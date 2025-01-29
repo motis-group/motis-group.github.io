@@ -80,15 +80,16 @@ table {
 }
 
 td {
-	border-bottom: 2px solid var(--border-color);
+	border: none;
+	/* border-bottom: 2px solid var(--border-color); */
 	padding: 0.25rem;
 }
 
 /* Projects Table */
-tr:hover {
+/* tr:hover {
 	background-color: var(--hover-bg);
 	color: var(--text-color);
-}
+} */
 
 img {
 	width: 100px;

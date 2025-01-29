@@ -1,64 +1,51 @@
-// Check system theme first, then saved preference
-const getPreferredTheme = () => {
-	const savedTheme = localStorage.getItem('theme');
-	const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-		? 'dark'
-		: 'light';
+(() => {
+	const THEME = {
+		LIGHT: 'light',
+		DARK: 'dark',
+	};
+	const ICONS = {
+		[THEME.LIGHT]: '☾',
+		[THEME.DARK]: '☀',
+	};
 
-	// Only use saved theme if user has explicitly set it
-	if (savedTheme && savedTheme !== systemTheme) {
-		return savedTheme;
-	}
-	return systemTheme;
-};
+	const getTheme = () => {
+		const saved = localStorage.getItem('theme');
+		return (
+			saved ||
+			(matchMedia('(prefers-color-scheme: dark)').matches
+				? THEME.DARK
+				: THEME.LIGHT)
+		);
+	};
 
-// Apply theme to document
-const setTheme = (theme) => {
-	document.documentElement.setAttribute('data-theme', theme);
-	localStorage.setItem('theme', theme);
-};
+	const setTheme = (theme) => {
+		document.documentElement.setAttribute('data-theme', theme);
+		localStorage.setItem('theme', theme);
+		const toggle = document.getElementById('theme-toggle');
+		if (toggle) toggle.textContent = ICONS[theme];
+	};
 
-// Initialize theme immediately to prevent flash
-setTheme(getPreferredTheme());
+	// Initialize theme
+	setTheme(getTheme());
 
-// Handle theme toggle
-document.addEventListener('DOMContentLoaded', () => {
-	const themeToggle = document.getElementById('theme-toggle');
-	if (themeToggle) {
-		themeToggle.addEventListener('click', () => {
-			const currentTheme = document.documentElement.getAttribute('data-theme');
-			const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-			setTheme(newTheme);
-			themeToggle.textContent = `${newTheme === 'light' ? '☾' : '☀'}`;
-		});
-
-		// Set initial button text
-		themeToggle.textContent = `${
-			document.documentElement.getAttribute('data-theme') === 'light'
-				? '☾'
-				: '☀'
-		}`;
-	}
-});
-
-// Listen for system theme changes
-window
-	.matchMedia('(prefers-color-scheme: dark)')
-	.addEventListener('change', (e) => {
-		const savedTheme = localStorage.getItem('theme');
-		const newSystemTheme = e.matches ? 'dark' : 'light';
-
-		// Update theme if user hasn't explicitly chosen a different one
-		if (
-			!savedTheme ||
-			savedTheme === document.documentElement.getAttribute('data-theme')
-		) {
-			setTheme(newSystemTheme);
-
-			// Update toggle button if it exists
-			const themeToggle = document.getElementById('theme-toggle');
-			if (themeToggle) {
-				themeToggle.textContent = `${newSystemTheme === 'light' ? '☾' : '☀'}`;
-			}
+	// Theme toggle handler
+	document.addEventListener('DOMContentLoaded', () => {
+		const toggle = document.getElementById('theme-toggle');
+		if (toggle) {
+			toggle.addEventListener('click', () =>
+				setTheme(
+					document.documentElement.getAttribute('data-theme') === THEME.LIGHT
+						? THEME.DARK
+						: THEME.LIGHT
+				)
+			);
 		}
 	});
+
+	// System theme change handler
+	matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+		if (!localStorage.getItem('theme')) {
+			setTheme(e.matches ? THEME.DARK : THEME.LIGHT);
+		}
+	});
+})();
