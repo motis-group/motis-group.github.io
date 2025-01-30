@@ -230,19 +230,16 @@ function generateProjectsHTML() {
             <td class="project-description">${project.description}</td>
             <td class="company">${project.company}</td>
             <td class="location">${project.location}</td>
-            ${
-							project.description.includes('*')
-								? ''
-								: `
             <td class="view-link">
                 ${
-									project.status === 'WIP' || project.visibility === 'closed'
+									project.description.includes('*')
+										? '*'
+										: project.status === 'WIP' ||
+										  project.visibility === 'closed'
 										? '<span class="disabled-link">link ⇱</span>'
 										: `<a href="${project.link}" target="_blank">link ⇱</a>`
 								}
             </td>
-            `
-						}
         </tr>
     `
 		)
