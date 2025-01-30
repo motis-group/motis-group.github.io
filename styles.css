@@ -9,7 +9,7 @@
 	--background-color: #ffffff;
 	--text-color: #000000;
 	--secondary-text-color: #c6c6c6;
-	--border-color: #000000;
+	--border-color: #c6c6c6;
 	--hover-bg: #efefef;
 	--link-bg: #efefef;
 	--link-hover: #5cfd3c;
@@ -82,8 +82,7 @@ table {
 }
 
 td {
-	border: none;
-	/* border-bottom: 2px solid var(--border-color); */
+	border-bottom: 2px solid var(--border-color);
 	padding: 0.25rem;
 }
 

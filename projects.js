@@ -38,6 +38,16 @@ const projects = [
 		company: 'acme corp',
 		location: 'remote',
 	},
+
+	{
+		name: 'dynix.cpp',
+		description: 'physics engine',
+		date: '2025-01-20',
+		link: '#',
+		visibility: 'closed',
+		company: 'motis group',
+		location: 'melbourne',
+	},
 	{
 		name: 'hr-sync.py',
 		description: 'contract - data engineering',
@@ -84,7 +94,7 @@ const projects = [
 		location: 'san diego',
 	},
 	{
-		name: 'revoltx.py',
+		name: 'revoltx',
 		description: 'auto job application script',
 		date: '2025-01-05',
 		link: '#',
@@ -127,6 +137,42 @@ const projects = [
 		visibility: 'open',
 		company: 'tray.io',
 		location: 'san diego',
+	},
+	{
+		name: '*',
+		description: '*',
+		date: '*',
+		link: '*',
+		visibility: '*',
+		company: '*',
+		location: '*',
+	},
+	{
+		name: '*',
+		description: '*',
+		date: '*',
+		link: '*',
+		visibility: '*',
+		company: '*',
+		location: '*',
+	},
+	{
+		name: '*',
+		description: '*',
+		date: '*',
+		link: '*',
+		visibility: '*',
+		company: '*',
+		location: '*',
+	},
+	{
+		name: 'MISCALLANEOUS',
+		description: '*',
+		date: '*',
+		link: '*',
+		visibility: '*',
+		company: '*',
+		location: '*',
 	},
 	{
 		name: 'usc-tsc-podcast',
@@ -184,6 +230,10 @@ function generateProjectsHTML() {
             <td class="project-description">${project.description}</td>
             <td class="company">${project.company}</td>
             <td class="location">${project.location}</td>
+            ${
+							project.description.includes('*')
+								? ''
+								: `
             <td class="view-link">
                 ${
 									project.status === 'WIP' || project.visibility === 'closed'
@@ -191,6 +241,8 @@ function generateProjectsHTML() {
 										: `<a href="${project.link}" target="_blank">link ⇱</a>`
 								}
             </td>
+            `
+						}
         </tr>
     `
 		)
