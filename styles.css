@@ -8,6 +8,7 @@
 :root {
 	--background-color: #ffffff;
 	--text-color: #000000;
+	--secondary-text-color: #c6c6c6;
 	--border-color: #000000;
 	--hover-bg: #efefef;
 	--link-bg: #efefef;
@@ -19,6 +20,7 @@
 [data-theme='dark'] {
 	--background-color: #000;
 	--text-color: #fff;
+	--secondary-text-color: #666666;
 	--border-color: #fff;
 	--hover-bg: #ef6302;
 	--link-bg: #2a2a2a;
@@ -127,7 +129,13 @@ a:hover {
 	text-align: right;
 }
 
-
+.project-status {
+	font-size: 0.75rem;
+	font-weight: 400;
+	background-color: var(--footer-btn-bg);
+	color: var(--text-color);
+	padding: 0.25rem;
+}
 
 /* Articles Table
 .articles-table {
@@ -216,3 +224,34 @@ footer {
 }
 
 /* CRT Effect */
+
+.disabled-link {
+	color: var(--text-color);
+	opacity: 0.5;
+	cursor: not-allowed;
+	text-decoration: line-through;
+	background-color: var(--link-bg);
+	padding: 0 0.25rem;
+}
+
+.company {
+	text-align: left;
+	font-size: 1rem;
+}
+
+.project-status.closed {
+	background-color: var(--text-color);
+	color: var(--background-color);
+	padding: 0.1rem 0.25rem;
+	line-height: 1;
+}
+
+.project-id {
+	color: var(--secondary-text-color);
+}
+
+.location {
+	text-align: left;
+	font-size: 1rem;
+	color: var(--secondary-text-color);
+}
