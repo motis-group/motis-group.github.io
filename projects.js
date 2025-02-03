@@ -98,7 +98,7 @@ const projects = [
 		description: 'auto job application script',
 		date: '2025-01-05',
 		link: 'https://github.com/automationchad/revoltx',
-		visibility: 'closed',
+		visibility: 'open',
 		company: 'motis group',
 		location: 'sydney',
 	},
