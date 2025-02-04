@@ -20,11 +20,10 @@ const projects = [
 		location: 'sydney',
 	},
 	{
-		name: 'yami',
+		name: 'kanpeki',
 		description: 'costing cli tool',
 		date: '2025-01-15',
-		link: '#',
-		status: 'WIP',
+		link: 'https://github.com/automationchad/kanpeki',
 		visibility: 'open',
 		company: 'alfab',
 		location: 'sydney',
