@@ -254,3 +254,23 @@ footer {
 	font-size: 1rem;
 	color: var(--secondary-text-color);
 }
+
+[data-theme='light'] .dark-logo {
+	display: none;
+}
+
+[data-theme='dark'] .light-logo {
+	display: none;
+}
+
+.footer-logos {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5rem;
+	position: relative;
+}
+
+.footer-logo {
+	width: 25px;
+	height: 25px; /* adjust as needed */
+}
