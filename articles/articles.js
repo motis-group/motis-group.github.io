@@ -1,15 +1,24 @@
 const articles = [
 	{
-		name: 'readme.md',
+		name: 'readme.txt',
 		description: '',
 		date: '2024-03-20',
-		link: '/articles/read_me.html',
+		link: '/articles/article.html?article=/articles/readme.txt',
+		type: 'text',
+	},
+	{
+		name: 'ronin.txt',
+		description: '',
+		date: '2025-02-07',
+		link: '/articles/article.html?article=/articles/ronin.txt',
+		type: 'text',
 	},
 	{
 		name: 'ammo_studio_review.mp4',
 		description: '',
 		date: '2022-01-19',
 		link: 'https://www.loom.com/share/c5ce641b12a2438ea0e226efdc45dc54?sid=75d3a346-5dfd-4d61-91db-53c2b0cfd999',
+		type: 'video',
 	},
 	{
 		name: 'process-mapping.mp4',
@@ -27,13 +36,15 @@ const articles = [
 
 // Function to sort articles by date (newest first)
 function getSortedArticles() {
-	return [...articles].sort((a, b) => new Date(b.date) - new Date(a.date));
+	const sortedArticles = [...articles].sort(
+		(a, b) => new Date(b.date) - new Date(a.date)
+	);
+	// Add the id to the sorted articles
+	sortedArticles.forEach((article, index) => {
+		article.id = (index + 1).toString().padStart(3, '0');
+	});
+	return sortedArticles;
 }
-
-// Add the id to the articles
-articles.forEach((article, index) => {
-	article.id = (index + 1).toString().padStart(3, '0');
-});
 
 // Function to generate HTML for the articles table
 function generateArticlesHTML() {
@@ -42,7 +53,11 @@ function generateArticlesHTML() {
 		.map(
 			(article) => `
         <tr>
-            <td class="project-name">${article.id} ${article.name}</td>
+            <td class="project-name">
+                <span class="project-id">${article.id}</span> 
+                ${article.name}
+                ${article.type === 'video' ? '📹' : '📄'}
+            </td>
             <td class="project-description">${article.description}</td>
             <td class="date">${article.date}</td>
             <td class="view-link">

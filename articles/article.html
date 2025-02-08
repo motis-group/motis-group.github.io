@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>ARTICLE_TITLE | MOTIS.GROUP</title>
+		<link rel="stylesheet" href="/styles.css" />
+		<script src="/theme.js"></script>
+	</head>
+	<body>
+		<div class="article-header">
+			<div class="article-title" id="article-title"></div>
+			<div class="article-date" id="article-date"></div>
+		</div>
+		<div class="article-content" id="article-content">
+			<!-- Content will be dynamically inserted here -->
+		</div>
+
+		<footer class="footer">
+			<div class="footer-logos">
+				<img
+					src="/images/logo-black.png"
+					alt="MOTIS.GROUP"
+					class="footer-logo light-logo"
+				/>
+				<img
+					src="/images/logo-white.png"
+					alt="MOTIS.GROUP"
+					class="footer-logo dark-logo"
+				/>
+			</div>
+			<div class="footer-menu">
+				<a href="/">PROJECTS</a>
+				<a href="/about">ABOUT</a>
+				<a href="/articles">ARTICLES</a>
+				<a href="https://github.com/motis-group" target="_blank">GITHUB</a>
+			</div>
+			<button id="theme-toggle" class="theme-toggle">☾</button>
+		</footer>
+
+		<script>
+			document.addEventListener('DOMContentLoaded', async () => {
+				const urlParams = new URLSearchParams(window.location.search);
+				const articlePath = urlParams.get('article');
+
+				if (articlePath) {
+					const response = await fetch(articlePath);
+					if (!response.ok) {
+						document.getElementById('article-content').textContent =
+							'Error loading article';
+					} else {
+						const content = await response.text();
+						document.getElementById('article-content').textContent = content;
+					}
+
+					const articleName = articlePath.split('/').pop().replace('.txt', '');
+					document.title = `${articleName} | MOTIS.GROUP`;
+					document.getElementById('article-title').textContent = articleName;
+
+					// Find the article in the articles array
+					const article = articles.find((a) => a.link === articlePath);
+
+					console.log(article);
+
+					document.getElementById('article-date').textContent = article.date;
+				}
+			});
+		</script>
+	</body>
+</html>
