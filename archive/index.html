@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+		/>
+		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+		<link rel="icon" type="image/png" href="/favicon.png" />
+		<title>projects | MOTIS.GROUP</title>
+		<link rel="stylesheet" href="/styles.css" />
+		<script src="/theme.js"></script>
+		<script src="/projects.js"></script>
+	</head>
+	<body>
+		<table class="projects-table" id="projects-table">
+			<!-- Table content will be dynamically generated -->
+		</table>
+
+		<footer class="footer">
+			<div class="footer-logos">
+				<img
+					src="/images/logo-black.png"
+					alt="MOTIS.GROUP"
+					class="footer-logo light-logo"
+				/>
+				<img
+					src="/images/logo-white.png"
+					alt="MOTIS.GROUP"
+					class="footer-logo dark-logo"
+				/>
+			</div>
+			<div class="footer-menu">
+				<a href="/"><span>HOME</span></a>
+				<a href="/archive" class="active"><span>ARCHIVE</span></a>
+				<a href="https://motisgroup.mataroa.blog" target="_blank"
+					><span>BLOG</span></a
+				>
+				<a href="https://github.com/motis-group" target="_blank"
+					><span>GITHUB</span></a
+				>
+			</div>
+			<button id="theme-toggle" class="theme-toggle">☾</button>
+		</footer>
+
+		<script>
+			document.addEventListener('DOMContentLoaded', () => {
+				const tableElement = document.getElementById('projects-table');
+				tableElement.innerHTML = generateProjectsHTML();
+			});
+		</script>
+	</body>
+</html>
