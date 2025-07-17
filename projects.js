@@ -1,3 +1,5 @@
+const github_base_url = 'https://github.com/willmarzella';
+
 const projects = [
 	{
 		name: 'article-automation.py',
@@ -175,7 +177,7 @@ const projects = [
 		name: 'sigil',
 		description: 'experiment in building GPT-native contract drafting agents',
 		date: '2024-12-05',
-		link: 'https://github.com/automationchad/sigil',
+		link: `${github_base_url}/sigil`,
 		visibility: 'open',
 		company: 'motis.group',
 		location: 'remote',
@@ -202,7 +204,7 @@ const projects = [
 		name: 'query-benchmark.py',
 		description: 'tool to evaluate warehouse query performance across Snowflake + Redshift',
 		date: '2025-02-09',
-		link: 'https://github.com/automationchad/query-benchmark',
+		link: `${github_base_url}/query-benchmark`,
 		visibility: 'open',
 		company: 'alfab',
 		location: 'remote',
