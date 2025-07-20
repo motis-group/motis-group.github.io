@@ -4,89 +4,294 @@
 		<meta charset="UTF-8" />
 		<meta
 			name="viewport"
-			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+			content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"
 		/>
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
-		<link rel="icon" type="image/png" href="/favicon.png" />
 		<title>about | MOTIS.GROUP</title>
-		<link rel="stylesheet" href="/styles.css" />
-		<script src="/theme.js"></script>
-		<script src="/tooltip.js"></script>
+		<style>
+			:root {
+				--bg: #fff;
+				--txt: #000;
+				--sec: #c6c6c6;
+				--quo: #555;
+				--bor: #efeded;
+				--lnk: #efefef;
+				--lnkhov: #5cfd3c;
+				--fbg: #e0e0e0;
+			}
+			[data-theme='dark'] {
+				--bg: #000;
+				--txt: #fff;
+				--sec: #666;
+				--quo: #aaa;
+				--bor: #0e1216;
+				--lnkhov: #ef6302;
+				--lnk: #2a2a2a;
+				--fbg: #2a2a2a;
+			}
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+			body {
+				font-family: 'SF Mono', 'Monaco', 'Menlo', 'Consolas', 'Liberation Mono',
+					'Courier New', monospace;
+				background: var(--bg);
+				color: var(--txt);
+				line-height: 1.6;
+				min-height: 100vh;
+				display: flex;
+				flex-direction: column;
+				padding-bottom: 4rem;
+			}
+			table {
+				padding: 0.5rem;
+				border-collapse: collapse;
+				width: 100%;
+			}
+			td {
+				border-bottom: 2px solid var(--bor);
+				padding: 0.25rem;
+				text-align: left;
+			}
+			a {
+				color: inherit;
+				text-decoration: underline;
+				background: var(--lnk);
+			}
+			a:hover {
+				background: var(--lnkhov);
+				color: var(--txt);
+			}
+			.active a {
+				background: var(--lnkhov) !important;
+			}
+			.quote {
+				font-style: italic;
+				color: var(--quo);
+			}
+			footer {
+				border-top: 2px solid var(--bor);
+				padding: 0.5rem;
+				margin-top: auto;
+				position: fixed;
+				bottom: 0;
+				width: 100%;
+				background: var(--bg);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			.footer-menu {
+				display: flex;
+				gap: 1rem;
+			}
+			.footer-menu a {
+				color: var(--txt);
+				text-decoration: none;
+				background: var(--fbg);
+				padding: 0 0.25rem;
+			}
+			.footer-menu a:hover {
+				background: var(--lnkhov);
+			}
+			.theme-toggle {
+				font-family: inherit;
+				font-size: 1rem;
+				cursor: pointer;
+				padding: 0.25rem 0.5rem;
+				background: var(--fbg);
+				color: var(--txt);
+				border: none;
+				margin-left: 1rem;
+			}
+			.theme-toggle:hover {
+				background: var(--lnkhov);
+			}
+			.tooltip {
+				position: relative;
+				border-bottom: 1px dotted var(--sec);
+				cursor: help;
+			}
+			.tooltip-content {
+				visibility: hidden;
+				opacity: 0;
+				position: absolute;
+				z-index: 999;
+				bottom: 125%;
+				left: 50%;
+				transform: translateX(-50%);
+				background: var(--bg);
+				color: var(--txt);
+				border: 2px solid var(--bor);
+				padding: 0.4rem;
+				font-size: 0.8rem;
+				line-height: 1.3;
+				white-space: normal;
+				max-width: 250px;
+				min-width: 100px;
+				word-wrap: break-word;
+				transition: opacity 0.2s;
+			}
+			.tooltip-content::after {
+				content: '';
+				position: absolute;
+				top: 100%;
+				left: 50%;
+				transform: translateX(-50%);
+				border: 5px solid transparent;
+				border-top-color: var(--bor);
+			}
+			.tooltip:hover .tooltip-content {
+				visibility: visible;
+				opacity: 1;
+			}
+			@media (max-width: 768px) {
+				body {
+					padding: 0.25rem;
+					padding-bottom: 5rem;
+				}
+				table,
+				tr,
+				td {
+					display: block;
+				}
+				tr {
+					margin-bottom: 0.8rem;
+					border-bottom: 2px solid var(--bor);
+				}
+				td {
+					border: none;
+					padding: 0.3rem 0;
+				}
+				footer {
+					padding: 0.8rem;
+				}
+				.footer-menu {
+					gap: 0.5rem;
+				}
+				.footer-menu a {
+					padding: 0.2rem 0.4rem;
+				}
+				.tooltip-content {
+					font-size: 0.75rem;
+					max-width: 200px;
+					padding: 0.3rem;
+				}
+			}
+		</style>
+		<script>
+			(() => {
+				const T = { L: 'light', D: 'dark' },
+					I = { light: '☾', dark: '☀' },
+					g = () =>
+						localStorage.getItem('theme') ||
+						(matchMedia('(prefers-color-scheme: dark)').matches ? T.D : T.L),
+					s = (t) => {
+						document.documentElement.setAttribute('data-theme', t);
+						localStorage.setItem('theme', t);
+						const toggle = document.getElementById('t');
+						if (toggle) toggle.textContent = I[t];
+					};
+				s(g());
+				document.addEventListener('DOMContentLoaded', () => {
+					const toggle = document.getElementById('t');
+					if (toggle)
+						toggle.addEventListener('click', () =>
+							s(
+								document.documentElement.getAttribute('data-theme') === T.L
+									? T.D
+									: T.L
+							)
+						);
+				});
+				matchMedia('(prefers-color-scheme: dark)').addEventListener(
+					'change',
+					(e) => {
+						if (!localStorage.getItem('theme')) s(e.matches ? T.D : T.L);
+					}
+				);
+			})();
+			document.addEventListener('DOMContentLoaded', () => {
+				document.querySelectorAll('.tooltip').forEach((t) => {
+					const c = t.querySelector('.tooltip-content');
+					t.addEventListener('mouseenter', () => {
+						const r = c.getBoundingClientRect();
+						if (r.right > window.innerWidth)
+							(c.style.left = 'auto'),
+								(c.style.right = '0'),
+								(c.style.transform = 'none');
+						if (r.left < 0) (c.style.left = '0'), (c.style.transform = 'none');
+					});
+					t.addEventListener('mouseleave', () => {
+						c.style.left = '50%';
+						c.style.right = 'auto';
+						c.style.transform = 'translateX(-50%)';
+					});
+				});
+			});
+		</script>
 	</head>
 	<body>
-		<table class="projects-table">
+		<table>
 			<tr>
-				<td class="project-description">I build AI systems that work.</td>
+				<td>I build AI systems that work.</td>
 			</tr>
 			<tr>
-				<td class="project-description">
+				<td>
 					Most consultants offshore work, miss deadlines, and leave you
 					dependent on their broken systems.
 				</td>
 			</tr>
 			<tr>
-				<td class="project-description">I don't.</td>
+				<td>I don't.</td>
 			</tr>
-
 			<tr>
 				<td>&nbsp;</td>
 			</tr>
-
 			<tr>
-				<td class="project-description">
-					Senior engineer. Zero handoffs. Ships on time.
-				</td>
+				<td>Senior engineer. Zero handoffs. Ships on time.</td>
 			</tr>
-
 			<tr>
 				<td>&nbsp;</td>
 			</tr>
-
 			<tr>
 				<td>Track record:</td>
 			</tr>
-
 			<tr>
-				<td class="project-description quote">
+				<td class="quote">
 					"Will delivered a clean RAG stack in a week. Our internal team spent
 					two months getting nowhere." — Tom R., Head of ML, logistics platform
 				</td>
 			</tr>
-
 			<tr>
-				<td class="project-description quote">
-					<blockquote>
-						"We were about to offshore another data cleanup project. Will
-						rebuilt the pipeline in three days and eliminated the need
-						entirely." — Priya K., Head of Data, ASX-listed SaaS firm
-					</blockquote>
+				<td class="quote">
+					"We were about to offshore another data cleanup project. Will rebuilt
+					the pipeline in three days and eliminated the need entirely." — Priya
+					K., Head of Data, ASX-listed SaaS firm
 				</td>
 			</tr>
-
 			<tr>
-				<td class="project-description quote">
+				<td class="quote">
 					"Will is the only consultant I've hired that made things simpler, not
 					messier." — Jack M., CTO, fintech startup
 				</td>
 			</tr>
-
 			<tr>
-				<td class="project-description quote">
+				<td class="quote">
 					"Will doesn't just build what you ask for. He builds what you
 					should've asked for." — Leila B., VP Engineering, e-commerce platform
 				</td>
 			</tr>
-
 			<tr>
 				<td>&nbsp;</td>
 			</tr>
-
 			<tr>
 				<td>What I build:</td>
 			</tr>
-
 			<tr>
-				<td class="project-description">
+				<td>
 					✦
 					<span class="tooltip"
 						>RAG<span class="tooltip-content"
@@ -97,9 +302,8 @@
 					systems that actually retrieve the right information.
 				</td>
 			</tr>
-
 			<tr>
-				<td class="project-description">
+				<td>
 					✦
 					<span class="tooltip"
 						>Agent<span class="tooltip-content"
@@ -110,9 +314,8 @@
 					workflows that automate work instead of creating more work.
 				</td>
 			</tr>
-
 			<tr>
-				<td class="project-description">
+				<td>
 					✦
 					<span class="tooltip"
 						>ML pipelines<span class="tooltip-content"
@@ -123,9 +326,8 @@
 					that deploy, scale, and stay deployed.
 				</td>
 			</tr>
-
 			<tr>
-				<td class="project-description">
+				<td>
 					✦
 					<span class="tooltip"
 						>Data infrastructure<span class="tooltip-content"
@@ -136,53 +338,37 @@
 					that processes what you need when you need it.
 				</td>
 			</tr>
-
 			<tr>
 				<td>&nbsp;</td>
 			</tr>
-
 			<tr>
 				<td>How I work:</td>
 			</tr>
-
 			<tr>
-				<td class="project-description">
+				<td>
 					✦ I scope the actual problem, not the problem you think you have.
 				</td>
 			</tr>
-
 			<tr>
-				<td class="project-description">
-					✦ I write the code personally. Zero outsourcing.
-				</td>
+				<td>✦ I write the code personally. Zero outsourcing.</td>
 			</tr>
-
 			<tr>
-				<td class="project-description">
-					✦ I build systems your team can own, extend, and understand.
-				</td>
+				<td>✦ I build systems your team can own, extend, and understand.</td>
 			</tr>
-
 			<tr>
-				<td class="project-description">✦ I ship on deadline. Always.</td>
+				<td>✦ I ship on deadline. Always.</td>
 			</tr>
-
 			<tr>
-				<td class="project-description">
-					✦ No meetings unless they solve something specific.
-				</td>
+				<td>✦ No meetings unless they solve something specific.</td>
 			</tr>
-
 			<tr>
 				<td>&nbsp;</td>
 			</tr>
-
 			<tr>
 				<td>Stack:</td>
 			</tr>
-
 			<tr>
-				<td class="project-description">
+				<td>
 					Python,
 					<span class="tooltip"
 						>LangChain<span class="tooltip-content"
@@ -219,29 +405,32 @@
 					>.
 				</td>
 			</tr>
-
 			<tr>
-				<td class="project-description">
-					Whatever works. Simple beats complex.
-				</td>
+				<td>Whatever works. Simple beats complex.</td>
 			</tr>
-
 			<tr>
 				<td>&nbsp;</td>
 			</tr>
-
+			<tr>
+				<td>
+					<a href="https://github.com/willmarzella" target="_blank"
+						>github.com/willmarzella</a
+					>
+				</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+			</tr>
 			<tr>
 				<td>Options:</td>
 			</tr>
-
 			<tr>
-				<td class="project-description">
+				<td>
 					✦ Fixed-price projects. $20k minimum. 50% upfront, 50% on delivery.
 				</td>
 			</tr>
-
 			<tr>
-				<td class="project-description">
+				<td>
 					✦ $2,000/day for short-term work. Migrations, audits,
 					<span class="tooltip"
 						>fire-fighting<span class="tooltip-content"
@@ -251,9 +440,8 @@
 					>.
 				</td>
 			</tr>
-
 			<tr>
-				<td class="project-description">
+				<td>
 					✦
 					<a href="https://calendly.com/motis-automation" target="_blank"
 						>$350–$500/hr</a
@@ -261,39 +449,22 @@
 					for advisory calls.
 				</td>
 			</tr>
-
 			<tr>
 				<td>&nbsp;</td>
 			</tr>
-
 			<tr>
-				<td class="project-description">Melbourne timezone. Work globally.</td>
+				<td>Melbourne timezone. Work globally.</td>
 			</tr>
-
 			<tr>
 				<td>&nbsp;</td>
 			</tr>
-
 			<tr>
-				<td class="project-description">
+				<td>
 					<a href="mailto:automation@motis.group">automation@motis.group</a>
 				</td>
 			</tr>
 		</table>
-
-		<footer class="footer">
-			<div class="footer-logos">
-				<img
-					src="/images/logo-black.png"
-					alt="MOTIS.GROUP"
-					class="footer-logo light-logo"
-				/>
-				<img
-					src="/images/logo-white.png"
-					alt="MOTIS.GROUP"
-					class="footer-logo dark-logo"
-				/>
-			</div>
+		<footer>
 			<div class="footer-menu">
 				<a href="/" class="active"><span>HOME</span></a>
 				<a href="/archive"><span>ARCHIVE</span></a>
@@ -304,7 +475,7 @@
 					><span>GITHUB</span></a
 				>
 			</div>
-			<button id="theme-toggle" class="theme-toggle">☾</button>
+			<button id="t" class="theme-toggle">☾</button>
 		</footer>
 	</body>
 </html>

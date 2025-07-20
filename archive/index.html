@@ -4,21 +4,626 @@
 		<meta charset="UTF-8" />
 		<meta
 			name="viewport"
-			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+			content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"
 		/>
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
-		<link rel="icon" type="image/png" href="/favicon.png" />
 		<title>projects | MOTIS.GROUP</title>
-		<link rel="stylesheet" href="/styles.css" />
-		<script src="/theme.js"></script>
-		<script src="/projects.js"></script>
+		<style>
+			:root {
+				--bg: #fff;
+				--txt: #000;
+				--sec: #c6c6c6;
+				--quo: #555;
+				--bor: #efeded;
+				--lnk: #efefef;
+				--lnkhov: #5cfd3c;
+				--fbg: #e0e0e0;
+			}
+			[data-theme='dark'] {
+				--bg: #000;
+				--txt: #fff;
+				--sec: #666;
+				--quo: #aaa;
+				--bor: #0e1216;
+				--lnkhov: #ef6302;
+				--lnk: #2a2a2a;
+				--fbg: #2a2a2a;
+			}
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+			body {
+				font-family: 'SF Mono', 'Monaco', 'Menlo', 'Consolas', 'Liberation Mono',
+					'Courier New', monospace;
+				background: var(--bg);
+				color: var(--txt);
+				line-height: 1.6;
+				min-height: 100vh;
+				display: flex;
+				flex-direction: column;
+				padding-bottom: 4rem;
+			}
+			table {
+				padding: 0.5rem;
+				border-collapse: collapse;
+				width: 100%;
+			}
+			td {
+				border-bottom: 2px solid var(--bor);
+				padding: 0.25rem;
+				text-align: left;
+			}
+			a {
+				color: inherit;
+				text-decoration: underline;
+				background: var(--lnk);
+			}
+			a:hover {
+				background: var(--lnkhov);
+				color: var(--txt);
+			}
+			.active a {
+				background: var(--lnkhov) !important;
+			}
+			.project-name {
+				text-align: left;
+			}
+			.project-description {
+				text-align: left;
+			}
+			.date {
+				text-align: left;
+			}
+			.view-link {
+				text-align: right;
+			}
+			.project-status {
+				font-size: 0.75rem;
+				font-weight: 400;
+				background: var(--fbg);
+				color: var(--txt);
+				padding: 0.25rem;
+			}
+			.project-status.closed {
+				background: var(--txt);
+				color: var(--bg);
+				padding: 0.1rem 0.25rem;
+				line-height: 1;
+			}
+			.company {
+				text-align: left;
+				font-size: 1rem;
+			}
+			.location {
+				text-align: left;
+				font-size: 1rem;
+				color: var(--sec);
+			}
+			.project-id {
+				color: var(--sec);
+			}
+			.disabled-link {
+				color: var(--txt);
+				opacity: 0.5;
+				cursor: not-allowed;
+				text-decoration: line-through;
+				background: var(--lnk);
+				padding: 0 0.25rem;
+			}
+			footer {
+				border-top: 2px solid var(--bor);
+				padding: 0.5rem;
+				margin-top: auto;
+				position: fixed;
+				bottom: 0;
+				width: 100%;
+				background: var(--bg);
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.footer-menu {
+				display: flex;
+				gap: 1rem;
+				justify-content: center;
+				align-items: center;
+			}
+			.footer-menu a {
+				color: var(--txt);
+				text-decoration: none;
+				background: var(--fbg);
+				padding: 0 0.25rem;
+			}
+			.footer-menu a:hover {
+				background: var(--lnkhov);
+			}
+			.footer-logos {
+				display: flex;
+				gap: 0.5rem;
+				position: relative;
+			}
+			.footer-logo {
+				width: 25px;
+				height: 25px;
+			}
+			[data-theme='light'] .dark-logo {
+				display: none;
+			}
+			[data-theme='dark'] .light-logo {
+				display: none;
+			}
+			.theme-toggle {
+				font-family: inherit;
+				font-size: 1rem;
+				cursor: pointer;
+				padding: 0.25rem 0.5rem;
+				background: var(--fbg);
+				color: var(--txt);
+				border: none;
+			}
+			.theme-toggle:hover {
+				background: var(--lnkhov);
+			}
+			@media (max-width: 768px) {
+				body {
+					padding: 0.5rem;
+					padding-bottom: 8rem;
+				}
+				table,
+				tr,
+				td {
+					display: block;
+				}
+				tr {
+					margin-bottom: 1rem;
+					border-bottom: 2px solid var(--bor);
+				}
+				td {
+					border: none;
+					padding: 0.5rem 0;
+				}
+				.view-link {
+					text-align: left;
+				}
+				footer {
+					padding: 1rem 0.5rem;
+					z-index: 100;
+				}
+				.footer-menu {
+					gap: 0.5rem;
+				}
+				.footer-menu a {
+					padding: 0.25rem 0.5rem;
+				}
+				.footer-logos {
+					display: none;
+				}
+				.project-name {
+					font-size: 1.1rem;
+				}
+				.project-description {
+					font-size: 0.9rem;
+				}
+				.date,
+				.location,
+				.company {
+					font-size: 0.85rem;
+				}
+				tr td:empty {
+					padding: 0.25rem 0;
+					margin: 0;
+					border: none;
+				}
+			}
+			@media (max-width: 480px) {
+				body {
+					padding: 0.25rem;
+					padding-bottom: 12rem;
+				}
+				footer {
+					gap: 0.5rem;
+					padding: 0.75rem;
+				}
+				.theme-toggle {
+					align-self: center;
+				}
+				.project-description {
+					font-size: 0.9rem;
+					padding: 0.5rem 0;
+				}
+			}
+		</style>
+		<script>
+			(() => {
+				const T = { L: 'light', D: 'dark' },
+					I = { light: '☾', dark: '☀' },
+					g = () =>
+						localStorage.getItem('theme') ||
+						(matchMedia('(prefers-color-scheme: dark)').matches ? T.D : T.L),
+					s = (t) => {
+						document.documentElement.setAttribute('data-theme', t);
+						localStorage.setItem('theme', t);
+						const toggle = document.getElementById('t');
+						if (toggle) toggle.textContent = I[t];
+					};
+				s(g());
+				document.addEventListener('DOMContentLoaded', () => {
+					const toggle = document.getElementById('t');
+					if (toggle)
+						toggle.addEventListener('click', () =>
+							s(
+								document.documentElement.getAttribute('data-theme') === T.L
+									? T.D
+									: T.L
+							)
+						);
+				});
+				matchMedia('(prefers-color-scheme: dark)').addEventListener(
+					'change',
+					(e) => {
+						if (!localStorage.getItem('theme')) s(e.matches ? T.D : T.L);
+					}
+				);
+			})();
+
+			const github_base_url = 'https://github.com/willmarzella';
+			const projects = [
+				{
+					name: 'article-automation.py',
+					description: 'workflow automation script',
+					date: '2025-01-30',
+					link: '#',
+					status: 'WIP',
+					visibility: 'open',
+					company: 'dot2dotconsulting',
+					location: 'remote',
+				},
+				{
+					name: 'hr-sync.py',
+					description: 'contract - data engineering',
+					date: '2024-10-15',
+					link: '#',
+					visibility: 'open',
+					company: 'kunes auto group',
+					location: 'remote',
+				},
+				{
+					name: 'ironclad-sync.py',
+					description: 'contract - data engineering',
+					date: '2023-04-15',
+					link: '#',
+					visibility: 'closed',
+					company: 'molecular testing labs',
+					location: 'san diego',
+				},
+				{
+					name: 'crm-sync.py',
+					description: 'contract - data engineering',
+					date: '2022-10-19',
+					link: '#',
+					visibility: 'closed',
+					company: 'nova',
+					location: 'san diego',
+				},
+				{
+					name: 'lever-sync.py',
+					description: 'contract - data engineering',
+					date: '2023-06-19',
+					link: '#',
+					visibility: 'closed',
+					company: 'appen',
+					location: 'san diego',
+				},
+				{
+					name: 'traci',
+					description: 'rag application',
+					date: '2023-04-15',
+					link: '#',
+					visibility: 'open',
+					company: 'tray.io',
+					location: 'italy',
+				},
+				{
+					name: 'database-sync.py',
+					description: 'contract - data engineering',
+					date: '2024-04-30',
+					link: '#',
+					visibility: 'open',
+					company: 'sai360',
+					location: 'melbourne',
+				},
+				{
+					name: 'hubspot-sync.py',
+					description: 'contract - data engineering',
+					date: '2023-10-06',
+					link: '#',
+					visibility: 'open',
+					company: 'manobyte',
+					location: 'remote',
+				},
+				{
+					name: 'platform engineer',
+					description: 'work in sales, automation, and data',
+					date: '2021-04-12',
+					link: '#',
+					visibility: 'open',
+					company: 'tray.io',
+					location: 'san diego',
+				},
+				{
+					name: 'gladius',
+					description:
+						'ETL refactor + orchestration migration (Airflow to Prefect)',
+					date: '2024-12-01',
+					link: '#',
+					visibility: 'closed',
+					company: 'stealth logistics client',
+					location: 'melbourne',
+				},
+				{
+					name: 'synapse-audit',
+					description: 'AI automation audit for mid-size enterprise',
+					date: '2025-02-05',
+					link: '#',
+					visibility: 'closed',
+					company: 'stealth corp',
+					location: 'australia',
+				},
+				{
+					name: 'lumen',
+					description: 'internal LLM agent platform with retrieval layer',
+					date: '2024-11-12',
+					link: '#',
+					visibility: 'closed',
+					company: 'motis.group',
+					location: 'remote',
+				},
+				{
+					name: 'regulus',
+					description: 'ML-driven forecasting pipeline for national wholesaler',
+					date: '2024-09-15',
+					link: '#',
+					visibility: 'closed',
+					company: 'stealth retail client',
+					location: 'australia',
+				},
+				{
+					name: 'ops-mirror',
+					description:
+						'infra monitoring & alerting system using lightweight GPT agents',
+					date: '2025-02-12',
+					link: '#',
+					visibility: 'closed',
+					company: 'stealth infra client',
+					location: 'melbourne',
+				},
+				{
+					name: 'flint-sync.py',
+					description: 'contract - dbt and Snowflake model sync',
+					date: '2024-07-01',
+					link: '#',
+					visibility: 'open',
+					company: 'rest super',
+					location: 'melbourne',
+				},
+				{
+					name: 'dendrite',
+					description:
+						'multi-tenant embedding + vector pipeline with modular RAG endpoints',
+					date: '2025-03-02',
+					link: '#',
+					visibility: 'open',
+					company: 'motis.group',
+					location: 'remote',
+				},
+				{
+					name: 'vector-qa-sync',
+					description: 'custom RAG app for internal knowledge base search',
+					date: '2024-11-03',
+					link: '#',
+					visibility: 'closed',
+					company: 'chiltons',
+					location: 'melbourne',
+				},
+				{
+					name: 'delta-layer-refactor',
+					description:
+						'rewrote delta lake ingestion pipeline for lower latency + cost',
+					date: '2024-08-19',
+					link: '#',
+					visibility: 'closed',
+					company: 'rest super',
+					location: 'remote',
+				},
+				{
+					name: 'telemetry-pruner',
+					description:
+						'wrote dbt macros to clean billions of log records for analytics',
+					date: '2024-06-22',
+					link: '#',
+					visibility: 'closed',
+					company: 'idee group',
+					location: 'new zealand',
+				},
+				{
+					name: 'sigil',
+					description:
+						'experiment in building GPT-native contract drafting agents',
+					date: '2024-12-05',
+					link: `${github_base_url}/sigil`,
+					visibility: 'open',
+					company: 'motis.group',
+					location: 'remote',
+				},
+				{
+					name: 'terraform-cleanroom',
+					description:
+						'infra-as-code simplification project for Snowflake environments',
+					date: '2024-10-11',
+					link: '#',
+					visibility: 'closed',
+					company: 'rest super',
+					location: 'melbourne',
+				},
+				{
+					name: 'onboarding-agent',
+					description: 'LLM-powered bot for HR onboarding workflow via Slack',
+					date: '2025-01-18',
+					link: '#',
+					visibility: 'closed',
+					company: 'stealth corp',
+					location: 'australia',
+				},
+				{
+					name: 'query-benchmark.py',
+					description:
+						'tool to evaluate warehouse query performance across Snowflake + Redshift',
+					date: '2025-02-09',
+					link: `${github_base_url}/query-benchmark`,
+					visibility: 'open',
+					company: 'alfab',
+					location: 'remote',
+				},
+				{
+					name: 'compose.ml',
+					description:
+						'consulting project to rebuild ML feature store into modular dbt-native system',
+					date: '2024-07-14',
+					link: '#',
+					visibility: 'closed',
+					company: 'telecom industry',
+					location: 'sydney',
+				},
+				{
+					name: 'client-data-migration',
+					description: 'multi-tenant customer analytics rebuild for Snowflake',
+					date: '2024-05-20',
+					link: '#',
+					visibility: 'closed',
+					company: 'education industry',
+					location: 'remote',
+				},
+				{
+					name: 'retention-agent',
+					description:
+						'lightweight LLM tool to draft winback emails using customer CRM notes',
+					date: '2024-09-01',
+					link: '#',
+					visibility: 'closed',
+					company: 'stealth startup',
+					location: 'los angeles',
+				},
+				{
+					name: '*',
+					description: '*',
+					date: '*',
+					link: '*',
+					visibility: '*',
+					company: '*',
+					location: '*',
+				},
+				{
+					name: '*',
+					description: '*',
+					date: '*',
+					link: '*',
+					visibility: '*',
+					company: '*',
+					location: '*',
+				},
+				{
+					name: '*',
+					description: '*',
+					date: '*',
+					link: '*',
+					visibility: '*',
+					company: '*',
+					location: '*',
+				},
+				{
+					name: 'MISCALLANEOUS',
+					description: '*',
+					date: '*',
+					link: '*',
+					visibility: '*',
+					company: '*',
+					location: '*',
+				},
+				{
+					name: 'usc-tsc-podcast',
+					description: 'podcast',
+					date: '2020-09-25',
+					link: 'https://open.spotify.com/show/3QWs17CVzPMCdiciMXM4Nz?si=a22f46e7621341e5',
+					visibility: 'open',
+					company: 'usc',
+					location: 'los angeles',
+				},
+				{
+					name: 'in-on-merit',
+					description: 't-shirt design',
+					date: '2019-04-19',
+					link: 'https://lamag.com/featured/these-usc-students-want-you-to-know-exactly-how-they-got-accepted',
+					visibility: 'open',
+					company: 'usc',
+					location: 'los angeles',
+				},
+			];
+
+			function getSortedProjects() {
+				const sortedProjects = [...projects].sort(
+					(a, b) => new Date(b.date) - new Date(a.date)
+				);
+				sortedProjects.forEach((project, index) => {
+					project.id = (index + 1).toString().padStart(3, '0');
+				});
+				return sortedProjects;
+			}
+
+			function generateProjectsHTML() {
+				const sortedProjects = getSortedProjects();
+				return sortedProjects
+					.map(
+						(project) =>
+							`<tr><td class="project-name"><span class="project-id">${
+								project.id
+							}</span> ${project.name} ${
+								project.status
+									? `<span class="project-status">${project.status}</span>`
+									: ''
+							} ${
+								project.visibility === 'closed'
+									? '<span class="project-status closed">⊗</span>'
+									: ''
+							}</td><td class="project-description">${
+								project.description
+							}</td><td class="company">${
+								project.company
+							}</td><td class="location">${
+								project.location
+							}</td><td class="view-link">${
+								project.description.includes('*')
+									? '*'
+									: project.status === 'WIP' || project.visibility === 'closed'
+									? '<span class="disabled-link">link ⇱</span>'
+									: `<a href="${project.link}" target="_blank">link ⇱</a>`
+							}</td></tr>`
+					)
+					.join('');
+			}
+
+			document.addEventListener('DOMContentLoaded', () => {
+				const tableElement = document.getElementById('projects-table');
+				tableElement.innerHTML = generateProjectsHTML();
+			});
+		</script>
 	</head>
 	<body>
-		<table class="projects-table" id="projects-table">
+		<table id="projects-table">
 			<!-- Table content will be dynamically generated -->
 		</table>
-
-		<footer class="footer">
+		<footer>
 			<div class="footer-logos">
 				<img
 					src="/images/logo-black.png"
@@ -41,14 +646,7 @@
 					><span>GITHUB</span></a
 				>
 			</div>
-			<button id="theme-toggle" class="theme-toggle">☾</button>
+			<button id="t" class="theme-toggle">☾</button>
 		</footer>
-
-		<script>
-			document.addEventListener('DOMContentLoaded', () => {
-				const tableElement = document.getElementById('projects-table');
-				tableElement.innerHTML = generateProjectsHTML();
-			});
-		</script>
 	</body>
 </html>
