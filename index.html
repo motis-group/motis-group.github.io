@@ -17,10 +17,11 @@
 				--dot-primary: rgb(232, 115, 26);
 				--dot-secondary: #ff6b35;
 				--dot-glow: rgba(232, 115, 26, 0.8);
-				--text-primary: #ffffff;
+				--text-primary: #ffb894;
 				--text-secondary: #ffb894;
 				--text-muted: #cc8a6b;
 				--accent: rgb(232, 115, 26);
+				--border: #6d0c03;
 			}
 
 			* {
@@ -31,14 +32,38 @@
 
 			@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
+			@font-face {
+				font-family: 'IBMVGA8';
+				src: url('WebPlus_IBM_VGA_8x16.woff') format('woff');
+				font-weight: normal;
+				font-style: normal;
+				font-display: swap;
+			}
+
 			body {
-				font-family: 'Inter', 'JetBrains Mono', monospace;
+				font-family: 'IBMVGA8', 'JetBrains Mono', 'Courier New', monospace;
 				background: var(--bg-dark);
 				color: var(--text-primary);
 				line-height: 1.6;
 				min-height: 100vh;
 				position: relative;
 				overflow-x: hidden;
+			}
+
+			ul {
+				margin-bottom: 1rem;
+			}
+
+			ul li {
+				margin: 0 1ch;
+				text-indent: -3ch;
+				padding-left: 3ch;
+				display: block;
+			}
+
+			ul li::before {
+				content: '\2666\a0\A0';
+				color: #0a0;
 			}
 
 			/* Chain Link Pattern Background */
@@ -164,13 +189,12 @@
 
 			/* Text Content */
 			.text-content {
-				text-transform: uppercase;
 				margin-bottom: 4rem;
 				max-width: 700px;
 				margin-left: auto;
 				margin-right: auto;
 				padding: 2rem;
-				border: 1px solid var(--accent);
+				border: 1px solid var(--border);
 				background: rgba(0, 0, 0, 0.3);
 				backdrop-filter: blur(5px);
 			}
@@ -338,21 +362,21 @@
 			}
 
 			.status-ping {
-				width: 8px;
-				height: 8px;
-				border-radius: 50%;
-				position: relative;
-				animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+				height: 18px;
+				width: auto;
+				display: inline-block;
 			}
 
 			.status-ping.available {
-				background: #00ff00;
-				box-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+				background: #040;
+				color: #03ff00;
+				box-shadow: 0 0 10px #040;
 			}
 
 			.status-ping.unavailable {
-				background: var(--accent);
-				box-shadow: 0 0 10px var(--dot-glow);
+				background: #800;
+				color: #f00 !important;
+				box-shadow: #800;
 			}
 
 			/* Animations */
@@ -464,48 +488,97 @@
 				const statusPing = document.getElementById('status-ping');
 				const statusText = document.getElementById('status-text');
 
-				// Get current time in Melbourne (UTC+10/11)
+				// Override: Not available until June 2026
 				const now = new Date();
-				const melbourneTime = new Date(
-					now.toLocaleString('en-US', { timeZone: 'Australia/Melbourne' })
-				);
-				const hour = melbourneTime.getHours();
-				const day = melbourneTime.getDay(); // 0 = Sunday, 6 = Saturday
+				const availableDate = new Date('2025-12-05T00:00:00+10:00'); // June 1, 2024 Melbourne time
 
-				// Available: Monday-Friday, 9 AM - 6 PM Melbourne time
-				const isWeekday = day >= 1 && day <= 5;
-				const isWorkingHours = hour >= 9 && hour < 18;
-				const isAvailable = isWeekday && isWorkingHours;
+				console.log('Current time:', now);
+				console.log('Available date:', availableDate);
+				console.log('Is past available date:', now >= availableDate);
 
-				if (isAvailable) {
-					statusPing.className = 'status-ping available';
-					statusText.textContent = 'AVAILABLE';
-				} else {
+				if (now < availableDate) {
+					// Show unavailable with red indicator
 					statusPing.className = 'status-ping unavailable';
-
-					// Calculate next availability
-					let nextAvailable = new Date(melbourneTime);
-
-					if (!isWeekday) {
-						// Weekend - next Monday
-						const daysUntilMonday = (8 - day) % 7;
-						nextAvailable.setDate(nextAvailable.getDate() + daysUntilMonday);
-						nextAvailable.setHours(9, 0, 0, 0);
-					} else if (hour >= 18) {
-						// After hours - next morning
-						nextAvailable.setDate(nextAvailable.getDate() + 1);
-						nextAvailable.setHours(9, 0, 0, 0);
-					} else {
-						// Before hours - today at 9 AM
-						nextAvailable.setHours(9, 0, 0, 0);
-					}
-
-					const timeUntil = Math.ceil(
-						(nextAvailable - melbourneTime) / (1000 * 60 * 60)
+					statusPing.textContent = '[X]';
+					const availableDateFormatted = availableDate
+						.toLocaleDateString('en-US', {
+							month: 'long',
+							year: 'numeric',
+							timeZone: 'Australia/Melbourne',
+						})
+						.toUpperCase();
+					statusText.textContent = `UNAVAILABLE UNTIL ${availableDateFormatted}`;
+					console.log(`Status: Unavailable until ${availableDateFormatted}`);
+				} else {
+					// After June 2024, revert to normal availability logic
+					const melbourneTime = new Date(
+						now.toLocaleString('en-US', { timeZone: 'Australia/Melbourne' })
 					);
-					statusText.textContent = `AVAILABLE IN ${timeUntil}H`;
+					const hour = melbourneTime.getHours();
+					const day = melbourneTime.getDay(); // 0 = Sunday, 6 = Saturday
+
+					console.log('Melbourne time:', melbourneTime);
+					console.log('Hour:', hour, 'Day:', day);
+
+					// Available: Monday-Friday, 9 AM - 6 PM Melbourne time
+					const isWeekday = day >= 1 && day <= 5;
+					const isWorkingHours = hour >= 9 && hour < 18;
+					const isAvailable = isWeekday && isWorkingHours;
+
+					console.log(
+						'Is weekday:',
+						isWeekday,
+						'Is working hours:',
+						isWorkingHours,
+						'Is available:',
+						isAvailable
+					);
+
+					if (isAvailable) {
+						statusPing.className = 'status-ping available';
+						statusPing.textContent = '[✓]';
+						statusText.textContent = 'AVAILABLE';
+						console.log('Status: Available');
+					} else {
+						statusPing.className = 'status-ping unavailable';
+						statusPing.textContent = '[X]';
+
+						// Calculate next availability
+						let nextAvailable = new Date(melbourneTime);
+
+						if (!isWeekday) {
+							// Weekend - next Monday
+							const daysUntilMonday = (8 - day) % 7;
+							nextAvailable.setDate(nextAvailable.getDate() + daysUntilMonday);
+							nextAvailable.setHours(9, 0, 0, 0);
+						} else if (hour >= 18) {
+							// After hours - next morning
+							nextAvailable.setDate(nextAvailable.getDate() + 1);
+							nextAvailable.setHours(9, 0, 0, 0);
+						} else {
+							// Before hours - today at 9 AM
+							nextAvailable.setHours(9, 0, 0, 0);
+						}
+
+						const timeUntil = Math.ceil(
+							(nextAvailable - melbourneTime) / (1000 * 60 * 60)
+						);
+						statusText.textContent = `AVAILABLE IN ${timeUntil}H`;
+						console.log(
+							'Status: Unavailable, next available in',
+							timeUntil,
+							'hours'
+						);
+					}
 				}
 			}
+
+			// Initialize when page loads
+			document.addEventListener('DOMContentLoaded', () => {
+				updateAvailabilityStatus();
+				// Update status every minute
+				setInterval(updateAvailabilityStatus, 60000);
+			});
 
 			// Dithered Image Implementation
 			function initDitheredImage() {
@@ -519,13 +592,15 @@
 				const ctx = canvas.getContext('2d');
 				const img = new Image();
 
-				img.onerror = function() {
-					console.error('Failed to load image: b69a34cbbf0ccecdd69df5d618c84000.jpg');
+				img.onerror = function () {
+					console.error(
+						'Failed to load image: b69a34cbbf0ccecdd69df5d618c84000.jpg'
+					);
 				};
 
 				img.onload = function () {
 					console.log('Image loaded, dimensions:', img.width, 'x', img.height);
-					
+
 					// Set canvas size based on image aspect ratio and container constraints
 					const maxWidth = 600;
 					const maxHeight = 400;
@@ -557,12 +632,12 @@
 					console.log('Dithering complete');
 				};
 
-				img.src = 'b69a34cbbf0ccecdd69df5d618c84000.jpg';
+				img.src = 'fdcf09a103931fc865ffa82b4de12ee3.jpg';
 			}
 
 			function applyDithering(ctx, width, height) {
 				console.log('Getting image data for dithering...', width, 'x', height);
-				
+
 				// Get image data
 				const imageData = ctx.getImageData(0, 0, width, height);
 				const data = imageData.data;
@@ -580,7 +655,7 @@
 				const orangeColor = [232, 115, 26]; // --accent color
 
 				let processedPixels = 0;
-				
+
 				// Process each pixel
 				for (let y = 0; y < height; y++) {
 					for (let x = 0; x < width; x++) {
@@ -604,11 +679,11 @@
 
 						// Simplified: either full orange or black
 						if (dithered > 0) {
-							data[pixelIndex] = orangeColor[0];     // R
+							data[pixelIndex] = orangeColor[0]; // R
 							data[pixelIndex + 1] = orangeColor[1]; // G
 							data[pixelIndex + 2] = orangeColor[2]; // B
 						} else {
-							data[pixelIndex] = 0;     // R
+							data[pixelIndex] = 0; // R
 							data[pixelIndex + 1] = 0; // G
 							data[pixelIndex + 2] = 0; // B
 						}
@@ -620,7 +695,7 @@
 				}
 
 				console.log('Processed pixels:', processedPixels);
-				
+
 				// Put the modified image data back
 				ctx.putImageData(imageData, 0, 0);
 				console.log('Image data put back to canvas');
@@ -780,43 +855,6 @@
 
 				renderer.render(scene, camera);
 			}
-
-			// Initialize when page loads
-			document.addEventListener('DOMContentLoaded', () => {
-				updateAvailabilityStatus();
-				initDitheredImage();
-				initInfinitySymbol();
-
-				// Update status every minute
-				setInterval(updateAvailabilityStatus, 60000);
-
-				// Handle window resize
-				window.addEventListener('resize', () => {
-					// Reinitialize dithered image
-					setTimeout(() => {
-						initDitheredImage();
-					}, 100);
-
-					const container = document.getElementById('infinity-container');
-					if (renderer && camera && container && container.offsetWidth > 0) {
-						camera.aspect = container.offsetWidth / container.offsetHeight;
-						camera.updateProjectionMatrix();
-						renderer.setSize(container.offsetWidth, container.offsetHeight);
-
-						// Update shader resolution uniform
-						if (infinityGroup) {
-							infinityGroup.children.forEach((child) => {
-								if (child.material && child.material.uniforms) {
-									child.material.uniforms.resolution.value.set(
-										container.offsetWidth,
-										container.offsetHeight
-									);
-								}
-							});
-						}
-					}
-				});
-			});
 		</script>
 	</head>
 	<body>
@@ -827,78 +865,87 @@
 
 		<!-- Status Indicator -->
 		<div class="status-indicator">
-			<div class="status-ping available" id="status-ping"></div>
-			<span id="status-text">AVAILABLE</span>
+			<div class="status-ping unavailable" id="status-ping">[X]</div>
+			<span id="status-text">UNAVAILABLE UNTIL JUNE 2026</span>
 		</div>
 
 		<!-- Main Content -->
 		<div class="content">
-			<div id="infinity-container"></div>
+			<!-- <div id="infinity-container"></div> -->
 			<div class="hero">
-				<h1>MOTIS.GROUP</h1>
-				<div class="subtitle">Systems Architecture & Engineering</div>
-				<div class="tagline">
-					"I build systems that work when everything else falls apart."
-				</div>
+				<pre style="line-height: 1">
+ _______  _______ __________________ _______ 
+(       )(  ___  )\__   __/\__   __/(  ____ \
+| () () || (   ) |   ) (      ) (   | (    \/
+| || || || |   | |   | |      | |   | (_____ 
+| |(_)| || |   | |   | |      | |   (_____  )
+| |   | || |   | |   | |      | |         ) |
+| )   ( || (___) |   | |   ___) (___/\____) |
+|/     \|(_______)   )_(   \_______/\_______)
+                                             
+ _______  _______  _______           _______ 
+(  ____ \(  ____ )(  ___  )|\     /|(  ____ )
+| (    \/| (    )|| (   ) || )   ( || (    )|
+| |      | (____)|| |   | || |   | || (____)|
+| | ____ |     __)| |   | || |   | ||  _____)
+| | \_  )| (\ (   | |   | || |   | || (      
+| (___) || ) \ \__| (___) || (___) || )      
+(_______)|/   \__/(_______)(_______)|/       </pre
+				>
+				<!-- <div class="subtitle">Systems Architecture & Engineering</div> -->
 			</div>
 
 			<!-- Dithered Image Section -->
-			<div class="dithered-section">
+			<!-- <div class="dithered-section">
 				<h3>Dithered Processing</h3>
 				<div class="dithered-container">
 					<canvas id="dithered-canvas"></canvas>
 				</div>
-			</div>
+			</div> -->
 
 			<div class="text-content">
-				<p>I build systems that work when everything else falls apart.</p>
+				<p>We build systems that work when everything else falls apart.</p>
 
 				<p>
-					I won't bullshit you about AI - it's the infrastructure underneath
-					that matters.
+					Software engineering isn't about writing code—it's about identifying
+					what actually matters and building it to survive reality.
 				</p>
 
-				<p>Code is just the medium. Shaping outcomes is the job.</p>
-
-				<p>Staff engineer. Zero handoffs. Ships on time.</p>
+				<ul>
+					<li>
+						Data infrastructure that processes what you need, when you need it.
+					</li>
+					<li>ML pipelines that deploy, scale, and stay deployed.</li>
+					<li>Automation that eliminates work instead of creating it.</li>
+				</ul>
 
 				<p>
-					Most of what people call software engineering isn't about writing
-					code.
+					Everyone's chasing AI hype while ignoring the fundamentals. You can't
+					build on broken foundations.
 				</p>
 
 				<p>
-					It's about figuring out what problem actually matters and making sure
-					it holds up when reality pushes back.
+					Infrastructure is the bottleneck. Models are only as good as their
+					data.
 				</p>
+
+				<p>We solve the real problem, not the problem you think you have.</p>
 
 				<p>
-					Data infrastructure that actually processes what you need when you
-					need it.
+					We write every line ourselves. Skilled local talent. No outsourcing to
+					shitty bodyshops. Ever.
 				</p>
 
-				<p>ML pipelines that deploy, scale, and stay deployed.</p>
+				<p>We build systems your team will own, extend, and understand.</p>
 
-				<p>Automation that removes work instead of creating more work.</p>
-
-				<p>Systems that work when everything else falls apart.</p>
-
-				<p>I scope the actual problem, not the problem you think you have.</p>
-
-				<p>I write the code personally. Zero outsourcing.</p>
-
-				<p>I build systems your team can own, extend, and understand.</p>
-
-				<p>I ship on deadline. Always.</p>
-
-				<p>No meetings unless they solve something specific.</p>
+				<p>
+					We ship on deadline. No meetings unless they solve something specific.
+				</p>
 
 				<p>
 					Python, LangChain, AWS, Snowflake, dbt, Airflow, Postgres, Databricks,
-					Hugging Face.
+					Hugging Face. Whatever works. Simple beats complex.
 				</p>
-
-				<p>Whatever works. Simple beats complex.</p>
 
 				<p>
 					<a href="https://github.com/willmarzella" target="_blank"
@@ -906,42 +953,29 @@
 					>
 				</p>
 
-				<p>Fixed-price projects. $20k minimum. 50% upfront, 50% on delivery.</p>
+				<p>Three ways to work with us:</p>
 
-				<p>
-					$1,000/day for short-term work. Migrations, audits, fire-fighting.
-				</p>
-
-				<p>
-					<a href="https://calendly.com/motis-automation" target="_blank"
-						>$150–$300/hr</a
-					>
-					for advisory calls.
-				</p>
+				<ul>
+					<li>
+						Fixed-price projects. $20k minimum. 50% upfront, 50% on delivery.
+					</li>
+					<li>
+						$1,000/day for urgent work. Migrations, audits, fire-fighting.
+					</li>
+					<li>
+						<a href="https://calendly.com/motis-automation" target="_blank"
+							>$150–$300/hr</a
+						>
+						for advisory calls.
+					</li>
+				</ul>
 
 				<p>Melbourne timezone. Work globally.</p>
-			</div>
 
-			<div class="contact">
-				<h2>Get In Touch</h2>
-				<p>Staff engineer. Zero handoffs. Ships on time.</p>
-				<div class="contact-info">
-					<a href="mailto:automation@motis.group" class="contact-item"
-						>automation@motis.group</a
-					>
-					<a
-						href="https://calendly.com/motis-automation"
-						target="_blank"
-						class="contact-item"
-						>Schedule Call</a
-					>
-					<a
-						href="https://github.com/willmarzella"
-						target="_blank"
-						class="contact-item"
-						>GitHub</a
-					>
-				</div>
+				<p>
+					Get in touch:
+					<a href="mailto:automation@motis.group">automation@motis.group</a>
+				</p>
 			</div>
 		</div>
 	</body>
