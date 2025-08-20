@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 	<head>
 		<meta charset="UTF-8" />
 		<meta
@@ -7,113 +7,257 @@
 			content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"
 		/>
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
-		<title>about | MOTIS.GROUP</title>
+		<title>MOTIS.GROUP | Systems Architect</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 		<style>
 			:root {
-				--bg: #fff;
-				--txt: #000;
-				--sec: #c6c6c6;
-				--quo: #555;
-				--bor: #efeded;
-				--lnk: #efefef;
-				--lnkhov: #5cfd3c;
-				--fbg: #e0e0e0;
+				--bg-dark: #0d0504;
+				--bg-mid: #1a0f0a;
+				--bg-light: #2d1b13;
+				--dot-primary: rgb(232, 115, 26);
+				--dot-secondary: #ff6b35;
+				--dot-glow: rgba(232, 115, 26, 0.8);
+				--text-primary: #ffb894;
+				--text-secondary: #ffb894;
+				--text-muted: #cc8a6b;
+				--accent: rgb(232, 115, 26);
+				--border: #6d0c03;
 			}
-			[data-theme='dark'] {
-				--bg: #000;
-				--txt: #fff;
-				--sec: #666;
-				--quo: #aaa;
-				--bor: #0e1216;
-				--lnkhov: #ef6302;
-				--lnk: #2a2a2a;
-				--fbg: #2a2a2a;
-			}
+
 			* {
 				margin: 0;
 				padding: 0;
 				box-sizing: border-box;
 			}
+
+			@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+			@font-face {
+				font-family: 'IBMVGA8';
+				src: url('WebPlus_IBM_VGA_8x16.woff') format('woff');
+				font-weight: normal;
+				font-style: normal;
+				font-display: swap;
+			}
+
 			body {
-				font-family: 'SF Mono', 'Monaco', 'Menlo', 'Consolas', 'Liberation Mono',
-					'Courier New', monospace;
-				background: var(--bg);
-				color: var(--txt);
+				font-family: 'IBMVGA8', 'JetBrains Mono', 'Courier New', monospace;
+				background: var(--bg-dark);
+				color: var(--text-primary);
 				line-height: 1.6;
 				min-height: 100vh;
+				position: relative;
+				overflow-x: hidden;
+			}
+
+			ul {
+				margin-bottom: 1rem;
+			}
+
+			ul li {
+				margin: 0 1ch;
+				text-indent: -3ch;
+				padding-left: 3ch;
+				display: block;
+			}
+
+			ul li::before {
+				content: '\2666\a0\A0';
+				color: #0a0;
+			}
+
+			/* Chain Link Pattern Background */
+			.chain-background {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				z-index: -2;
+				background-image: url('b6ea8215e62147969a6370cd5c7fb809.jpg');
+				background-size: cover;
+				background-position: center;
+				background-repeat: no-repeat;
+				background-attachment: fixed;
+			}
+
+			/* Dithered Image Section */
+			.dithered-section {
+				margin: 3rem 0;
+				text-align: center;
+				padding: 2rem;
+				background: rgba(0, 0, 0, 0.3);
+				backdrop-filter: blur(5px);
+				border: 1px solid var(--accent);
+			}
+
+			.dithered-section h3 {
+				color: var(--accent);
+				font-size: 1.5rem;
+				margin-bottom: 1.5rem;
+				text-transform: uppercase;
+				letter-spacing: 2px;
+			}
+
+			.dithered-container {
+				position: relative;
+				display: inline-block;
+				max-width: 600px;
+				width: 100%;
+				border: 2px solid var(--accent);
+				background: var(--bg-dark);
+			}
+
+			#dithered-canvas {
+				display: block;
+				width: 100%;
+				height: auto;
+				max-height: 400px;
+				object-fit: contain;
+			}
+
+			.chain-background::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: rgba(0, 0, 0, 0.4);
+				z-index: 1;
+			}
+
+			/* 3D Infinity Symbol Container */
+			#infinity-container {
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				width: 400px;
+				height: 300px;
+				z-index: 50;
+				opacity: 0.8;
+				pointer-events: none;
+			}
+
+			/* Content Container */
+			.content {
+				position: relative;
+				z-index: 10;
+				max-width: 900px;
+				margin: 0 auto;
+				padding: 4rem 2rem;
 				display: flex;
 				flex-direction: column;
-				padding-bottom: 4rem;
-			}
-			table {
-				padding: 0.5rem;
-				border-collapse: collapse;
-				width: 100%;
-			}
-			td {
-				border-bottom: 2px solid var(--bor);
-				padding: 0.25rem;
-				text-align: left;
-			}
-			a {
-				color: inherit;
-				text-decoration: underline;
-				background: var(--lnk);
-			}
-			a:hover {
-				background: var(--lnkhov);
-				color: var(--txt);
-			}
-			.active a {
-				background: var(--lnkhov) !important;
-			}
-			.quote {
-				font-style: italic;
-				color: var(--quo);
-			}
-			footer {
-				border-top: 2px solid var(--bor);
-				padding: 0.5rem;
-				margin-top: auto;
-				position: fixed;
-				bottom: 0;
-				width: 100%;
-				background: var(--bg);
-				display: flex;
+				min-height: 100vh;
 				justify-content: center;
-				align-items: center;
 			}
-			.footer-menu {
-				display: flex;
-				gap: 1rem;
+
+			.hero {
+				text-align: center;
+				margin-bottom: 4rem;
 			}
-			.footer-menu a {
-				color: var(--txt);
-				text-decoration: none;
-				background: var(--fbg);
-				padding: 0 0.25rem;
+
+			.hero h1 {
+				font-size: 3.5rem;
+				font-weight: 700;
+				margin-bottom: 1rem;
+				background: linear-gradient(
+					135deg,
+					var(--text-primary) 0%,
+					var(--text-secondary) 100%
+				);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+				text-shadow: 0 0 30px var(--dot-glow);
 			}
-			.footer-menu a:hover {
-				background: var(--lnkhov);
+
+			.hero .subtitle {
+				font-size: 1.2rem;
+				color: var(--text-secondary);
+				font-weight: 300;
+				margin-bottom: 2rem;
 			}
-			.theme-toggle {
-				font-family: inherit;
-				font-size: 1rem;
-				cursor: pointer;
-				padding: 0.25rem 0.5rem;
-				background: var(--fbg);
-				color: var(--txt);
-				border: none;
-				margin-left: 1rem;
+
+			.tagline {
+				font-size: 1.1rem;
+				color: var(--text-muted);
+				font-style: italic;
+				margin-bottom: 3rem;
 			}
-			.theme-toggle:hover {
-				background: var(--lnkhov);
+
+			/* Text Content */
+			.text-content {
+				margin-bottom: 4rem;
+				max-width: 700px;
+				margin-left: auto;
+				margin-right: auto;
+				padding: 2rem;
+				border: 1px solid var(--border);
+				background: rgba(0, 0, 0, 0.3);
+				backdrop-filter: blur(5px);
 			}
+
+			.text-content p {
+				margin-bottom: 1rem;
+				font-weight: 300;
+				line-height: 1.8;
+				color: var(--text-primary);
+			}
+
+			.text-content p:last-child {
+				margin-bottom: 0;
+			}
+
+			.statement {
+				padding: 0.8rem 1rem;
+				margin-bottom: 0.5rem;
+				font-weight: 300;
+				line-height: 1.8;
+				transition: all 0.3s ease;
+				border-left: 2px solid transparent;
+			}
+
+			.statement:hover {
+				background: rgba(232, 115, 26, 0.05);
+				border-left-color: var(--accent);
+				padding-left: 1.5rem;
+			}
+
+			.section-header {
+				color: var(--accent);
+				font-weight: 600;
+				font-size: 1.1rem;
+				margin: 2rem 0 1rem 0;
+				text-transform: uppercase;
+				letter-spacing: 1px;
+			}
+
+			.spacer {
+				height: 1.5rem;
+			}
+
+			.accent-marker {
+				color: var(--accent);
+				font-weight: bold;
+				text-shadow: 0 0 5px var(--dot-glow);
+				margin-right: 0.5rem;
+			}
+
+			/* Tooltips */
 			.tooltip {
 				position: relative;
-				border-bottom: 1px dotted var(--sec);
+				border-bottom: 1px dotted var(--accent);
 				cursor: help;
+				color: var(--accent);
+				transition: all 0.3s ease;
 			}
+
+			.tooltip:hover {
+				text-shadow: 0 0 5px var(--dot-glow);
+			}
+
 			.tooltip-content {
 				visibility: hidden;
 				opacity: 0;
@@ -122,379 +266,717 @@
 				bottom: 125%;
 				left: 50%;
 				transform: translateX(-50%);
-				background: var(--bg);
-				color: var(--txt);
-				border: 2px solid var(--bor);
-				padding: 0.4rem;
-				font-size: 0.8rem;
-				line-height: 1.3;
+				background: rgba(0, 0, 0, 0.95);
+				color: var(--text-primary);
+				border: 1px solid var(--accent);
+				padding: 0.8rem;
+				font-size: 0.75rem;
+				line-height: 1.4;
 				white-space: normal;
-				max-width: 250px;
-				min-width: 100px;
+				max-width: 300px;
+				min-width: 120px;
 				word-wrap: break-word;
-				transition: opacity 0.2s;
+				transition: all 0.3s ease;
+				backdrop-filter: blur(10px);
+				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5),
+					0 0 20px rgba(232, 115, 26, 0.2);
 			}
+
 			.tooltip-content::after {
 				content: '';
 				position: absolute;
 				top: 100%;
 				left: 50%;
 				transform: translateX(-50%);
-				border: 5px solid transparent;
-				border-top-color: var(--bor);
+				border: 8px solid transparent;
+				border-top-color: var(--accent);
 			}
+
 			.tooltip:hover .tooltip-content {
 				visibility: visible;
 				opacity: 1;
+				transform: translateX(-50%) translateY(-5px);
 			}
+
+			/* Simple Links */
+			a {
+				color: var(--accent);
+				text-decoration: underline;
+			}
+
+			/* Contact Section */
+			.contact {
+				text-align: center;
+				padding: 3rem 0;
+				border-top: 1px solid rgba(255, 69, 0, 0.2);
+			}
+
+			.contact h2 {
+				color: var(--accent);
+				font-size: 2rem;
+				margin-bottom: 1rem;
+			}
+
+			.contact-info {
+				display: flex;
+				justify-content: center;
+				gap: 3rem;
+				margin-top: 2rem;
+				flex-wrap: wrap;
+			}
+
+			.contact-item {
+				color: var(--text-secondary);
+				text-decoration: none;
+				font-weight: 500;
+				transition: color 0.3s ease;
+				padding: 0.5rem 1rem;
+				border: 1px solid rgba(255, 69, 0, 0.3);
+				border-radius: 4px;
+				backdrop-filter: blur(5px);
+			}
+
+			.contact-item:hover {
+				color: var(--accent);
+				box-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
+			}
+
+			/* Status Indicator */
+			.status-indicator {
+				position: fixed;
+				top: 20px;
+				right: 20px;
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				background: rgba(45, 27, 19, 0.8);
+				padding: 8px 12px;
+				border-radius: 4px;
+				backdrop-filter: blur(10px);
+				z-index: 100;
+				font-size: 0.8rem;
+				font-weight: 300;
+				text-transform: uppercase;
+				letter-spacing: 1px;
+				border: 1px solid rgba(255, 69, 0, 0.3);
+			}
+
+			.status-ping {
+				height: 18px;
+				width: auto;
+				display: inline-block;
+			}
+
+			.status-ping.available {
+				background: #040;
+				color: #03ff00;
+				box-shadow: 0 0 10px #040;
+			}
+
+			.status-ping.unavailable {
+				background: #800;
+				color: #f00 !important;
+				box-shadow: #800;
+			}
+
+			/* Animations */
+			@keyframes matrix-pulse {
+				0% {
+					opacity: 0.2;
+				}
+				100% {
+					opacity: 0.6;
+				}
+			}
+
+			@keyframes glow-pulse {
+				0%,
+				100% {
+					box-shadow: 0 0 10px var(--dot-glow),
+						inset 0 0 5px rgba(255, 69, 0, 0.3);
+					opacity: 0.6;
+				}
+				50% {
+					box-shadow: 0 0 20px var(--dot-glow),
+						inset 0 0 10px rgba(255, 69, 0, 0.5);
+					opacity: 1;
+				}
+			}
+
+			@keyframes ping {
+				0% {
+					opacity: 1;
+				}
+				75%,
+				100% {
+					opacity: 0.5;
+				}
+			}
+
+			/* Mobile Responsive */
 			@media (max-width: 768px) {
-				body {
-					padding: 0.25rem;
-					padding-bottom: 5rem;
+				.content {
+					padding: 2rem 1rem;
 				}
-				table,
-				tr,
-				td {
-					display: block;
+
+				.hero h1 {
+					font-size: 2.5rem;
 				}
-				tr {
+
+				.hero .subtitle {
+					font-size: 1rem;
+				}
+
+				.text-content {
+					padding: 1.5rem;
+					margin: 0 1rem 4rem 1rem;
+				}
+
+				.text-content p {
+					font-size: 0.9rem;
 					margin-bottom: 0.8rem;
-					border-bottom: 2px solid var(--bor);
 				}
-				td {
-					border: none;
-					padding: 0.3rem 0;
+
+				.contact-info {
+					flex-direction: column;
+					gap: 1rem;
 				}
-				footer {
-					padding: 0.8rem;
+
+				.chain-background {
+					background-attachment: scroll;
+					background-size: cover;
 				}
-				.footer-menu {
-					gap: 0.5rem;
+
+				.chain-background::before {
+					background: rgba(0, 0, 0, 0.6);
 				}
-				.footer-menu a {
-					padding: 0.2rem 0.4rem;
+
+				#infinity-container {
+					width: 300px;
+					height: 200px;
+					opacity: 0.6;
 				}
-				.tooltip-content {
-					font-size: 0.75rem;
-					max-width: 200px;
-					padding: 0.3rem;
+
+				.status-indicator {
+					top: 10px;
+					right: 10px;
+					padding: 6px 10px;
+					font-size: 0.7rem;
+				}
+
+				.dithered-section {
+					margin: 2rem 1rem;
+					padding: 1.5rem 1rem;
+				}
+
+				.dithered-section h3 {
+					font-size: 1.2rem;
+				}
+
+				.dithered-container {
+					max-width: 100%;
+				}
+
+				#dithered-canvas {
+					max-height: 300px;
 				}
 			}
 		</style>
 		<script>
-			(() => {
-				const T = { L: 'light', D: 'dark' },
-					I = { light: '☾', dark: '☀' },
-					g = () =>
-						localStorage.getItem('theme') ||
-						(matchMedia('(prefers-color-scheme: dark)').matches ? T.D : T.L),
-					s = (t) => {
-						document.documentElement.setAttribute('data-theme', t);
-						localStorage.setItem('theme', t);
-						const toggle = document.getElementById('t');
-						if (toggle) toggle.textContent = I[t];
-					};
-				s(g());
-				document.addEventListener('DOMContentLoaded', () => {
-					const toggle = document.getElementById('t');
-					if (toggle)
-						toggle.addEventListener('click', () =>
-							s(
-								document.documentElement.getAttribute('data-theme') === T.L
-									? T.D
-									: T.L
-							)
+			// Availability Status Management
+			function updateAvailabilityStatus() {
+				const statusPing = document.getElementById('status-ping');
+				const statusText = document.getElementById('status-text');
+
+				// Override: Not available until June 2026
+				const now = new Date();
+				const availableDate = new Date('2025-12-05T00:00:00+10:00'); // June 1, 2024 Melbourne time
+
+				console.log('Current time:', now);
+				console.log('Available date:', availableDate);
+				console.log('Is past available date:', now >= availableDate);
+
+				if (now < availableDate) {
+					// Show unavailable with red indicator
+					statusPing.className = 'status-ping unavailable';
+					statusPing.textContent = '[X]';
+					const availableDateFormatted = availableDate
+						.toLocaleDateString('en-US', {
+							month: 'long',
+							year: 'numeric',
+							timeZone: 'Australia/Melbourne',
+						})
+						.toUpperCase();
+					statusText.textContent = `UNAVAILABLE UNTIL ${availableDateFormatted}`;
+					console.log(`Status: Unavailable until ${availableDateFormatted}`);
+				} else {
+					// After June 2024, revert to normal availability logic
+					const melbourneTime = new Date(
+						now.toLocaleString('en-US', { timeZone: 'Australia/Melbourne' })
+					);
+					const hour = melbourneTime.getHours();
+					const day = melbourneTime.getDay(); // 0 = Sunday, 6 = Saturday
+
+					console.log('Melbourne time:', melbourneTime);
+					console.log('Hour:', hour, 'Day:', day);
+
+					// Available: Monday-Friday, 9 AM - 6 PM Melbourne time
+					const isWeekday = day >= 1 && day <= 5;
+					const isWorkingHours = hour >= 9 && hour < 18;
+					const isAvailable = isWeekday && isWorkingHours;
+
+					console.log(
+						'Is weekday:',
+						isWeekday,
+						'Is working hours:',
+						isWorkingHours,
+						'Is available:',
+						isAvailable
+					);
+
+					if (isAvailable) {
+						statusPing.className = 'status-ping available';
+						statusPing.textContent = '[✓]';
+						statusText.textContent = 'AVAILABLE';
+						console.log('Status: Available');
+					} else {
+						statusPing.className = 'status-ping unavailable';
+						statusPing.textContent = '[X]';
+
+						// Calculate next availability
+						let nextAvailable = new Date(melbourneTime);
+
+						if (!isWeekday) {
+							// Weekend - next Monday
+							const daysUntilMonday = (8 - day) % 7;
+							nextAvailable.setDate(nextAvailable.getDate() + daysUntilMonday);
+							nextAvailable.setHours(9, 0, 0, 0);
+						} else if (hour >= 18) {
+							// After hours - next morning
+							nextAvailable.setDate(nextAvailable.getDate() + 1);
+							nextAvailable.setHours(9, 0, 0, 0);
+						} else {
+							// Before hours - today at 9 AM
+							nextAvailable.setHours(9, 0, 0, 0);
+						}
+
+						const timeUntil = Math.ceil(
+							(nextAvailable - melbourneTime) / (1000 * 60 * 60)
 						);
-				});
-				matchMedia('(prefers-color-scheme: dark)').addEventListener(
-					'change',
-					(e) => {
-						if (!localStorage.getItem('theme')) s(e.matches ? T.D : T.L);
+						statusText.textContent = `AVAILABLE IN ${timeUntil}H`;
+						console.log(
+							'Status: Unavailable, next available in',
+							timeUntil,
+							'hours'
+						);
 					}
-				);
-			})();
+				}
+			}
+
+			// Initialize when page loads
 			document.addEventListener('DOMContentLoaded', () => {
-				document.querySelectorAll('.tooltip').forEach((t) => {
-					const c = t.querySelector('.tooltip-content');
-					t.addEventListener('mouseenter', () => {
-						const r = c.getBoundingClientRect();
-						if (r.right > window.innerWidth)
-							(c.style.left = 'auto'),
-								(c.style.right = '0'),
-								(c.style.transform = 'none');
-						if (r.left < 0) (c.style.left = '0'), (c.style.transform = 'none');
-					});
-					t.addEventListener('mouseleave', () => {
-						c.style.left = '50%';
-						c.style.right = 'auto';
-						c.style.transform = 'translateX(-50%)';
-					});
-				});
+				updateAvailabilityStatus();
+				// Update status every minute
+				setInterval(updateAvailabilityStatus, 60000);
 			});
+
+			// Dithered Image Implementation
+			function initDitheredImage() {
+				console.log('Initializing dithered image...');
+				const canvas = document.getElementById('dithered-canvas');
+				if (!canvas) {
+					console.error('Canvas not found!');
+					return;
+				}
+
+				const ctx = canvas.getContext('2d');
+				const img = new Image();
+
+				img.onerror = function () {
+					console.error(
+						'Failed to load image: b69a34cbbf0ccecdd69df5d618c84000.jpg'
+					);
+				};
+
+				img.onload = function () {
+					console.log('Image loaded, dimensions:', img.width, 'x', img.height);
+
+					// Set canvas size based on image aspect ratio and container constraints
+					const maxWidth = 600;
+					const maxHeight = 400;
+					const imgAspect = img.width / img.height;
+
+					let canvasWidth, canvasHeight;
+
+					if (imgAspect > maxWidth / maxHeight) {
+						// Image is wider - constrain by width
+						canvasWidth = maxWidth;
+						canvasHeight = maxWidth / imgAspect;
+					} else {
+						// Image is taller - constrain by height
+						canvasHeight = maxHeight;
+						canvasWidth = maxHeight * imgAspect;
+					}
+
+					canvas.width = canvasWidth;
+					canvas.height = canvasHeight;
+					console.log('Canvas size set to:', canvasWidth, 'x', canvasHeight);
+
+					// Draw the image to fill the entire canvas
+					ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
+					console.log('Image drawn to canvas');
+
+					// Apply dithering effect
+					console.log('Applying dithering...');
+					applyDithering(ctx, canvasWidth, canvasHeight);
+					console.log('Dithering complete');
+				};
+
+				img.src = 'fdcf09a103931fc865ffa82b4de12ee3.jpg';
+			}
+
+			function applyDithering(ctx, width, height) {
+				console.log('Getting image data for dithering...', width, 'x', height);
+
+				// Get image data
+				const imageData = ctx.getImageData(0, 0, width, height);
+				const data = imageData.data;
+				console.log('Image data length:', data.length);
+
+				// 4x4 Bayer Matrix (same as in the shader)
+				const bayerMatrix = [
+					[0 / 16, 8 / 16, 2 / 16, 10 / 16],
+					[12 / 16, 4 / 16, 14 / 16, 6 / 16],
+					[3 / 16, 11 / 16, 1 / 16, 9 / 16],
+					[15 / 16, 7 / 16, 13 / 16, 5 / 16],
+				];
+
+				// Orange color theme to match the site
+				const orangeColor = [232, 115, 26]; // --accent color
+
+				let processedPixels = 0;
+
+				// Process each pixel
+				for (let y = 0; y < height; y++) {
+					for (let x = 0; x < width; x++) {
+						const pixelIndex = (y * width + x) * 4;
+
+						// Get RGB values
+						const r = data[pixelIndex];
+						const g = data[pixelIndex + 1];
+						const b = data[pixelIndex + 2];
+
+						// Calculate luminance
+						const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+						// Get Bayer matrix threshold
+						const bayerX = x % 4;
+						const bayerY = y % 4;
+						const threshold = bayerMatrix[bayerY][bayerX];
+
+						// Apply dithering - make more aggressive
+						const dithered = luminance > threshold ? 1 : 0;
+
+						// Simplified: either full orange or black
+						if (dithered > 0) {
+							data[pixelIndex] = orangeColor[0]; // R
+							data[pixelIndex + 1] = orangeColor[1]; // G
+							data[pixelIndex + 2] = orangeColor[2]; // B
+						} else {
+							data[pixelIndex] = 0; // R
+							data[pixelIndex + 1] = 0; // G
+							data[pixelIndex + 2] = 0; // B
+						}
+
+						// Keep original alpha
+						data[pixelIndex + 3] = 255;
+						processedPixels++;
+					}
+				}
+
+				console.log('Processed pixels:', processedPixels);
+
+				// Put the modified image data back
+				ctx.putImageData(imageData, 0, 0);
+				console.log('Image data put back to canvas');
+			}
+
+			// 3D Dithered Infinity Symbol
+			let scene, camera, renderer, infinityGroup;
+
+			function initInfinitySymbol() {
+				const container = document.getElementById('infinity-container');
+				if (!container) return;
+
+				// Scene setup
+				scene = new THREE.Scene();
+				camera = new THREE.PerspectiveCamera(
+					75,
+					container.offsetWidth / container.offsetHeight,
+					0.1,
+					1000
+				);
+				renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
+				renderer.setSize(container.offsetWidth, container.offsetHeight);
+				renderer.setClearColor(0x000000, 0);
+				container.appendChild(renderer.domElement);
+
+				// Create infinity symbol using two torus geometries
+				infinityGroup = new THREE.Group();
+
+				// Create dithering material with custom shader
+				const ditheredMaterial = new THREE.ShaderMaterial({
+					uniforms: {
+						time: { value: 0 },
+						resolution: {
+							value: new THREE.Vector2(
+								container.offsetWidth,
+								container.offsetHeight
+							),
+						},
+						color: { value: new THREE.Color(0xff7300) },
+					},
+					vertexShader: `
+						varying vec2 vUv;
+						varying vec3 vPosition;
+						varying vec3 vNormal;
+						
+						void main() {
+							vUv = uv;
+							vPosition = position;
+							vNormal = normal;
+							gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+						}
+					`,
+					fragmentShader: `
+						uniform float time;
+						uniform vec2 resolution;
+						uniform vec3 color;
+						varying vec2 vUv;
+						varying vec3 vPosition;
+						varying vec3 vNormal;
+						
+						// 4x4 Bayer Matrix for ordered dithering
+						const mat4 bayerMatrix = mat4(
+							0.0,  8.0,  2.0, 10.0,
+							12.0, 4.0,  14.0, 6.0,
+							3.0,  11.0, 1.0, 9.0,
+							15.0, 7.0,  13.0, 5.0
+						) / 16.0;
+						
+						float orderedDither(vec2 screenPos, float lum) {
+							int x = int(mod(screenPos.x, 4.0));
+							int y = int(mod(screenPos.y, 4.0));
+							float threshold = bayerMatrix[y][x];
+							return lum > threshold ? 1.0 : 0.0;
+						}
+						
+						void main() {
+							vec2 screenPos = gl_FragCoord.xy;
+							
+							// Calculate lighting based on normal
+							vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
+							float NdotL = max(dot(vNormal, lightDir), 0.0);
+							
+							// Add some ambient and fresnel lighting
+							float fresnel = 1.0 - dot(vNormal, vec3(0.0, 0.0, 1.0));
+							float luminance = NdotL * 0.7 + fresnel * 0.3 + 0.2;
+							
+							// Add animated glow effect
+							float glow = sin(time * 2.0 + vPosition.x * 5.0) * 0.1 + 0.9;
+							luminance *= glow;
+							
+							// Apply ordered dithering
+							float dithered = orderedDither(screenPos, luminance);
+							
+							// Color quantization (reduce to 4 levels)
+							float quantized = floor(dithered * 3.0 + 0.5) / 3.0;
+							
+							vec3 finalColor = color * quantized;
+							
+							// Add subtle glow for non-black pixels
+							if (quantized > 0.0) {
+								finalColor += color * 0.3 * glow;
+							}
+							
+							gl_FragColor = vec4(finalColor, quantized);
+						}
+					`,
+					transparent: true,
+					wireframe: false,
+				});
+
+				// Left torus (rotated)
+				const leftTorus = new THREE.Mesh(
+					new THREE.TorusGeometry(0.8, 0.3, 16, 32),
+					ditheredMaterial.clone()
+				);
+				leftTorus.position.set(-0.6, 0, 0);
+				leftTorus.rotation.set(0, 0, Math.PI / 4);
+
+				// Right torus (rotated opposite)
+				const rightTorus = new THREE.Mesh(
+					new THREE.TorusGeometry(0.8, 0.3, 16, 32),
+					ditheredMaterial.clone()
+				);
+				rightTorus.position.set(0.6, 0, 0);
+				rightTorus.rotation.set(0, 0, -Math.PI / 4);
+
+				infinityGroup.add(leftTorus);
+				infinityGroup.add(rightTorus);
+				scene.add(infinityGroup);
+
+				// Camera position
+				camera.position.z = 4;
+				camera.position.y = 0;
+
+				// Start animation
+				animateInfinity();
+			}
+
+			function animateInfinity() {
+				requestAnimationFrame(animateInfinity);
+
+				const time = Date.now() * 0.001;
+
+				// Rotate the entire infinity symbol
+				if (infinityGroup) {
+					infinityGroup.rotation.x = Math.sin(time * 0.5) * 0.2;
+					infinityGroup.rotation.y = time * 0.3;
+					infinityGroup.rotation.z = Math.cos(time * 0.3) * 0.1;
+
+					// Update shader uniforms
+					infinityGroup.children.forEach((child) => {
+						if (child.material && child.material.uniforms) {
+							child.material.uniforms.time.value = time;
+						}
+					});
+				}
+
+				renderer.render(scene, camera);
+			}
 		</script>
 	</head>
 	<body>
-		<table>
-			<tr>
-				<td>I build systems that work when everything else falls apart.</td>
-			</tr>
-			<tr>
-				<td>
-					I won't bullshit you about AI - it's the
-					infrastructure underneath that matters.
-				</td>
-			</tr>
-			<tr>
-				<td>Code is just the medium. Shaping outcomes is the job.</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>Staff engineer. Zero handoffs. Ships on time.</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>
-					Most of what people call software engineering isn't about writing
-					code.
-				</td>
-			</tr>
-			<tr>
-				<td>
-					It's about figuring out what problem actually matters and making sure
-					it holds up when reality pushes back.
-				</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>Track record:</td>
-			</tr>
-			<tr>
-				<td class="quote">
-					"Will delivered a working system in a week. Our internal team spent
-					two months getting nowhere." — Tom R., Head of ML, logistics platform
-				</td>
-			</tr>
-			<tr>
-				<td class="quote">
-					"We were about to offshore another data cleanup project. Will rebuilt
-					the pipeline in three days and eliminated the need entirely." — Priya
-					K., Head of Data, ASX-listed SaaS firm
-				</td>
-			</tr>
-			<tr>
-				<td class="quote">
-					"Will is the only consultant I've hired that made things simpler, not
-					messier." — Jack M., CTO, fintech startup
-				</td>
-			</tr>
-			<tr>
-				<td class="quote">
-					"Will doesn't just build what you ask for. He builds what you
-					should've asked for." — Leila B., VP Engineering, e-commerce platform
-				</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>What I build:</td>
-			</tr>
-			<tr>
-				<td>
-					✦
-					<span class="tooltip"
-						>Data infrastructure<span class="tooltip-content"
-							>The underlying systems that collect, store, process, and serve
-							data across your organization - the foundation that makes AI
-							possible</span
-						></span
-					>
-					that actually processes what you need when you need it.
-				</td>
-			</tr>
-			<tr>
-				<td>
-					✦
-					<span class="tooltip"
-						>ML pipelines<span class="tooltip-content"
-							>Machine Learning systems: End-to-end pipelines for training,
-							deploying, and monitoring AI models</span
-						></span
-					>
-					that deploy, scale, and stay deployed.
-				</td>
-			</tr>
-			<tr>
-				<td>
-					✦
-					<span class="tooltip"
-						>Automation<span class="tooltip-content"
-							>Workflows that eliminate manual work and reduce human error</span
-						></span
-					>
-					that removes work instead of creating more work.
-				</td>
-			</tr>
-			<tr>
-				<td>
-					✦
-					<span class="tooltip"
-						>Systems<span class="tooltip-content"
-							>End-to-end solutions that handle real-world complexity and edge
-							cases</span
-						></span
-					>
-					that work when everything else falls apart.
-				</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>How I work:</td>
-			</tr>
-			<tr>
-				<td>
-					✦ I scope the actual problem, not the problem you think you have.
-				</td>
-			</tr>
-			<tr>
-				<td>✦ I write the code personally. Zero outsourcing.</td>
-			</tr>
-			<tr>
-				<td>✦ I build systems your team can own, extend, and understand.</td>
-			</tr>
-			<tr>
-				<td>✦ I ship on deadline. Always.</td>
-			</tr>
-			<tr>
-				<td>✦ No meetings unless they solve something specific.</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
+		<!-- Chain Link Pattern Background -->
+		<div class="chain-background"></div>
 
-			<tr>
-				<td>Stack:</td>
-			</tr>
-			<tr>
-				<td>
-					Python,
-					<span class="tooltip"
-						>LangChain<span class="tooltip-content"
-							>Framework for developing applications with large language
-							models</span
-						></span
-					>, AWS,
-					<span class="tooltip"
-						>Snowflake<span class="tooltip-content"
-							>Cloud-based data warehouse platform</span
-						></span
-					>,
-					<span class="tooltip"
-						>dbt<span class="tooltip-content"
-							>Data build tool: Transforms data in your warehouse</span
-						></span
-					>,
-					<span class="tooltip"
-						>Airflow<span class="tooltip-content"
-							>Platform for programmatically authoring and scheduling
-							workflows</span
-						></span
-					>, Postgres,
-					<span class="tooltip"
-						>Databricks<span class="tooltip-content"
-							>Unified analytics platform for big data and machine
-							learning</span
-						></span
-					>,
-					<span class="tooltip"
-						>Hugging Face<span class="tooltip-content"
-							>Platform hosting AI models and datasets</span
-						></span
-					>.
-				</td>
-			</tr>
-			<tr>
-				<td>Whatever works. Simple beats complex.</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>
+		<!-- 3D Dithered Infinity Symbol -->
+
+		<!-- Status Indicator -->
+		<div class="status-indicator">
+			<div class="status-ping unavailable" id="status-ping">[X]</div>
+			<span id="status-text">UNAVAILABLE UNTIL JUNE 2026</span>
+		</div>
+
+		<!-- Main Content -->
+		<div class="content">
+			<!-- <div id="infinity-container"></div> -->
+			<div class="hero">
+				<pre style="line-height: 1">
+ _______  _______ __________________ _______ 
+(       )(  ___  )\__   __/\__   __/(  ____ \
+| () () || (   ) |   ) (      ) (   | (    \/
+| || || || |   | |   | |      | |   | (_____ 
+| |(_)| || |   | |   | |      | |   (_____  )
+| |   | || |   | |   | |      | |         ) |
+| )   ( || (___) |   | |   ___) (___/\____) |
+|/     \|(_______)   )_(   \_______/\_______)
+                                             
+ _______  _______  _______           _______ 
+(  ____ \(  ____ )(  ___  )|\     /|(  ____ )
+| (    \/| (    )|| (   ) || )   ( || (    )|
+| |      | (____)|| |   | || |   | || (____)|
+| | ____ |     __)| |   | || |   | ||  _____)
+| | \_  )| (\ (   | |   | || |   | || (      
+| (___) || ) \ \__| (___) || (___) || )      
+(_______)|/   \__/(_______)(_______)|/       </pre
+				>
+				<!-- <div class="subtitle">Systems Architecture & Engineering</div> -->
+			</div>
+
+			<!-- Dithered Image Section -->
+			<!-- <div class="dithered-section">
+				<h3>Dithered Processing</h3>
+				<div class="dithered-container">
+					<canvas id="dithered-canvas"></canvas>
+				</div>
+			</div> -->
+
+			<div class="text-content">
+				<p>We build systems that work when everything else falls apart.</p>
+
+				<p>
+					Software engineering isn't about writing code—it's about identifying
+					what actually matters and building it to survive reality.
+				</p>
+
+				<ul>
+					<li>
+						Data infrastructure that processes what you need, when you need it.
+					</li>
+					<li>ML pipelines that deploy, scale, and stay deployed.</li>
+					<li>Automation that eliminates work instead of creating it.</li>
+				</ul>
+
+				<p>
+					Everyone's chasing AI hype while ignoring the fundamentals. You can't
+					build on broken foundations.
+				</p>
+
+				<p>
+					Infrastructure is the bottleneck. Models are only as good as their
+					data.
+				</p>
+
+				<p>We solve the real problem, not the problem you think you have.</p>
+
+				<p>
+					We write every line ourselves. Skilled local talent. No outsourcing to
+					shitty bodyshops. Ever.
+				</p>
+
+				<p>We build systems your team will own, extend, and understand.</p>
+
+				<p>
+					We ship on deadline. No meetings unless they solve something specific.
+				</p>
+
+				<p>
+					Python, LangChain, AWS, Snowflake, dbt, Airflow, Postgres, Databricks,
+					Hugging Face. Whatever works. Simple beats complex.
+				</p>
+
+				<p>
 					<a href="https://github.com/willmarzella" target="_blank"
 						>github.com/willmarzella</a
 					>
-				</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>Options:</td>
-			</tr>
-			<tr>
-				<td>
-					✦ Fixed-price projects. $20k minimum. 50% upfront, 50% on delivery.
-				</td>
-			</tr>
-			<tr>
-				<td>
-					✦ $1,000/day for short-term work. Migrations, audits,
-					<span class="tooltip"
-						>fire-fighting<span class="tooltip-content"
-							>Urgent troubleshooting and fixes for critical system failures or
-							performance issues</span
-						></span
-					>.
-				</td>
-			</tr>
-			<tr>
-				<td>✦ $5,000/mo for short-term work. Migrations, audits,</td>
-			</tr>
-			<tr>
-				<td>
-					✦
-					<a href="https://calendly.com/motis-automation" target="_blank"
-						>$150–$300/hr</a
-					>
-					for advisory calls.
-				</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>Melbourne timezone. Work globally.</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>
+				</p>
+
+				<p>Three ways to work with us:</p>
+
+				<ul>
+					<li>
+						Fixed-price projects. $20k minimum. 50% upfront, 50% on delivery.
+					</li>
+					<li>
+						$1,000/day for urgent work. Migrations, audits, fire-fighting.
+					</li>
+					<li>
+						<a href="https://calendly.com/motis-automation" target="_blank"
+							>$150–$300/hr</a
+						>
+						for advisory calls.
+					</li>
+				</ul>
+
+				<p>Melbourne timezone. Work globally.</p>
+
+				<p>
+					Get in touch:
 					<a href="mailto:automation@motis.group">automation@motis.group</a>
-				</td>
-			</tr>
-		</table>
-		<footer>
-			<div class="footer-menu">
-				<a href="/" class="active"><span>HOME</span></a>
-				<a href="/archive"><span>ARCHIVE</span></a>
-				<a href="https://motisgroup.mataroa.blog" target="_blank"
-					><span>BLOG</span></a
-				>
-				<a href="https://github.com/motis-group" target="_blank"
-					><span>GITHUB</span></a
-				>
+				</p>
 			</div>
-			<button id="t" class="theme-toggle">☾</button>
-		</footer>
+		</div>
 	</body>
 </html>
