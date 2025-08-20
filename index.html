@@ -7,458 +7,237 @@
 			content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"
 		/>
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
-		<title>MOTIS.GROUP | Intelligence Systems</title>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+		<title>MOTIS.GROUP | Systems Architect</title>
 		<style>
 			:root {
-				--bg: #22281C;
-				--bg-secondary: #22281C;
-				--txt: #ffffff;
-				--txt-secondary: #b8b8b8;
-				--accent-purple: #8b5cf6;
-				--accent-green: #feffa7;
-				--accent-cyan: #06b6d4;
-				--border: #1f1f1f;
-				--glow-purple: rgba(139, 92, 246, 0.3);
-				--glow-green: lab(66.82% -52.21 17.67 / 0.3);
-				--glow-cyan: rgba(6, 182, 212, 0.3);
+				--bg-dark: #0d0504;
+				--bg-mid: #1a0f0a;
+				--bg-light: #2d1b13;
+				--dot-primary: #ff4500;
+				--dot-secondary: #ff6b35;
+				--dot-glow: rgba(255, 69, 0, 0.8);
+				--text-primary: #ffffff;
+				--text-secondary: #ffb894;
+				--text-muted: #cc8a6b;
+				--accent: #ff4500;
 			}
+
 			* {
 				margin: 0;
 				padding: 0;
 				box-sizing: border-box;
 			}
 
-			@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
+			@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 			body {
-				font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Menlo', 'Consolas',
-					monospace;
-				background: var(--bg);
-				color: var(--txt);
-				line-height: 1.8;
+				font-family: 'Inter', 'JetBrains Mono', monospace;
+				background: var(--bg-dark);
+				color: var(--text-primary);
+				line-height: 1.6;
 				min-height: 100vh;
-				display: flex;
-				flex-direction: column;
-				padding-bottom: 4rem;
 				position: relative;
 				overflow-x: hidden;
-				/* CRT Screen Properties */
-				text-shadow: 0 0 2px currentColor;
-				filter: contrast(1.1) brightness(1.05) saturate(1.2);
 			}
 
-			/* Cyberpunk background effect */
-			body::before {
-				content: '';
+			/* Dot Matrix Background */
+			.dot-matrix {
 				position: fixed;
 				top: 0;
 				left: 0;
 				width: 100%;
 				height: 100%;
-				background: radial-gradient(
-						circle at 20% 50%,
-						var(--glow-purple) 0%,
-						transparent 50%
-					),
-					radial-gradient(
-						circle at 80% 20%,
-						var(--glow-green) 0%,
-						transparent 50%
-					),
-					radial-gradient(
-						circle at 40% 80%,
-						var(--glow-cyan) 0%,
-						transparent 50%
-					),
-					linear-gradient(180deg, var(--bg) 0%, #0d0d0d 100%);
 				z-index: -2;
-				animation: pulse 4s ease-in-out infinite alternate;
+				background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-mid) 50%, var(--bg-dark) 100%);
 			}
 
-			/* CRT Screen Effect */
-			body::after {
-				content: '';
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background: 
-					/* Horizontal scanlines */
-					repeating-linear-gradient(
-						0deg,
-						transparent,
-						transparent 1px,
-						rgba(255, 255, 255, 0.03) 1px,
-						rgba(255, 255, 255, 0.03) 2px,
-						transparent 2px,
-						transparent 3px
-					),
-					/* Vertical RGB separation */
-					repeating-linear-gradient(
-						90deg,
-						rgba(255, 0, 0, 0.005),
-						rgba(255, 0, 0, 0.005) 1px,
-						rgba(0, 255, 0, 0.005) 1px,
-						rgba(0, 255, 0, 0.005) 2px,
-						rgba(0, 0, 255, 0.005) 2px,
-						rgba(0, 0, 255, 0.005) 3px
-					);
-				z-index: 1000;
-				pointer-events: none;
-				animation: scanlines 2s linear infinite;
-				/* Subtle screen curvature */
-				border-radius: 20px;
-				box-shadow: 
-					inset 0 0 100px rgba(0, 0, 0, 0.3),
-					inset 0 0 200px rgba(0, 0, 0, 0.1);
-			}
-			
-			/* CRT Phosphor Glow Effect */
-			body::before {
-				animation: pulse 4s ease-in-out infinite alternate, crt-flicker 0.15s infinite linear alternate;
-			}
-			
-			/* Additional CRT overlay for more authentic look */
-			.crt-overlay {
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background: 
-					/* Noise pattern */
-					radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.01) 1px, transparent 1px),
-					radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.01) 1px, transparent 1px),
-					radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
-				background-size: 4px 4px, 6px 6px, 3px 3px;
-				z-index: 999;
-				pointer-events: none;
-				animation: crt-noise 0.1s infinite;
-				opacity: 0.7;
-			}
-
-			@keyframes pulse {
-				0% {
-					opacity: 0.8;
-				}
-				100% {
-					opacity: 1;
-				}
-			}
-
-			@keyframes scanlines {
-				0% {
-					transform: translateY(0);
-				}
-				100% {
-					transform: translateY(3px);
-				}
-			}
-			
-			@keyframes crt-flicker {
-				0% {
-					opacity: 0.98;
-				}
-				50% {
-					opacity: 0.99;
-				}
-				100% {
-					opacity: 0.97;
-				}
-			}
-			
-			@keyframes crt-noise {
-				0% {
-					transform: translateX(0) translateY(0);
-				}
-				25% {
-					transform: translateX(-1px) translateY(1px);
-				}
-				50% {
-					transform: translateX(1px) translateY(-1px);
-				}
-				75% {
-					transform: translateX(-1px) translateY(-1px);
-				}
-				100% {
-					transform: translateX(1px) translateY(1px);
-				}
-			}
-			table {
-				padding: 2rem 1rem;
-				border-collapse: collapse;
-				width: 100%;
-				max-width: 900px;
-				margin: 0 auto;
-				background: rgba(17, 17, 17, 0.7);
-				backdrop-filter: blur(10px);
-				border: 1px solid var(--border);
-				box-shadow: 0 0 30px rgba(139, 92, 246, 0.1),
-					inset 0 1px 0 rgba(255, 255, 255, 0.1);
-			}
-
-			td {
-				border-bottom: 1px solid var(--border);
-				padding: 0.8rem 1rem;
-				text-align: left;
-				font-weight: 300;
-				transition: all 0.3s ease;
-				position: relative;
-			}
-
-			td:hover {
-				background: rgba(139, 92, 246, 0.05);
-				box-shadow: inset 0 0 20px rgba(139, 92, 246, 0.1);
-			}
-
-			/* Glowing accent for special rows */
-			tr:has(.accent) td {
-				border-left: 2px solid var(--accent-purple);
-				background: rgba(139, 92, 246, 0.02);
-			}
-
-			a {
-				color: var(--accent-cyan);
-				text-decoration: none;
-				position: relative;
-				transition: all 0.3s ease;
-				font-weight: 400;
-			}
-
-			a::after {
-				content: '';
-				position: absolute;
-				bottom: -2px;
-				left: 0;
-				width: 0;
-				height: 1px;
-				background: linear-gradient(
-					90deg,
-					var(--accent-cyan),
-					var(--accent-purple)
-				);
-				transition: width 0.3s ease;
-			}
-
-			a:hover {
-				color: var(--txt);
-				text-shadow: 0 0 10px var(--glow-cyan);
-			}
-
-			a:hover::after {
-				width: 100%;
-			}
-
-			.quote {
-				font-style: italic;
-				color: var(--txt-secondary);
-				border-left: 2px solid var(--accent-green);
-				padding-left: 1rem;
-				background: rgba(16, 185, 129, 0.02);
-				position: relative;
-			}
-
-			.quote::before {
-				content: '"';
-				color: var(--accent-green);
-				font-size: 1.5em;
-				position: absolute;
-				left: -0.2rem;
-				top: -0.2rem;
-				font-weight: bold;
-			}
-			footer {
-				border-top: 1px solid var(--border);
-				padding: 1rem;
-				margin-top: auto;
-				position: fixed;
-				bottom: 0;
-				width: 100%;
-				background: rgba(10, 10, 10, 0.95);
-				backdrop-filter: blur(20px);
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
-			}
-
-			.footer-menu {
-				display: flex;
-				gap: 2rem;
-			}
-
-			.footer-menu a {
-				color: var(--txt-secondary);
-				text-decoration: none;
-				padding: 0.5rem 1rem;
-				border: 1px solid var(--border);
-				background: rgba(17, 17, 17, 0.5);
-				transition: all 0.3s ease;
-				position: relative;
-				font-weight: 300;
-				text-transform: uppercase;
-				letter-spacing: 1px;
-				font-size: 0.8rem;
-			}
-
-			.footer-menu a::before {
+			.dot-matrix::before {
 				content: '';
 				position: absolute;
 				top: 0;
 				left: 0;
-				width: 0;
-				height: 100%;
-				background: linear-gradient(
-					90deg,
-					var(--accent-purple),
-					var(--accent-cyan)
-				);
-				opacity: 0.1;
-				transition: width 0.3s ease;
-				z-index: -1;
-			}
-
-			.footer-menu a:hover {
-				color: var(--txt);
-				border-color: var(--accent-purple);
-				box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
-			}
-
-			.footer-menu a:hover::before {
 				width: 100%;
+				height: 100%;
+				background-image: 
+					radial-gradient(circle at center, var(--dot-primary) 1px, transparent 1px),
+					radial-gradient(circle at center, var(--dot-secondary) 0.5px, transparent 0.5px);
+				background-size: 20px 20px, 40px 40px;
+				background-position: 0 0, 10px 10px;
+				animation: matrix-pulse 4s ease-in-out infinite alternate;
+				opacity: 0.4;
 			}
 
-			.footer-menu a.active {
-				color: var(--accent-purple);
-				border-color: var(--accent-purple);
-				background: rgba(139, 92, 246, 0.1);
-				box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
-			}
-
-			.theme-toggle {
-				font-family: inherit;
-				font-size: 1.2rem;
-				cursor: pointer;
-				padding: 0.5rem;
-				background: rgba(17, 17, 17, 0.5);
-				color: var(--accent-green);
-				border: 1px solid var(--border);
-				margin-left: 2rem;
-				transition: all 0.3s ease;
-				width: 40px;
-				height: 40px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-			}
-
-			.theme-toggle:hover {
-				background: rgba(16, 185, 129, 0.1);
-				border-color: var(--accent-green);
-				box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
-				transform: scale(1.05);
-			}
-			.tooltip {
-				position: relative;
-				border-bottom: 1px dotted var(--accent-purple);
-				cursor: help;
-				color: var(--accent-purple);
-				transition: all 0.3s ease;
-			}
-
-			.tooltip:hover {
-				text-shadow: 0 0 5px var(--glow-purple);
-			}
-
-			.tooltip-content {
-				visibility: hidden;
-				opacity: 0;
-				position: absolute;
-				z-index: 999;
-				bottom: 125%;
-				left: 50%;
-				transform: translateX(-50%);
-				background: rgba(17, 17, 17, 0.95);
-				color: var(--txt);
-				border: 1px solid var(--accent-purple);
-				padding: 0.8rem;
-				font-size: 0.75rem;
-				line-height: 1.4;
-				white-space: normal;
-				max-width: 300px;
-				min-width: 120px;
-				word-wrap: break-word;
-				transition: all 0.3s ease;
-				backdrop-filter: blur(10px);
-				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5),
-					0 0 20px rgba(139, 92, 246, 0.2);
-			}
-
-			.tooltip-content::after {
-				content: '';
-				position: absolute;
-				top: 100%;
-				left: 50%;
-				transform: translateX(-50%);
-				border: 8px solid transparent;
-				border-top-color: var(--accent-purple);
-			}
-
-			.tooltip:hover .tooltip-content {
-				visibility: visible;
-				opacity: 1;
-				transform: translateX(-50%) translateY(-5px);
-			}
-
-			/* Cyberpunk accent elements */
-			.accent-marker {
-				color: var(--accent-green);
-				font-weight: bold;
-				text-shadow: 0 0 5px var(--glow-green);
-			}
-
-			/* Glitch effect for special text */
-			.glitch {
-				position: relative;
-				animation: glitch 2s infinite;
-			}
-
-			@keyframes glitch {
-				0%,
-				90%,
-				100% {
-					transform: translateX(0);
-				}
-				10% {
-					transform: translateX(-2px);
-				}
-				20% {
-					transform: translateX(2px);
-				}
-				30% {
-					transform: translateX(-1px);
-				}
-				40% {
-					transform: translateX(1px);
-				}
-			}
-
-			/* Three.js Globe Container - Front and Center */
-			#globe-container {
+			/* Chain Link Pattern */
+			.chain-pattern {
 				position: fixed;
 				top: 50%;
 				left: 50%;
 				transform: translate(-50%, -50%);
-				width: 600px;
-				height: 600px;
+				width: 800px;
+				height: 400px;
 				z-index: -1;
-				opacity: 0.8;
-				pointer-events: none;
+				opacity: 0.6;
 			}
 
-			/* Availability Status Indicator - Simplified */
+			.chain-link {
+				position: absolute;
+				width: 60px;
+				height: 30px;
+				border: 3px solid var(--dot-primary);
+				border-radius: 15px;
+				box-shadow: 
+					0 0 10px var(--dot-glow),
+					inset 0 0 5px rgba(255, 69, 0, 0.3);
+				animation: glow-pulse 3s ease-in-out infinite;
+			}
+
+			.chain-link:nth-child(1) { top: 180px; left: 100px; transform: rotate(0deg); animation-delay: 0s; }
+			.chain-link:nth-child(2) { top: 160px; left: 140px; transform: rotate(45deg); animation-delay: 0.2s; }
+			.chain-link:nth-child(3) { top: 180px; left: 180px; transform: rotate(0deg); animation-delay: 0.4s; }
+			.chain-link:nth-child(4) { top: 160px; left: 220px; transform: rotate(-45deg); animation-delay: 0.6s; }
+			.chain-link:nth-child(5) { top: 180px; left: 260px; transform: rotate(0deg); animation-delay: 0.8s; }
+			.chain-link:nth-child(6) { top: 160px; left: 300px; transform: rotate(45deg); animation-delay: 1s; }
+			.chain-link:nth-child(7) { top: 180px; left: 340px; transform: rotate(0deg); animation-delay: 1.2s; }
+			.chain-link:nth-child(8) { top: 160px; left: 380px; transform: rotate(-45deg); animation-delay: 1.4s; }
+			.chain-link:nth-child(9) { top: 180px; left: 420px; transform: rotate(0deg); animation-delay: 1.6s; }
+			.chain-link:nth-child(10) { top: 160px; left: 460px; transform: rotate(45deg); animation-delay: 1.8s; }
+			.chain-link:nth-child(11) { top: 180px; left: 500px; transform: rotate(0deg); animation-delay: 2s; }
+			.chain-link:nth-child(12) { top: 160px; left: 540px; transform: rotate(-45deg); animation-delay: 2.2s; }
+
+			/* Content Container */
+			.content {
+				position: relative;
+				z-index: 10;
+				max-width: 900px;
+				margin: 0 auto;
+				padding: 4rem 2rem;
+				display: flex;
+				flex-direction: column;
+				min-height: 100vh;
+				justify-content: center;
+			}
+
+			.hero {
+				text-align: center;
+				margin-bottom: 4rem;
+			}
+
+			.hero h1 {
+				font-size: 3.5rem;
+				font-weight: 700;
+				margin-bottom: 1rem;
+				background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+				text-shadow: 0 0 30px var(--dot-glow);
+			}
+
+			.hero .subtitle {
+				font-size: 1.2rem;
+				color: var(--text-secondary);
+				font-weight: 300;
+				margin-bottom: 2rem;
+			}
+
+			.tagline {
+				font-size: 1.1rem;
+				color: var(--text-muted);
+				font-style: italic;
+				margin-bottom: 3rem;
+			}
+
+			/* Services Grid */
+			.services {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+				gap: 2rem;
+				margin-bottom: 4rem;
+			}
+
+			.service-card {
+				background: rgba(45, 27, 19, 0.3);
+				border: 1px solid rgba(255, 69, 0, 0.2);
+				border-radius: 8px;
+				padding: 2rem;
+				backdrop-filter: blur(10px);
+				transition: all 0.3s ease;
+				position: relative;
+				overflow: hidden;
+			}
+
+			.service-card::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: linear-gradient(135deg, rgba(255, 69, 0, 0.1) 0%, transparent 50%);
+				opacity: 0;
+				transition: opacity 0.3s ease;
+			}
+
+			.service-card:hover {
+				border-color: var(--accent);
+				box-shadow: 0 0 20px rgba(255, 69, 0, 0.3);
+				transform: translateY(-5px);
+			}
+
+			.service-card:hover::before {
+				opacity: 1;
+			}
+
+			.service-card h3 {
+				color: var(--accent);
+				font-size: 1.3rem;
+				margin-bottom: 1rem;
+				font-weight: 600;
+			}
+
+			.service-card p {
+				color: var(--text-secondary);
+				line-height: 1.6;
+			}
+
+			/* Contact Section */
+			.contact {
+				text-align: center;
+				padding: 3rem 0;
+				border-top: 1px solid rgba(255, 69, 0, 0.2);
+			}
+
+			.contact h2 {
+				color: var(--accent);
+				font-size: 2rem;
+				margin-bottom: 1rem;
+			}
+
+			.contact-info {
+				display: flex;
+				justify-content: center;
+				gap: 3rem;
+				margin-top: 2rem;
+				flex-wrap: wrap;
+			}
+
+			.contact-item {
+				color: var(--text-secondary);
+				text-decoration: none;
+				font-weight: 500;
+				transition: color 0.3s ease;
+				padding: 0.5rem 1rem;
+				border: 1px solid rgba(255, 69, 0, 0.3);
+				border-radius: 4px;
+				backdrop-filter: blur(5px);
+			}
+
+			.contact-item:hover {
+				color: var(--accent);
+				box-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
+			}
+
+			/* Status Indicator */
 			.status-indicator {
 				position: fixed;
 				top: 20px;
@@ -466,108 +245,90 @@
 				display: flex;
 				align-items: center;
 				gap: 10px;
-				background: rgba(17, 17, 17, 0.8);
+				background: rgba(45, 27, 19, 0.8);
 				padding: 8px 12px;
 				border-radius: 4px;
 				backdrop-filter: blur(10px);
-				z-index: 10;
+				z-index: 100;
 				font-size: 0.8rem;
 				font-weight: 300;
 				text-transform: uppercase;
 				letter-spacing: 1px;
-				border: 1px solid rgba(255, 255, 255, 0.1);
+				border: 1px solid rgba(255, 69, 0, 0.3);
 			}
 
 			.status-ping {
-				width: 12px;
-				height: 12px;
+				width: 8px;
+				height: 8px;
 				border-radius: 50%;
 				position: relative;
 				animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
 			}
 
 			.status-ping.available {
-				background: var(--accent-green);
-				box-shadow: 0 0 10px var(--glow-green);
+				background: #00ff00;
+				box-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
 			}
 
 			.status-ping.unavailable {
-				background: #ef4444;
-				box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+				background: var(--accent);
+				box-shadow: 0 0 10px var(--dot-glow);
 			}
 
-			.status-ping::before {
-				content: '';
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				border-radius: 50%;
-				background: inherit;
-				animation: ping-wave 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+			/* Animations */
+			@keyframes matrix-pulse {
+				0% { opacity: 0.2; }
+				100% { opacity: 0.6; }
+			}
+
+			@keyframes glow-pulse {
+				0%, 100% { 
+					box-shadow: 0 0 10px var(--dot-glow), inset 0 0 5px rgba(255, 69, 0, 0.3);
+					opacity: 0.6;
+				}
+				50% { 
+					box-shadow: 0 0 20px var(--dot-glow), inset 0 0 10px rgba(255, 69, 0, 0.5);
+				opacity: 1;
+				}
 			}
 
 			@keyframes ping {
-				0% {
-					opacity: 1;
-				}
-				75%,
-				100% {
-					opacity: 0.5;
-				}
+				0% { opacity: 1; }
+				75%, 100% { opacity: 0.5; }
 			}
 
-			@keyframes ping-wave {
-				0% {
-					transform: scale(1);
-					opacity: 1;
-				}
-				75%,
-				100% {
-					transform: scale(2);
-					opacity: 0;
-				}
-			}
-
+			/* Mobile Responsive */
 			@media (max-width: 768px) {
-				body {
-					padding: 0.25rem;
-					padding-bottom: 5rem;
-				}
-				table,
-				tr,
-				td {
-					display: block;
-				}
-				tr {
-					margin-bottom: 0.8rem;
-					border-bottom: 2px solid var(--border);
-				}
-				td {
-					border: none;
-					padding: 0.3rem 0;
-				}
-				footer {
-					padding: 0.8rem;
-				}
-				.footer-menu {
-					gap: 0.5rem;
-				}
-				.footer-menu a {
-					padding: 0.2rem 0.4rem;
-				}
-				.tooltip-content {
-					font-size: 0.75rem;
-					max-width: 200px;
-					padding: 0.3rem;
+				.content {
+					padding: 2rem 1rem;
 				}
 
-				/* Mobile responsive adjustments */
-				#globe-container {
-					width: 300px;
-					height: 300px;
-					opacity: 0.4;
+				.hero h1 {
+					font-size: 2.5rem;
+				}
+
+				.hero .subtitle {
+					font-size: 1rem;
+				}
+
+				.services {
+					grid-template-columns: 1fr;
+					gap: 1.5rem;
+				}
+
+				.service-card {
+					padding: 1.5rem;
+				}
+
+				.contact-info {
+					flex-direction: column;
+					gap: 1rem;
+				}
+
+				.chain-pattern {
+					width: 100%;
+					height: 200px;
+					opacity: 0.3;
 				}
 
 				.status-indicator {
@@ -576,500 +337,14 @@
 					padding: 6px 10px;
 					font-size: 0.7rem;
 				}
-				
-				/* Reduce CRT effects on mobile for performance */
-				.crt-overlay {
-					opacity: 0.3;
-					animation: none;
-				}
-				
-				body::after {
-					border-radius: 10px;
-					background: 
-						repeating-linear-gradient(
-							0deg,
-							transparent,
-							transparent 2px,
-							rgba(255, 255, 255, 0.02) 2px,
-							rgba(255, 255, 255, 0.02) 4px
-						);
-				}
 			}
 		</style>
 		<script>
-			(() => {
-				const T = { L: 'light', D: 'dark' },
-					I = { light: '☾', dark: '☀' },
-					g = () =>
-						localStorage.getItem('theme') ||
-						(matchMedia('(prefers-color-scheme: dark)').matches ? T.D : T.L),
-					s = (t) => {
-						document.documentElement.setAttribute('data-theme', t);
-						localStorage.setItem('theme', t);
-						const toggle = document.getElementById('t');
-						if (toggle) toggle.textContent = I[t];
-					};
-				s(g());
-				document.addEventListener('DOMContentLoaded', () => {
-					const toggle = document.getElementById('t');
-					if (toggle)
-						toggle.addEventListener('click', () =>
-							s(
-								document.documentElement.getAttribute('data-theme') === T.L
-									? T.D
-									: T.L
-							)
-						);
-				});
-				matchMedia('(prefers-color-scheme: dark)').addEventListener(
-					'change',
-					(e) => {
-						if (!localStorage.getItem('theme')) s(e.matches ? T.D : T.L);
-					}
-				);
-			})();
-			document.addEventListener('DOMContentLoaded', () => {
-				document.querySelectorAll('.tooltip').forEach((t) => {
-					const c = t.querySelector('.tooltip-content');
-					t.addEventListener('mouseenter', () => {
-						const r = c.getBoundingClientRect();
-						if (r.right > window.innerWidth)
-							(c.style.left = 'auto'),
-								(c.style.right = '0'),
-								(c.style.transform = 'none');
-						if (r.left < 0) (c.style.left = '0'), (c.style.transform = 'none');
-					});
-					t.addEventListener('mouseleave', () => {
-						c.style.left = '50%';
-						c.style.right = 'auto';
-						c.style.transform = 'translateX(-50%)';
-					});
-				});
-			});
-		</script>
-	</head>
-	<body>
-		<!-- CRT Screen Overlay -->
-		<div class="crt-overlay"></div>
-		
-		<!-- Availability Status Indicator -->
-		<div class="status-indicator">
-			<div class="status-ping available" id="status-ping"></div>
-			<span id="status-text">AVAILABLE</span>
-		</div>
-
-		<!-- Three.js Globe Container - Front and Center -->
-		<div id="globe-container"></div>
-
-		<table>
-			<tr>
-				<td>
-					<span class="accent-marker">></span> I build systems that work when
-					everything else falls apart.
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<span class="accent-marker">></span> I won't bullshit you about AI -
-					it's the infrastructure underneath that matters.
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<span class="accent-marker">></span> Code is just the medium. Shaping
-					outcomes is the job.
-				</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>
-					<span class="accent-marker">[PROFILE]</span> Staff engineer. Zero
-					handoffs. Ships on time.
-				</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>
-					Most of what people call software engineering isn't about writing
-					code.
-				</td>
-			</tr>
-			<tr>
-				<td>
-					It's about figuring out what problem actually matters and making sure
-					it holds up when reality pushes back.
-				</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td><span class="accent-marker">[TRACK_RECORD]</span></td>
-			</tr>
-			<tr>
-				<td class="quote">
-					"Will delivered a working system in a week. Our internal team spent
-					two months getting nowhere." — Tom R., Head of ML, logistics platform
-				</td>
-			</tr>
-			<tr>
-				<td class="quote">
-					"We were about to offshore another data cleanup project. Will rebuilt
-					the pipeline in three days and eliminated the need entirely." — Priya
-					K., Head of Data, ASX-listed SaaS firm
-				</td>
-			</tr>
-			<tr>
-				<td class="quote">
-					"Will is the only consultant I've hired that made things simpler, not
-					messier." — Jack M., CTO, fintech startup
-				</td>
-			</tr>
-			<tr>
-				<td class="quote">
-					"Will doesn't just build what you ask for. He builds what you
-					should've asked for." — Leila B., VP Engineering, e-commerce platform
-				</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td><span class="accent-marker">[SYSTEMS]</span></td>
-			</tr>
-			<tr>
-				<td>
-					<span class="accent-marker">[+]</span>
-					<span class="tooltip"
-						>Data infrastructure<span class="tooltip-content"
-							>The underlying systems that collect, store, process, and serve
-							data across your organization - the foundation that makes AI
-							possible</span
-						></span
-					>
-					that actually processes what you need when you need it.
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<span class="accent-marker">[+]</span>
-					<span class="tooltip"
-						>ML pipelines<span class="tooltip-content"
-							>Machine Learning systems: End-to-end pipelines for training,
-							deploying, and monitoring AI models</span
-						></span
-					>
-					that deploy, scale, and stay deployed.
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<span class="accent-marker">[+]</span>
-					<span class="tooltip"
-						>Automation<span class="tooltip-content"
-							>Workflows that eliminate manual work and reduce human error</span
-						></span
-					>
-					that removes work instead of creating more work.
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<span class="accent-marker">[+]</span>
-					<span class="tooltip"
-						>Systems<span class="tooltip-content"
-							>End-to-end solutions that handle real-world complexity and edge
-							cases</span
-						></span
-					>
-					that work when everything else falls apart.
-				</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td><span class="accent-marker">[PROTOCOL]</span></td>
-			</tr>
-			<tr>
-				<td>
-					<span class="accent-marker">[*]</span> I scope the actual problem, not
-					the problem you think you have.
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<span class="accent-marker">[*]</span> I write the code personally.
-					Zero outsourcing.
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<span class="accent-marker">[*]</span> I build systems your team can
-					own, extend, and understand.
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<span class="accent-marker">[*]</span> I ship on deadline. Always.
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<span class="accent-marker">[*]</span> No meetings unless they solve
-					something specific.
-				</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-
-			<tr>
-				<td><span class="accent-marker">[STACK]</span></td>
-			</tr>
-			<tr>
-				<td>
-					Python,
-					<span class="tooltip"
-						>LangChain<span class="tooltip-content"
-							>Framework for developing applications with large language
-							models</span
-						></span
-					>, AWS,
-					<span class="tooltip"
-						>Snowflake<span class="tooltip-content"
-							>Cloud-based data warehouse platform</span
-						></span
-					>,
-					<span class="tooltip"
-						>dbt<span class="tooltip-content"
-							>Data build tool: Transforms data in your warehouse</span
-						></span
-					>,
-					<span class="tooltip"
-						>Airflow<span class="tooltip-content"
-							>Platform for programmatically authoring and scheduling
-							workflows</span
-						></span
-					>, Postgres,
-					<span class="tooltip"
-						>Databricks<span class="tooltip-content"
-							>Unified analytics platform for big data and machine
-							learning</span
-						></span
-					>,
-					<span class="tooltip"
-						>Hugging Face<span class="tooltip-content"
-							>Platform hosting AI models and datasets</span
-						></span
-					>.
-				</td>
-			</tr>
-			<tr>
-				<td>Whatever works. Simple beats complex.</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>
-					<a href="https://github.com/willmarzella" target="_blank"
-						>github.com/willmarzella</a
-					>
-				</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td><span class="accent-marker">[PRICING]</span></td>
-			</tr>
-			<tr>
-				<td>
-					<span class="accent-marker">[$]</span> Fixed-price projects. $20k
-					minimum. 50% upfront, 50% on delivery.
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<span class="accent-marker">[$]</span> $1,000/day for short-term work.
-					Migrations, audits,
-					<span class="tooltip"
-						>fire-fighting<span class="tooltip-content"
-							>Urgent troubleshooting and fixes for critical system failures or
-							performance issues</span
-						></span
-					>.
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<span class="accent-marker">[$]</span> $5,000/mo for short-term work.
-					Migrations, audits,
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<span class="accent-marker">[$]</span>
-					<a href="https://calendly.com/motis-automation" target="_blank"
-						>$150–$300/hr</a
-					>
-					for advisory calls.
-				</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>
-					<span class="accent-marker">[LOCATION]</span> Melbourne timezone. Work
-					globally.
-				</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>
-					<span class="accent-marker">[CONTACT]</span>
-					<a href="mailto:automation@motis.group">automation@motis.group</a>
-				</td>
-			</tr>
-		</table>
-		<footer>
-			<div class="footer-menu">
-				<a href="/" class="active"><span>HOME</span></a>
-				<a href="/archive"><span>ARCHIVE</span></a>
-				<a href="https://motisgroup.mataroa.blog" target="_blank"
-					><span>BLOG</span></a
-				>
-				<a href="https://github.com/motis-group" target="_blank"
-					><span>GITHUB</span></a
-				>
-			</div>
-			<button id="t" class="theme-toggle">☾</button>
-		</footer>
-
-		<script>
-			// CIA Intelligence Interface Globe with Three.js
-			let scene, camera, renderer, globe, particles;
-
-			function initGlobe() {
-				const container = document.getElementById('globe-container');
-				if (!container) return;
-
-				// Scene setup
-				scene = new THREE.Scene();
-				camera = new THREE.PerspectiveCamera(
-					75,
-					container.offsetWidth / container.offsetHeight,
-					0.1,
-					1000
-				);
-				renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-				renderer.setSize(container.offsetWidth, container.offsetHeight);
-				renderer.setClearColor(0x000000, 0);
-				container.appendChild(renderer.domElement);
-
-				// Main Globe wireframe - larger and more prominent
-				const geometry = new THREE.SphereGeometry(3, 48, 48);
-				const material = new THREE.MeshBasicMaterial({
-					color: 0x06b6d4,
-					wireframe: true,
-					transparent: true,
-					opacity: 0.8,
-				});
-				globe = new THREE.Mesh(geometry, material);
-				scene.add(globe);
-
-				// Orbital rings around the globe
-				for (let i = 0; i < 12; i++) {
-					const ringGeometry = new THREE.RingGeometry(3.5, 3.7, 64);
-					const colors = [0x8b5cf6, 0x10b981, 0x06b6d4];
-					const ringMaterial = new THREE.MeshBasicMaterial({
-						color: colors[i % 3],
-						transparent: true,
-						opacity: 0.4,
-						side: THREE.DoubleSide,
-					});
-					const ring = new THREE.Mesh(ringGeometry, ringMaterial);
-					ring.rotation.x = (i * Math.PI) / 6;
-					ring.rotation.y = (i * Math.PI) / 8;
-					ring.rotation.z = (i * Math.PI) / 12;
-					scene.add(ring);
-				}
-
-				// Enhanced particle system - more particles, larger area
-				const particleGeometry = new THREE.BufferGeometry();
-				const particleCount = 200;
-				const positions = new Float32Array(particleCount * 3);
-
-				for (let i = 0; i < particleCount; i++) {
-					const radius = 4 + Math.random() * 3;
-					const theta = Math.random() * Math.PI * 2;
-					const phi = Math.random() * Math.PI;
-
-					positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-					positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-					positions[i * 3 + 2] = radius * Math.cos(phi);
-				}
-
-				particleGeometry.setAttribute(
-					'position',
-					new THREE.BufferAttribute(positions, 3)
-				);
-				const particleMaterial = new THREE.PointsMaterial({
-					color: 0x10b981,
-					size: 0.08,
-					transparent: true,
-					opacity: 0.7,
-				});
-				particles = new THREE.Points(particleGeometry, particleMaterial);
-				scene.add(particles);
-
-				// Camera position - closer for more impact
-				camera.position.z = 10;
-				camera.position.y = 0;
-				camera.position.x = 0;
-
-				// Start animation
-				animate();
-			}
-
-			function animate() {
-				requestAnimationFrame(animate);
-
-				// Rotate globe and particles
-				if (globe) {
-					globe.rotation.y += 0.005;
-					globe.rotation.x += 0.002;
-				}
-
-				if (particles) {
-					particles.rotation.y += 0.003;
-					particles.rotation.x += 0.001;
-				}
-
-				// Rotate rings
-				scene.children.forEach((child, index) => {
-					if (child.geometry && child.geometry.type === 'RingGeometry') {
-						child.rotation.y += 0.002 * (index % 2 === 0 ? 1 : -1);
-						child.rotation.z += 0.001;
-					}
-				});
-
-				renderer.render(scene, camera);
-			}
-
 			// Availability Status Management
 			function updateAvailabilityStatus() {
 				const statusPing = document.getElementById('status-ping');
 				const statusText = document.getElementById('status-text');
-
+				
 				// Get current time in Melbourne (UTC+10/11)
 				const now = new Date();
 				const melbourneTime = new Date(
@@ -1077,21 +352,21 @@
 				);
 				const hour = melbourneTime.getHours();
 				const day = melbourneTime.getDay(); // 0 = Sunday, 6 = Saturday
-
+				
 				// Available: Monday-Friday, 9 AM - 6 PM Melbourne time
 				const isWeekday = day >= 1 && day <= 5;
 				const isWorkingHours = hour >= 9 && hour < 18;
 				const isAvailable = isWeekday && isWorkingHours;
-
+				
 				if (isAvailable) {
 					statusPing.className = 'status-ping available';
 					statusText.textContent = 'AVAILABLE';
 				} else {
 					statusPing.className = 'status-ping unavailable';
-
+					
 					// Calculate next availability
 					let nextAvailable = new Date(melbourneTime);
-
+					
 					if (!isWeekday) {
 						// Weekend - next Monday
 						const daysUntilMonday = (8 - day) % 7;
@@ -1105,34 +380,97 @@
 						// Before hours - today at 9 AM
 						nextAvailable.setHours(9, 0, 0, 0);
 					}
-
+					
 					const timeUntil = Math.ceil(
 						(nextAvailable - melbourneTime) / (1000 * 60 * 60)
 					);
 					statusText.textContent = `AVAILABLE IN ${timeUntil}H`;
 				}
 			}
-
-			// Initialize everything when page loads
+			
+			// Initialize when page loads
 			document.addEventListener('DOMContentLoaded', () => {
-				initGlobe();
 				updateAvailabilityStatus();
-
 				// Update status every minute
 				setInterval(updateAvailabilityStatus, 60000);
-
-				// Handle window resize
-				window.addEventListener('resize', () => {
-					if (renderer && camera) {
-						const container = document.getElementById('globe-container');
-						if (container && container.offsetWidth > 0) {
-							camera.aspect = container.offsetWidth / container.offsetHeight;
-							camera.updateProjectionMatrix();
-							renderer.setSize(container.offsetWidth, container.offsetHeight);
-						}
-					}
-				});
 			});
 		</script>
+	</head>
+	<body>
+		<!-- Dot Matrix Background -->
+		<div class="dot-matrix"></div>
+		
+		<!-- Chain Pattern -->
+		<div class="chain-pattern">
+			<div class="chain-link"></div>
+			<div class="chain-link"></div>
+			<div class="chain-link"></div>
+			<div class="chain-link"></div>
+			<div class="chain-link"></div>
+			<div class="chain-link"></div>
+			<div class="chain-link"></div>
+			<div class="chain-link"></div>
+			<div class="chain-link"></div>
+			<div class="chain-link"></div>
+			<div class="chain-link"></div>
+			<div class="chain-link"></div>
+		</div>
+		
+		<!-- Status Indicator -->
+		<div class="status-indicator">
+			<div class="status-ping available" id="status-ping"></div>
+			<span id="status-text">AVAILABLE</span>
+		</div>
+		
+		<!-- Main Content -->
+		<div class="content">
+			<div class="hero">
+				<h1>MOTIS.GROUP</h1>
+				<div class="subtitle">Systems Architecture & Engineering</div>
+				<div class="tagline">"I build systems that work when everything else falls apart."</div>
+			</div>
+
+			<div class="services">
+				<div class="service-card">
+					<h3>Data Infrastructure</h3>
+					<p>The underlying systems that collect, store, process, and serve data across your organization - the foundation that makes AI possible.</p>
+				</div>
+				
+				<div class="service-card">
+					<h3>ML Pipelines</h3>
+					<p>End-to-end machine learning pipelines for training, deploying, and monitoring AI models that deploy, scale, and stay deployed.</p>
+				</div>
+				
+				<div class="service-card">
+					<h3>Automation Systems</h3>
+					<p>Workflows that eliminate manual work and reduce human error - automation that removes work instead of creating more work.</p>
+				</div>
+				
+				<div class="service-card">
+					<h3>Enterprise Systems</h3>
+					<p>End-to-end solutions that handle real-world complexity and edge cases - systems that work when everything else falls apart.</p>
+				</div>
+				
+				<div class="service-card">
+					<h3>Technical Strategy</h3>
+					<p>I scope the actual problem, not the problem you think you have. Zero handoffs, shipped on deadline, always.</p>
+				</div>
+				
+				<div class="service-card">
+					<h3>Performance Engineering</h3>
+					<p>Systems your team can own, extend, and understand. Built for scale, optimized for maintainability.</p>
+				</div>
+			</div>
+
+			<div class="contact">
+				<h2>Get In Touch</h2>
+				<p>Staff engineer. Zero handoffs. Ships on time.</p>
+				<div class="contact-info">
+					<a href="mailto:automation@motis.group" class="contact-item">automation@motis.group</a>
+					<a href="https://calendly.com/motis-automation" target="_blank" class="contact-item">Schedule Call</a>
+					<a href="https://github.com/willmarzella" target="_blank" class="contact-item">GitHub</a>
+				</div>
+			</div>
+		</div>
 	</body>
 </html>
