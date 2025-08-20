@@ -11,16 +11,16 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 		<style>
 			:root {
-				--bg: #0a0a0a;
-				--bg-secondary: #111111;
+				--bg: #22281C;
+				--bg-secondary: #22281C;
 				--txt: #ffffff;
 				--txt-secondary: #b8b8b8;
 				--accent-purple: #8b5cf6;
-				--accent-green: #10b981;
+				--accent-green: #feffa7;
 				--accent-cyan: #06b6d4;
 				--border: #1f1f1f;
 				--glow-purple: rgba(139, 92, 246, 0.3);
-				--glow-green: rgba(16, 185, 129, 0.3);
+				--glow-green: lab(66.82% -52.21 17.67 / 0.3);
 				--glow-cyan: rgba(6, 182, 212, 0.3);
 			}
 			* {
@@ -43,6 +43,9 @@
 				padding-bottom: 4rem;
 				position: relative;
 				overflow-x: hidden;
+				/* CRT Screen Properties */
+				text-shadow: 0 0 2px currentColor;
+				filter: contrast(1.1) brightness(1.05) saturate(1.2);
 			}
 
 			/* Cyberpunk background effect */
@@ -73,7 +76,7 @@
 				animation: pulse 4s ease-in-out infinite alternate;
 			}
 
-			/* Scan lines effect */
+			/* CRT Screen Effect */
 			body::after {
 				content: '';
 				position: fixed;
@@ -81,16 +84,59 @@
 				left: 0;
 				width: 100%;
 				height: 100%;
-				background: repeating-linear-gradient(
-					0deg,
-					transparent,
-					transparent 2px,
-					rgba(139, 92, 246, 0.03) 2px,
-					rgba(139, 92, 246, 0.03) 4px
-				);
-				z-index: -1;
+				background: 
+					/* Horizontal scanlines */
+					repeating-linear-gradient(
+						0deg,
+						transparent,
+						transparent 1px,
+						rgba(255, 255, 255, 0.03) 1px,
+						rgba(255, 255, 255, 0.03) 2px,
+						transparent 2px,
+						transparent 3px
+					),
+					/* Vertical RGB separation */
+					repeating-linear-gradient(
+						90deg,
+						rgba(255, 0, 0, 0.005),
+						rgba(255, 0, 0, 0.005) 1px,
+						rgba(0, 255, 0, 0.005) 1px,
+						rgba(0, 255, 0, 0.005) 2px,
+						rgba(0, 0, 255, 0.005) 2px,
+						rgba(0, 0, 255, 0.005) 3px
+					);
+				z-index: 1000;
 				pointer-events: none;
 				animation: scanlines 2s linear infinite;
+				/* Subtle screen curvature */
+				border-radius: 20px;
+				box-shadow: 
+					inset 0 0 100px rgba(0, 0, 0, 0.3),
+					inset 0 0 200px rgba(0, 0, 0, 0.1);
+			}
+			
+			/* CRT Phosphor Glow Effect */
+			body::before {
+				animation: pulse 4s ease-in-out infinite alternate, crt-flicker 0.15s infinite linear alternate;
+			}
+			
+			/* Additional CRT overlay for more authentic look */
+			.crt-overlay {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: 
+					/* Noise pattern */
+					radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+					radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+					radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+				background-size: 4px 4px, 6px 6px, 3px 3px;
+				z-index: 999;
+				pointer-events: none;
+				animation: crt-noise 0.1s infinite;
+				opacity: 0.7;
 			}
 
 			@keyframes pulse {
@@ -107,7 +153,37 @@
 					transform: translateY(0);
 				}
 				100% {
-					transform: translateY(4px);
+					transform: translateY(3px);
+				}
+			}
+			
+			@keyframes crt-flicker {
+				0% {
+					opacity: 0.98;
+				}
+				50% {
+					opacity: 0.99;
+				}
+				100% {
+					opacity: 0.97;
+				}
+			}
+			
+			@keyframes crt-noise {
+				0% {
+					transform: translateX(0) translateY(0);
+				}
+				25% {
+					transform: translateX(-1px) translateY(1px);
+				}
+				50% {
+					transform: translateX(1px) translateY(-1px);
+				}
+				75% {
+					transform: translateX(-1px) translateY(-1px);
+				}
+				100% {
+					transform: translateX(1px) translateY(1px);
 				}
 			}
 			table {
@@ -454,7 +530,6 @@
 				}
 			}
 
-
 			@media (max-width: 768px) {
 				body {
 					padding: 0.25rem;
@@ -500,6 +575,24 @@
 					right: 10px;
 					padding: 6px 10px;
 					font-size: 0.7rem;
+				}
+				
+				/* Reduce CRT effects on mobile for performance */
+				.crt-overlay {
+					opacity: 0.3;
+					animation: none;
+				}
+				
+				body::after {
+					border-radius: 10px;
+					background: 
+						repeating-linear-gradient(
+							0deg,
+							transparent,
+							transparent 2px,
+							rgba(255, 255, 255, 0.02) 2px,
+							rgba(255, 255, 255, 0.02) 4px
+						);
 				}
 			}
 		</style>
@@ -556,6 +649,9 @@
 		</script>
 	</head>
 	<body>
+		<!-- CRT Screen Overlay -->
+		<div class="crt-overlay"></div>
+		
 		<!-- Availability Status Indicator -->
 		<div class="status-indicator">
 			<div class="status-ping available" id="status-ping"></div>
