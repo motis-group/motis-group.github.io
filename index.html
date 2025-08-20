@@ -509,13 +509,23 @@
 
 			// Dithered Image Implementation
 			function initDitheredImage() {
+				console.log('Initializing dithered image...');
 				const canvas = document.getElementById('dithered-canvas');
-				if (!canvas) return;
+				if (!canvas) {
+					console.error('Canvas not found!');
+					return;
+				}
 
 				const ctx = canvas.getContext('2d');
 				const img = new Image();
 
+				img.onerror = function() {
+					console.error('Failed to load image: b69a34cbbf0ccecdd69df5d618c84000.jpg');
+				};
+
 				img.onload = function () {
+					console.log('Image loaded, dimensions:', img.width, 'x', img.height);
+					
 					// Set canvas size based on image aspect ratio and container constraints
 					const maxWidth = 600;
 					const maxHeight = 400;
@@ -535,21 +545,28 @@
 
 					canvas.width = canvasWidth;
 					canvas.height = canvasHeight;
+					console.log('Canvas size set to:', canvasWidth, 'x', canvasHeight);
 
 					// Draw the image to fill the entire canvas
 					ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
+					console.log('Image drawn to canvas');
 
 					// Apply dithering effect
+					console.log('Applying dithering...');
 					applyDithering(ctx, canvasWidth, canvasHeight);
+					console.log('Dithering complete');
 				};
 
 				img.src = 'b69a34cbbf0ccecdd69df5d618c84000.jpg';
 			}
 
 			function applyDithering(ctx, width, height) {
+				console.log('Getting image data for dithering...', width, 'x', height);
+				
 				// Get image data
 				const imageData = ctx.getImageData(0, 0, width, height);
 				const data = imageData.data;
+				console.log('Image data length:', data.length);
 
 				// 4x4 Bayer Matrix (same as in the shader)
 				const bayerMatrix = [
@@ -562,6 +579,8 @@
 				// Orange color theme to match the site
 				const orangeColor = [232, 115, 26]; // --accent color
 
+				let processedPixels = 0;
+				
 				// Process each pixel
 				for (let y = 0; y < height; y++) {
 					for (let x = 0; x < width; x++) {
@@ -580,30 +599,31 @@
 						const bayerY = y % 4;
 						const threshold = bayerMatrix[bayerY][bayerX];
 
-						// Apply dithering
+						// Apply dithering - make more aggressive
 						const dithered = luminance > threshold ? 1 : 0;
 
-						// Color quantization (4 levels like in the shader)
-						const quantized = Math.floor(dithered * 3 + 0.5) / 3;
-
-						// Apply orange color theme
-						if (quantized > 0) {
-							data[pixelIndex] = orangeColor[0] * quantized; // R
-							data[pixelIndex + 1] = orangeColor[1] * quantized; // G
-							data[pixelIndex + 2] = orangeColor[2] * quantized; // B
+						// Simplified: either full orange or black
+						if (dithered > 0) {
+							data[pixelIndex] = orangeColor[0];     // R
+							data[pixelIndex + 1] = orangeColor[1]; // G
+							data[pixelIndex + 2] = orangeColor[2]; // B
 						} else {
-							data[pixelIndex] = 0; // R
+							data[pixelIndex] = 0;     // R
 							data[pixelIndex + 1] = 0; // G
 							data[pixelIndex + 2] = 0; // B
 						}
 
 						// Keep original alpha
-						// data[pixelIndex + 3] = data[pixelIndex + 3];
+						data[pixelIndex + 3] = 255;
+						processedPixels++;
 					}
 				}
 
+				console.log('Processed pixels:', processedPixels);
+				
 				// Put the modified image data back
 				ctx.putImageData(imageData, 0, 0);
+				console.log('Image data put back to canvas');
 			}
 
 			// 3D Dithered Infinity Symbol
