@@ -543,7 +543,7 @@
 					applyDithering(ctx, canvasWidth, canvasHeight);
 				};
 
-				img.src = '6284b1cb-38e8-4e4f-8573-1bffe517880b-2060x1236_100x60.webp';
+				img.src = 'b69a34cbbf0ccecdd69df5d618c84000.jpg';
 			}
 
 			function applyDithering(ctx, width, height) {
@@ -580,13 +580,13 @@
 						const bayerY = y % 4;
 						const threshold = bayerMatrix[bayerY][bayerX];
 
-						// Apply inverted dithering (bright areas become dark, dark areas become bright orange)
-						const dithered = luminance > threshold ? 0 : 1;
+						// Apply dithering
+						const dithered = luminance > threshold ? 1 : 0;
 
 						// Color quantization (4 levels like in the shader)
 						const quantized = Math.floor(dithered * 3 + 0.5) / 3;
 
-						// Apply orange color theme (inverted)
+						// Apply orange color theme
 						if (quantized > 0) {
 							data[pixelIndex] = orangeColor[0] * quantized; // R
 							data[pixelIndex + 1] = orangeColor[1] * quantized; // G
