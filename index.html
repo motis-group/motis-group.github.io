@@ -49,21 +49,46 @@
 				width: 100%;
 				height: 100%;
 				z-index: -2;
+				background-image: url('b6ea8215e62147969a6370cd5c7fb809.jpg');
 				background-size: cover;
 				background-position: center;
 				background-repeat: no-repeat;
 				background-attachment: fixed;
 			}
 
-			/* Canvas for dithered background */
-			#dithered-canvas {
-				position: fixed;
-				top: 0;
-				left: 0;
+			/* Dithered Image Section */
+			.dithered-section {
+				margin: 3rem 0;
+				text-align: center;
+				padding: 2rem;
+				background: rgba(0, 0, 0, 0.3);
+				backdrop-filter: blur(5px);
+				border: 1px solid var(--accent);
+			}
+
+			.dithered-section h3 {
+				color: var(--accent);
+				font-size: 1.5rem;
+				margin-bottom: 1.5rem;
+				text-transform: uppercase;
+				letter-spacing: 2px;
+			}
+
+			.dithered-container {
+				position: relative;
+				display: inline-block;
+				max-width: 600px;
 				width: 100%;
-				height: 100%;
-				z-index: -2;
-				object-fit: cover;
+				border: 2px solid var(--accent);
+				background: var(--bg-dark);
+			}
+
+			#dithered-canvas {
+				display: block;
+				width: 100%;
+				height: auto;
+				max-height: 400px;
+				object-fit: contain;
 			}
 
 			.chain-background::before {
@@ -414,6 +439,23 @@
 					padding: 6px 10px;
 					font-size: 0.7rem;
 				}
+
+				.dithered-section {
+					margin: 2rem 1rem;
+					padding: 1.5rem 1rem;
+				}
+
+				.dithered-section h3 {
+					font-size: 1.2rem;
+				}
+
+				.dithered-container {
+					max-width: 100%;
+				}
+
+				#dithered-canvas {
+					max-height: 300px;
+				}
 			}
 		</style>
 		<script>
@@ -465,105 +507,101 @@
 				}
 			}
 
-			// Dithered Background Implementation
-			function initDitheredBackground() {
+			// Dithered Image Implementation
+			function initDitheredImage() {
 				const canvas = document.getElementById('dithered-canvas');
 				if (!canvas) return;
-				
+
 				const ctx = canvas.getContext('2d');
 				const img = new Image();
-				
-				img.onload = function() {
-					// Set canvas size to match viewport
-					canvas.width = window.innerWidth;
-					canvas.height = window.innerHeight;
-					
-					// Calculate aspect ratios for cover-like behavior
-					const canvasAspect = canvas.width / canvas.height;
+
+				img.onload = function () {
+					// Set canvas size based on image aspect ratio and container constraints
+					const maxWidth = 600;
+					const maxHeight = 400;
 					const imgAspect = img.width / img.height;
-					
-					let drawWidth, drawHeight, offsetX, offsetY;
-					
-					if (canvasAspect > imgAspect) {
-						// Canvas is wider than image
-						drawWidth = canvas.width;
-						drawHeight = canvas.width / imgAspect;
-						offsetX = 0;
-						offsetY = (canvas.height - drawHeight) / 2;
+
+					let canvasWidth, canvasHeight;
+
+					if (imgAspect > maxWidth / maxHeight) {
+						// Image is wider - constrain by width
+						canvasWidth = maxWidth;
+						canvasHeight = maxWidth / imgAspect;
 					} else {
-						// Canvas is taller than image
-						drawWidth = canvas.height * imgAspect;
-						drawHeight = canvas.height;
-						offsetX = (canvas.width - drawWidth) / 2;
-						offsetY = 0;
+						// Image is taller - constrain by height
+						canvasHeight = maxHeight;
+						canvasWidth = maxHeight * imgAspect;
 					}
-					
-					// Draw the image
-					ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-					
+
+					canvas.width = canvasWidth;
+					canvas.height = canvasHeight;
+
+					// Draw the image to fill the entire canvas
+					ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
+
 					// Apply dithering effect
-					applyDithering(ctx, canvas.width, canvas.height);
+					applyDithering(ctx, canvasWidth, canvasHeight);
 				};
-				
+
 				img.src = 'd2064fbd00e65134cf8566947fb52269.jpg';
 			}
-			
+
 			function applyDithering(ctx, width, height) {
 				// Get image data
 				const imageData = ctx.getImageData(0, 0, width, height);
 				const data = imageData.data;
-				
+
 				// 4x4 Bayer Matrix (same as in the shader)
 				const bayerMatrix = [
-					[0/16, 8/16, 2/16, 10/16],
-					[12/16, 4/16, 14/16, 6/16],
-					[3/16, 11/16, 1/16, 9/16],
-					[15/16, 7/16, 13/16, 5/16]
+					[0 / 16, 8 / 16, 2 / 16, 10 / 16],
+					[12 / 16, 4 / 16, 14 / 16, 6 / 16],
+					[3 / 16, 11 / 16, 1 / 16, 9 / 16],
+					[15 / 16, 7 / 16, 13 / 16, 5 / 16],
 				];
-				
+
 				// Orange color theme to match the site
 				const orangeColor = [232, 115, 26]; // --accent color
-				
+
 				// Process each pixel
 				for (let y = 0; y < height; y++) {
 					for (let x = 0; x < width; x++) {
 						const pixelIndex = (y * width + x) * 4;
-						
+
 						// Get RGB values
 						const r = data[pixelIndex];
 						const g = data[pixelIndex + 1];
 						const b = data[pixelIndex + 2];
-						
+
 						// Calculate luminance
 						const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-						
+
 						// Get Bayer matrix threshold
 						const bayerX = x % 4;
 						const bayerY = y % 4;
 						const threshold = bayerMatrix[bayerY][bayerX];
-						
+
 						// Apply dithering
 						const dithered = luminance > threshold ? 1 : 0;
-						
+
 						// Color quantization (4 levels like in the shader)
 						const quantized = Math.floor(dithered * 3 + 0.5) / 3;
-						
+
 						// Apply orange color theme
 						if (quantized > 0) {
-							data[pixelIndex] = orangeColor[0] * quantized;     // R
-							data[pixelIndex + 1] = orangeColor[1] * quantized; // G  
+							data[pixelIndex] = orangeColor[0] * quantized; // R
+							data[pixelIndex + 1] = orangeColor[1] * quantized; // G
 							data[pixelIndex + 2] = orangeColor[2] * quantized; // B
 						} else {
-							data[pixelIndex] = 0;     // R
+							data[pixelIndex] = 0; // R
 							data[pixelIndex + 1] = 0; // G
 							data[pixelIndex + 2] = 0; // B
 						}
-						
+
 						// Keep original alpha
 						// data[pixelIndex + 3] = data[pixelIndex + 3];
 					}
 				}
-				
+
 				// Put the modified image data back
 				ctx.putImageData(imageData, 0, 0);
 			}
@@ -726,7 +764,7 @@
 			// Initialize when page loads
 			document.addEventListener('DOMContentLoaded', () => {
 				updateAvailabilityStatus();
-				initDitheredBackground();
+				initDitheredImage();
 				initInfinitySymbol();
 
 				// Update status every minute
@@ -734,11 +772,11 @@
 
 				// Handle window resize
 				window.addEventListener('resize', () => {
-					// Reinitialize dithered background
+					// Reinitialize dithered image
 					setTimeout(() => {
-						initDitheredBackground();
+						initDitheredImage();
 					}, 100);
-					
+
 					const container = document.getElementById('infinity-container');
 					if (renderer && camera && container && container.offsetWidth > 0) {
 						camera.aspect = container.offsetWidth / container.offsetHeight;
@@ -762,9 +800,6 @@
 		</script>
 	</head>
 	<body>
-		<!-- Dithered Background Canvas -->
-		<canvas id="dithered-canvas"></canvas>
-		
 		<!-- Chain Link Pattern Background -->
 		<div class="chain-background"></div>
 
@@ -784,6 +819,14 @@
 				<div class="subtitle">Systems Architecture & Engineering</div>
 				<div class="tagline">
 					"I build systems that work when everything else falls apart."
+				</div>
+			</div>
+
+			<!-- Dithered Image Section -->
+			<div class="dithered-section">
+				<h3>Dithered Processing</h3>
+				<div class="dithered-container">
+					<canvas id="dithered-canvas"></canvas>
 				</div>
 			</div>
 
