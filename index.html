@@ -7,19 +7,17 @@
 			content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"
 		/>
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
-		<title>MOTIS.GROUP | Systems Architect</title>
+		<title>MOTIS.GROUP | SECURE SYSTEMS</title>
 		<style>
 			:root {
-				--bg-dark: #0d0504;
-				--bg-mid: #1a0f0a;
-				--bg-light: #2d1b13;
-				--dot-primary: #ff4500;
-				--dot-secondary: #ff6b35;
-				--dot-glow: rgba(255, 69, 0, 0.8);
-				--text-primary: #ffffff;
-				--text-secondary: #ffb894;
-				--text-muted: #cc8a6b;
-				--accent: #ff4500;
+				--bg-terminal: #0d1b0d;
+				--bg-darker: #050a05;
+				--terminal-green: #00ff41;
+				--terminal-dim: #008f25;
+				--terminal-glow: rgba(0, 255, 65, 0.8);
+				--text-primary: #00ff41;
+				--text-secondary: #008f25;
+				--border-green: rgba(0, 255, 65, 0.3);
 			}
 
 			* {
@@ -28,187 +26,179 @@
 				box-sizing: border-box;
 			}
 
-			@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
+			@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
 
 			body {
-				font-family: 'Inter', 'JetBrains Mono', monospace;
-				background: var(--bg-dark);
+				font-family: 'Source Code Pro', 'JetBrains Mono', 'Courier New', monospace;
+				background: var(--bg-terminal);
 				color: var(--text-primary);
 				line-height: 1.6;
 				min-height: 100vh;
 				position: relative;
 				overflow-x: hidden;
+				font-size: 14px;
+				letter-spacing: 0.5px;
 			}
 
-			/* Chain Link Pattern Background */
-			.chain-background {
+			/* CRT Terminal Effect */
+			body::before {
+				content: '';
 				position: fixed;
 				top: 0;
 				left: 0;
 				width: 100%;
 				height: 100%;
-				z-index: -2;
-				background-image: url('b6ea8215e62147969a6370cd5c7fb809.jpg');
-				background-size: cover;
-				background-position: center;
-				background-repeat: no-repeat;
-				background-attachment: fixed;
+				background: 
+					radial-gradient(circle at center, transparent 0%, var(--bg-darker) 100%),
+					repeating-linear-gradient(
+						0deg,
+						transparent,
+						transparent 2px,
+						rgba(0, 255, 65, 0.03) 2px,
+						rgba(0, 255, 65, 0.03) 4px
+					);
+				z-index: -1;
+				pointer-events: none;
+				animation: crt-flicker 0.15s infinite linear alternate;
 			}
 
-			.chain-background::before {
-				content: '';
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background: rgba(0, 0, 0, 0.4);
-				z-index: 1;
-			}
-
-
-
-
-
-			/* Content Container */
-			.content {
-				position: relative;
-				z-index: 10;
-				max-width: 900px;
+			/* Terminal Container */
+			.terminal {
+				max-width: 1000px;
 				margin: 0 auto;
-				padding: 4rem 2rem;
-				display: flex;
-				flex-direction: column;
-				min-height: 100vh;
-				justify-content: center;
-			}
-
-			.hero {
-				text-align: center;
-				margin-bottom: 4rem;
-			}
-
-			.hero h1 {
-				font-size: 3.5rem;
-				font-weight: 700;
-				margin-bottom: 1rem;
-				background: linear-gradient(
-					135deg,
-					var(--text-primary) 0%,
-					var(--text-secondary) 100%
-				);
-				-webkit-background-clip: text;
-				-webkit-text-fill-color: transparent;
-				background-clip: text;
-				text-shadow: 0 0 30px var(--dot-glow);
-			}
-
-			.hero .subtitle {
-				font-size: 1.2rem;
-				color: var(--text-secondary);
-				font-weight: 300;
+				padding: 2rem;
+				background: rgba(13, 27, 13, 0.95);
+				border: 2px solid var(--border-green);
+				box-shadow: 
+					0 0 30px var(--terminal-glow),
+					inset 0 0 50px rgba(0, 255, 65, 0.05);
+				position: relative;
+				min-height: calc(100vh - 4rem);
+				margin-top: 2rem;
 				margin-bottom: 2rem;
 			}
 
-			.tagline {
-				font-size: 1.1rem;
-				color: var(--text-muted);
-				font-style: italic;
-				margin-bottom: 3rem;
+			/* Terminal Header */
+			.terminal-header {
+				border-bottom: 1px solid var(--border-green);
+				padding-bottom: 1rem;
+				margin-bottom: 2rem;
+				text-align: center;
 			}
 
-			/* Services Grid */
-			.services {
-				display: grid;
-				grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-				gap: 2rem;
-				margin-bottom: 4rem;
+			.terminal-title {
+				font-size: 1.2rem;
+				font-weight: 600;
+				color: var(--terminal-green);
+				text-shadow: 0 0 10px var(--terminal-glow);
+				margin-bottom: 0.5rem;
 			}
 
-			.service-card {
-				background: rgba(0, 0, 0, 0.7);
-				border: 1px solid rgba(255, 69, 0, 0.3);
-				border-radius: 8px;
-				padding: 2rem;
-				backdrop-filter: blur(15px);
-				transition: all 0.3s ease;
-				position: relative;
-				overflow: hidden;
+			.terminal-subtitle {
+				font-size: 0.9rem;
+				color: var(--terminal-dim);
+				text-transform: uppercase;
+				letter-spacing: 2px;
 			}
 
-			.service-card::before {
-				content: '';
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background: linear-gradient(
-					135deg,
-					rgba(255, 69, 0, 0.1) 0%,
-					transparent 50%
-				);
-				opacity: 0;
-				transition: opacity 0.3s ease;
+			/* Command Prompt Lines */
+			.cmd-line {
+				margin: 1rem 0;
+				font-family: inherit;
+				font-size: 14px;
 			}
 
-			.service-card:hover {
-				border-color: var(--accent);
-				box-shadow: 0 0 20px rgba(255, 69, 0, 0.3);
-				transform: translateY(-5px);
-			}
-
-			.service-card:hover::before {
-				opacity: 1;
-			}
-
-			.service-card h3 {
-				color: var(--accent);
-				font-size: 1.3rem;
-				margin-bottom: 1rem;
+			.cmd-prompt {
+				color: var(--terminal-green);
 				font-weight: 600;
 			}
 
-			.service-card p {
-				color: var(--text-secondary);
-				line-height: 1.6;
+			.cmd-output {
+				color: var(--terminal-dim);
+				margin-left: 0;
+				padding-left: 0;
 			}
 
-			/* Contact Section */
-			.contact {
+			.cmd-highlight {
+				color: var(--terminal-green);
+				text-shadow: 0 0 5px var(--terminal-glow);
+				font-weight: 600;
+			}
+
+			/* ASCII Art Eye */
+			.ascii-art {
+				font-family: 'Source Code Pro', monospace;
+				font-size: 8px;
+				line-height: 0.8;
+				color: var(--terminal-green);
 				text-align: center;
-				padding: 3rem 0;
-				border-top: 1px solid rgba(255, 69, 0, 0.2);
+				margin: 2rem 0;
+				white-space: pre;
+				text-shadow: 0 0 5px var(--terminal-glow);
 			}
 
-			.contact h2 {
-				color: var(--accent);
-				font-size: 2rem;
+			/* Info Boxes */
+			.info-box {
+				border: 1px solid var(--border-green);
+				padding: 1.5rem;
+				margin: 2rem 0;
+				background: rgba(0, 255, 65, 0.02);
+				position: relative;
+			}
+
+			.info-box::before {
+				content: '>';
+				position: absolute;
+				left: 0.5rem;
+				top: 0.5rem;
+				color: var(--terminal-green);
+				font-weight: bold;
+			}
+
+			.info-box-title {
+				color: var(--terminal-green);
+				font-weight: 600;
 				margin-bottom: 1rem;
+				text-transform: uppercase;
+				letter-spacing: 1px;
 			}
 
-			.contact-info {
-				display: flex;
-				justify-content: center;
-				gap: 3rem;
-				margin-top: 2rem;
-				flex-wrap: wrap;
+			.info-box-content {
+				color: var(--terminal-dim);
+				line-height: 1.8;
+				padding-left: 1rem;
 			}
 
-			.contact-item {
-				color: var(--text-secondary);
-				text-decoration: none;
-				font-weight: 500;
-				transition: color 0.3s ease;
-				padding: 0.5rem 1rem;
-				border: 1px solid rgba(255, 69, 0, 0.3);
-				border-radius: 4px;
-				backdrop-filter: blur(5px);
+			/* Services Grid */
+			.services-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+				gap: 1rem;
+				margin: 2rem 0;
 			}
 
-			.contact-item:hover {
-				color: var(--accent);
-				box-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
+			.service-item {
+				border: 1px solid var(--border-green);
+				padding: 1rem;
+				background: rgba(0, 255, 65, 0.02);
+				transition: all 0.3s ease;
+			}
+
+			.service-item:hover {
+				background: rgba(0, 255, 65, 0.05);
+				box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+			}
+
+			.service-title {
+				color: var(--terminal-green);
+				font-weight: 600;
+				margin-bottom: 0.5rem;
+				text-transform: uppercase;
+			}
+
+			.service-desc {
+				color: var(--terminal-dim);
+				font-size: 0.9rem;
 			}
 
 			/* Status Indicator */
@@ -219,16 +209,14 @@
 				display: flex;
 				align-items: center;
 				gap: 10px;
-				background: rgba(45, 27, 19, 0.8);
+				background: rgba(13, 27, 13, 0.9);
 				padding: 8px 12px;
-				border-radius: 4px;
-				backdrop-filter: blur(10px);
-				z-index: 100;
+				border: 1px solid var(--border-green);
 				font-size: 0.8rem;
 				font-weight: 300;
 				text-transform: uppercase;
 				letter-spacing: 1px;
-				border: 1px solid rgba(255, 69, 0, 0.3);
+				z-index: 100;
 			}
 
 			.status-ping {
@@ -240,84 +228,81 @@
 			}
 
 			.status-ping.available {
-				background: #00ff00;
-				box-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+				background: var(--terminal-green);
+				box-shadow: 0 0 10px var(--terminal-glow);
 			}
 
 			.status-ping.unavailable {
-				background: var(--accent);
-				box-shadow: 0 0 10px var(--dot-glow);
+				background: var(--terminal-dim);
+				box-shadow: 0 0 10px rgba(0, 143, 37, 0.5);
+			}
+
+			/* Typing Cursor */
+			.cursor {
+				display: inline-block;
+				background: var(--terminal-green);
+				width: 8px;
+				height: 16px;
+				animation: cursor-blink 1s infinite;
+				margin-left: 2px;
+			}
+
+			/* Contact Links */
+			.contact-links {
+				margin: 2rem 0;
+				padding: 1rem;
+				border-top: 1px solid var(--border-green);
+				border-bottom: 1px solid var(--border-green);
+			}
+
+			.contact-link {
+				color: var(--terminal-green);
+				text-decoration: none;
+				display: inline-block;
+				margin: 0.5rem 1rem 0.5rem 0;
+				padding: 0.5rem;
+				border: 1px solid var(--border-green);
+				transition: all 0.3s ease;
+			}
+
+			.contact-link:hover {
+				background: rgba(0, 255, 65, 0.1);
+				box-shadow: 0 0 10px var(--terminal-glow);
+				text-shadow: 0 0 5px var(--terminal-glow);
 			}
 
 			/* Animations */
-			@keyframes matrix-pulse {
-				0% {
-					opacity: 0.2;
-				}
-				100% {
-					opacity: 0.6;
-				}
-			}
-
-			@keyframes glow-pulse {
-				0%,
-				100% {
-					box-shadow: 0 0 10px var(--dot-glow),
-						inset 0 0 5px rgba(255, 69, 0, 0.3);
-					opacity: 0.6;
-				}
-				50% {
-					box-shadow: 0 0 20px var(--dot-glow),
-						inset 0 0 10px rgba(255, 69, 0, 0.5);
-					opacity: 1;
-				}
+			@keyframes crt-flicker {
+				0% { opacity: 0.98; }
+				50% { opacity: 0.99; }
+				100% { opacity: 0.97; }
 			}
 
 			@keyframes ping {
-				0% {
-				opacity: 1;
-				}
-				75%,
-				100% {
-					opacity: 0.5;
-				}
+				0% { opacity: 1; }
+				75%, 100% { opacity: 0.5; }
+			}
+
+			@keyframes cursor-blink {
+				0%, 50% { opacity: 1; }
+				51%, 100% { opacity: 0; }
 			}
 
 			/* Mobile Responsive */
 			@media (max-width: 768px) {
-				.content {
-					padding: 2rem 1rem;
+				.terminal {
+					margin: 1rem;
+					padding: 1rem;
+					min-height: calc(100vh - 2rem);
 				}
 
-				.hero h1 {
-					font-size: 2.5rem;
+				.ascii-art {
+					font-size: 6px;
 				}
 
-				.hero .subtitle {
-					font-size: 1rem;
-				}
-
-				.services {
+				.services-grid {
 					grid-template-columns: 1fr;
-					gap: 1.5rem;
-				}
-
-				.service-card {
-					padding: 1.5rem;
-				}
-
-				.contact-info {
-					flex-direction: column;
-					gap: 1rem;
-				}
-
-				.chain-background {
-					background-attachment: scroll;
-					background-size: cover;
-				}
-				
-				.chain-background::before {
-					background: rgba(0, 0, 0, 0.6);
+					gap: 0.5rem;
 				}
 
 				.status-indicator {
@@ -326,6 +311,10 @@
 					padding: 6px 10px;
 					font-size: 0.7rem;
 				}
+
+				body {
+					font-size: 12px;
+				}
 			}
 		</style>
 		<script>
@@ -333,7 +322,7 @@
 			function updateAvailabilityStatus() {
 				const statusPing = document.getElementById('status-ping');
 				const statusText = document.getElementById('status-text');
-
+				
 				// Get current time in Melbourne (UTC+10/11)
 				const now = new Date();
 				const melbourneTime = new Date(
@@ -341,21 +330,21 @@
 				);
 				const hour = melbourneTime.getHours();
 				const day = melbourneTime.getDay(); // 0 = Sunday, 6 = Saturday
-
+				
 				// Available: Monday-Friday, 9 AM - 6 PM Melbourne time
 				const isWeekday = day >= 1 && day <= 5;
 				const isWorkingHours = hour >= 9 && hour < 18;
 				const isAvailable = isWeekday && isWorkingHours;
-
+				
 				if (isAvailable) {
 					statusPing.className = 'status-ping available';
-					statusText.textContent = 'AVAILABLE';
+					statusText.textContent = 'ONLINE';
 				} else {
 					statusPing.className = 'status-ping unavailable';
-
+					
 					// Calculate next availability
 					let nextAvailable = new Date(melbourneTime);
-
+					
 					if (!isWeekday) {
 						// Weekend - next Monday
 						const daysUntilMonday = (8 - day) % 7;
@@ -369,112 +358,177 @@
 						// Before hours - today at 9 AM
 						nextAvailable.setHours(9, 0, 0, 0);
 					}
-
+					
 					const timeUntil = Math.ceil(
 						(nextAvailable - melbourneTime) / (1000 * 60 * 60)
 					);
-					statusText.textContent = `AVAILABLE IN ${timeUntil}H`;
+					statusText.textContent = `OFFLINE [${timeUntil}H]`;
 				}
 			}
-
+			
+			// Terminal typing effect
+			function typeText(element, text, speed = 50) {
+				let i = 0;
+				element.innerHTML = '';
+				const timer = setInterval(() => {
+					if (i < text.length) {
+						element.innerHTML += text.charAt(i);
+						i++;
+					} else {
+						clearInterval(timer);
+						element.innerHTML += '<span class="cursor"></span>';
+					}
+				}, speed);
+			}
+			
 			// Initialize when page loads
 			document.addEventListener('DOMContentLoaded', () => {
 				updateAvailabilityStatus();
 				// Update status every minute
 				setInterval(updateAvailabilityStatus, 60000);
+				
+				// Add typing effect to main title
+				const titleElement = document.querySelector('.terminal-title');
+				if (titleElement) {
+					const originalText = titleElement.textContent;
+					typeText(titleElement, originalText, 100);
+				}
 			});
 		</script>
 	</head>
 	<body>
-		<!-- Chain Link Pattern Background -->
-		<div class="chain-background"></div>
-
 		<!-- Status Indicator -->
 		<div class="status-indicator">
 			<div class="status-ping available" id="status-ping"></div>
-			<span id="status-text">AVAILABLE</span>
+			<span id="status-text">ONLINE</span>
 		</div>
+		
+		<!-- Terminal Container -->
+		<div class="terminal">
+			<div class="terminal-header">
+				<div class="terminal-title">MOTIS.GROUP SECURE SYSTEMS</div>
+				<div class="terminal-subtitle">SURVEILLANCE-RESISTANT ARCHITECTURE</div>
+			</div>
 
-		<!-- Main Content -->
-		<div class="content">
-			<div class="hero">
-				<h1>MOTIS.GROUP</h1>
-				<div class="subtitle">Systems Architecture & Engineering</div>
-				<div class="tagline">
-					"I build systems that work when everything else falls apart."
+			<div class="cmd-line">
+				<span class="cmd-prompt">root@motis:~$</span> whoami
+			</div>
+			<div class="cmd-line cmd-output">
+				SYSTEMS ENGINEER. ZERO TRUST ARCHITECTURE. PRIVACY BY DESIGN.
+			</div>
+
+			<div class="ascii-art">
+    ████████████████████████████████████████████████████████████████████████
+    ████████████████████████████████████████████████████████████████████████
+    ████████████████████████████████████████████████████████████████████████
+    ████████████████████████████████████████████████████████████████████████
+    ████████████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓████████████████████████████
+    ████████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓████████████████████████
+    ██████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓██████████████████████
+    ████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓████████████████████
+    ██████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓        ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓██████████████████
+    ████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓            ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓████████████████
+    ██████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓        ████    ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓██████████████
+    ████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓        ████████    ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓████████████
+    ██████▓▓▓▓▓▓▓▓▓▓▓▓▓▓        ████████████    ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓██████████
+    ████▓▓▓▓▓▓▓▓▓▓▓▓▓▓        ████████████████    ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓████████
+    ██▓▓▓▓▓▓▓▓▓▓▓▓▓▓        ██████████████████    ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓██████
+            </div>
+
+			<div class="cmd-line">
+				<span class="cmd-prompt">root@motis:~$</span> cat /etc/motd
+			</div>
+
+			<div class="info-box">
+				<div class="info-box-title">SURVEILLANCE-RESISTANT SYSTEMS</div>
+				<div class="info-box-content">
+					Around the world, governments have turned the internet into a surveillance machine.
+					<br><br>
+					MOTIS provides end-to-end security with a decentralized design.
+					<br>
+					OPT OUT OF MASS SURVEILLANCE.
+					<br><br>
+					Control your data, protect your privacy, take back the internet.
 				</div>
 			</div>
 
-			<div class="services">
-				<div class="service-card">
-					<h3>Data Infrastructure</h3>
-					<p>
-						The underlying systems that collect, store, process, and serve data
-						across your organization - the foundation that makes AI possible.
-					</p>
-				</div>
+			<div class="cmd-line">
+				<span class="cmd-prompt">root@motis:~$</span> ls -la /services/
+			</div>
 
-				<div class="service-card">
-					<h3>ML Pipelines</h3>
-					<p>
-						End-to-end machine learning pipelines for training, deploying, and
-						monitoring AI models that deploy, scale, and stay deployed.
-					</p>
+			<div class="services-grid">
+				<div class="service-item">
+					<div class="service-title">SECURE INFRASTRUCTURE</div>
+					<div class="service-desc">Zero-trust architecture. End-to-end encryption. Air-gapped deployment options.</div>
 				</div>
-
-				<div class="service-card">
-					<h3>Automation Systems</h3>
-					<p>
-						Workflows that eliminate manual work and reduce human error -
-						automation that removes work instead of creating more work.
-					</p>
+				
+				<div class="service-item">
+					<div class="service-title">PRIVACY ENGINEERING</div>
+					<div class="service-desc">Data minimization. Anonymous authentication. Surveillance-resistant protocols.</div>
 				</div>
-
-				<div class="service-card">
-					<h3>Enterprise Systems</h3>
-					<p>
-						End-to-end solutions that handle real-world complexity and edge
-						cases - systems that work when everything else falls apart.
-					</p>
+				
+				<div class="service-item">
+					<div class="service-title">CRYPTOGRAPHIC SYSTEMS</div>
+					<div class="service-desc">Post-quantum cryptography. Perfect forward secrecy. Homomorphic encryption.</div>
 				</div>
-
-				<div class="service-card">
-					<h3>Technical Strategy</h3>
-					<p>
-						I scope the actual problem, not the problem you think you have. Zero
-						handoffs, shipped on deadline, always.
-					</p>
+				
+				<div class="service-item">
+					<div class="service-title">DECENTRALIZED NETWORKS</div>
+					<div class="service-desc">Mesh networking. Peer-to-peer protocols. Censorship-resistant communication.</div>
 				</div>
-
-				<div class="service-card">
-					<h3>Performance Engineering</h3>
-					<p>
-						Systems your team can own, extend, and understand. Built for scale,
-						optimized for maintainability.
-					</p>
+				
+				<div class="service-item">
+					<div class="service-title">OPERATIONAL SECURITY</div>
+					<div class="service-desc">Threat modeling. Security audits. Incident response. Digital forensics.</div>
+				</div>
+				
+				<div class="service-item">
+					<div class="service-title">ANONYMOUS SYSTEMS</div>
+					<div class="service-desc">Tor integration. Mix networks. Anonymous credentials. Metadata protection.</div>
 				</div>
 			</div>
 
-			<div class="contact">
-				<h2>Get In Touch</h2>
-				<p>Staff engineer. Zero handoffs. Ships on time.</p>
-				<div class="contact-info">
-					<a href="mailto:automation@motis.group" class="contact-item"
-						>automation@motis.group</a
-					>
-					<a
-						href="https://calendly.com/motis-automation"
-						target="_blank"
-						class="contact-item"
-						>Schedule Call</a
-					>
-					<a
-						href="https://github.com/willmarzella"
-						target="_blank"
-						class="contact-item"
-						>GitHub</a
-					>
+			<div class="cmd-line">
+				<span class="cmd-prompt">root@motis:~$</span> cat /proc/threat_model
+			</div>
+
+			<div class="info-box">
+				<div class="info-box-title">ADVERSARY: GLOBAL SURVEILLANCE STATE</div>
+				<div class="info-box-content">
+					• State-level actors with unlimited resources<br>
+					• Corporate data brokers and surveillance capitalism<br>
+					• Mass collection and correlation of metadata<br>
+					• Compromised infrastructure and supply chains<br>
+					• Legal compulsion and secret court orders
 				</div>
+			</div>
+
+			<div class="cmd-line">
+				<span class="cmd-prompt">root@motis:~$</span> grep -i "contact" /etc/passwd
+			</div>
+
+			<div class="contact-links">
+				<a href="mailto:secure@motis.group" class="contact-link">[SECURE EMAIL]</a>
+				<a href="https://calendly.com/motis-automation" target="_blank" class="contact-link">[ENCRYPTED CALL]</a>
+				<a href="https://github.com/willmarzella" target="_blank" class="contact-link">[CODE REVIEW]</a>
+			</div>
+
+			<div class="cmd-line">
+				<span class="cmd-prompt">root@motis:~$</span> uptime
+			</div>
+			<div class="cmd-line cmd-output">
+				MELBOURNE TIMEZONE. GLOBAL OPERATIONS. ZERO DOWNTIME.
+			</div>
+
+			<div class="cmd-line">
+				<span class="cmd-prompt">root@motis:~$</span> echo "ACT NOW AGAINST MASS SURVEILLANCE."
+			</div>
+			<div class="cmd-line cmd-output cmd-highlight">
+				ACT NOW AGAINST MASS SURVEILLANCE.
+			</div>
+
+			<div class="cmd-line">
+				<span class="cmd-prompt">root@motis:~$</span> <span class="cursor"></span>
 			</div>
 		</div>
 	</body>
