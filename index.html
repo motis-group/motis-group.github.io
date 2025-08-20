@@ -8,6 +8,7 @@
 		/>
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 		<title>MOTIS.GROUP | Systems Architect</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 		<style>
 			:root {
 				--bg-dark: #0d0504;
@@ -64,6 +65,19 @@
 				height: 100%;
 				background: rgba(0, 0, 0, 0.4);
 				z-index: 1;
+			}
+
+			/* 3D Infinity Symbol Container */
+			#infinity-container {
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				width: 400px;
+				height: 300px;
+				z-index: -1;
+				opacity: 0.8;
+				pointer-events: none;
 			}
 
 			/* Content Container */
@@ -189,8 +203,7 @@
 				word-wrap: break-word;
 				transition: all 0.3s ease;
 				backdrop-filter: blur(10px);
-				box-shadow: 
-					0 10px 30px rgba(0, 0, 0, 0.5),
+				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5),
 					0 0 20px rgba(232, 115, 26, 0.2);
 			}
 
@@ -396,6 +409,12 @@
 					background: rgba(0, 0, 0, 0.6);
 				}
 
+				#infinity-container {
+					width: 300px;
+					height: 200px;
+					opacity: 0.6;
+				}
+
 				.status-indicator {
 					top: 10px;
 					right: 10px;
@@ -453,17 +472,186 @@
 				}
 			}
 
+			// 3D Dithered Infinity Symbol
+			let scene, camera, renderer, infinityGroup;
+			
+			function initInfinitySymbol() {
+				const container = document.getElementById('infinity-container');
+				if (!container) return;
+				
+				// Scene setup
+				scene = new THREE.Scene();
+				camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+				renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
+				renderer.setSize(container.offsetWidth, container.offsetHeight);
+				renderer.setClearColor(0x000000, 0);
+				container.appendChild(renderer.domElement);
+				
+				// Create infinity symbol using two torus geometries
+				infinityGroup = new THREE.Group();
+				
+				// Create dithering material with custom shader
+				const ditheredMaterial = new THREE.ShaderMaterial({
+					uniforms: {
+						time: { value: 0 },
+						resolution: { value: new THREE.Vector2(container.offsetWidth, container.offsetHeight) },
+						color: { value: new THREE.Color(0xff7300) }
+					},
+					vertexShader: `
+						varying vec2 vUv;
+						varying vec3 vPosition;
+						varying vec3 vNormal;
+						
+						void main() {
+							vUv = uv;
+							vPosition = position;
+							vNormal = normal;
+							gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+						}
+					`,
+					fragmentShader: `
+						uniform float time;
+						uniform vec2 resolution;
+						uniform vec3 color;
+						varying vec2 vUv;
+						varying vec3 vPosition;
+						varying vec3 vNormal;
+						
+						// 4x4 Bayer Matrix for ordered dithering
+						const mat4 bayerMatrix = mat4(
+							0.0,  8.0,  2.0, 10.0,
+							12.0, 4.0,  14.0, 6.0,
+							3.0,  11.0, 1.0, 9.0,
+							15.0, 7.0,  13.0, 5.0
+						) / 16.0;
+						
+						float orderedDither(vec2 screenPos, float lum) {
+							int x = int(mod(screenPos.x, 4.0));
+							int y = int(mod(screenPos.y, 4.0));
+							float threshold = bayerMatrix[y][x];
+							return lum > threshold ? 1.0 : 0.0;
+						}
+						
+						void main() {
+							vec2 screenPos = gl_FragCoord.xy;
+							
+							// Calculate lighting based on normal
+							vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
+							float NdotL = max(dot(vNormal, lightDir), 0.0);
+							
+							// Add some ambient and fresnel lighting
+							float fresnel = 1.0 - dot(vNormal, vec3(0.0, 0.0, 1.0));
+							float luminance = NdotL * 0.7 + fresnel * 0.3 + 0.2;
+							
+							// Add animated glow effect
+							float glow = sin(time * 2.0 + vPosition.x * 5.0) * 0.1 + 0.9;
+							luminance *= glow;
+							
+							// Apply ordered dithering
+							float dithered = orderedDither(screenPos, luminance);
+							
+							// Color quantization (reduce to 4 levels)
+							float quantized = floor(dithered * 3.0 + 0.5) / 3.0;
+							
+							vec3 finalColor = color * quantized;
+							
+							// Add subtle glow for non-black pixels
+							if (quantized > 0.0) {
+								finalColor += color * 0.3 * glow;
+							}
+							
+							gl_FragColor = vec4(finalColor, quantized);
+						}
+					`,
+					transparent: true,
+					wireframe: false
+				});
+				
+				// Left torus (rotated)
+				const leftTorus = new THREE.Mesh(
+					new THREE.TorusGeometry(0.8, 0.3, 16, 32),
+					ditheredMaterial.clone()
+				);
+				leftTorus.position.set(-0.6, 0, 0);
+				leftTorus.rotation.set(0, 0, Math.PI / 4);
+				
+				// Right torus (rotated opposite)
+				const rightTorus = new THREE.Mesh(
+					new THREE.TorusGeometry(0.8, 0.3, 16, 32),
+					ditheredMaterial.clone()
+				);
+				rightTorus.position.set(0.6, 0, 0);
+				rightTorus.rotation.set(0, 0, -Math.PI / 4);
+				
+				infinityGroup.add(leftTorus);
+				infinityGroup.add(rightTorus);
+				scene.add(infinityGroup);
+				
+				// Camera position
+				camera.position.z = 4;
+				camera.position.y = 0;
+				
+				// Start animation
+				animateInfinity();
+			}
+			
+			function animateInfinity() {
+				requestAnimationFrame(animateInfinity);
+				
+				const time = Date.now() * 0.001;
+				
+				// Rotate the entire infinity symbol
+				if (infinityGroup) {
+					infinityGroup.rotation.x = Math.sin(time * 0.5) * 0.2;
+					infinityGroup.rotation.y = time * 0.3;
+					infinityGroup.rotation.z = Math.cos(time * 0.3) * 0.1;
+					
+					// Update shader uniforms
+					infinityGroup.children.forEach(child => {
+						if (child.material && child.material.uniforms) {
+							child.material.uniforms.time.value = time;
+						}
+					});
+				}
+				
+				renderer.render(scene, camera);
+			}
+
 			// Initialize when page loads
 			document.addEventListener('DOMContentLoaded', () => {
 				updateAvailabilityStatus();
+				initInfinitySymbol();
+				
 				// Update status every minute
 				setInterval(updateAvailabilityStatus, 60000);
+				
+				// Handle window resize
+				window.addEventListener('resize', () => {
+					const container = document.getElementById('infinity-container');
+					if (renderer && camera && container && container.offsetWidth > 0) {
+						camera.aspect = container.offsetWidth / container.offsetHeight;
+						camera.updateProjectionMatrix();
+						renderer.setSize(container.offsetWidth, container.offsetHeight);
+						
+						// Update shader resolution uniform
+						if (infinityGroup) {
+							infinityGroup.children.forEach(child => {
+								if (child.material && child.material.uniforms) {
+									child.material.uniforms.resolution.value.set(container.offsetWidth, container.offsetHeight);
+								}
+							});
+						}
+					}
+				});
 			});
 		</script>
 	</head>
 	<body>
 		<!-- Chain Link Pattern Background -->
 		<div class="chain-background"></div>
+
+		<!-- 3D Dithered Infinity Symbol -->
+		<div id="infinity-container"></div>
 
 		<!-- Status Indicator -->
 		<div class="status-indicator">
@@ -483,105 +671,194 @@
 
 			<div class="content-section">
 				<div class="statement">
-					<span class="accent-marker">></span> I won't bullshit you about AI - it's the infrastructure underneath that matters.
+					<span class="accent-marker">></span> I won't bullshit you about AI -
+					it's the infrastructure underneath that matters.
 				</div>
-				
+
 				<div class="statement">
-					<span class="accent-marker">></span> Code is just the medium. Shaping outcomes is the job.
+					<span class="accent-marker">></span> Code is just the medium. Shaping
+					outcomes is the job.
 				</div>
 
 				<div class="spacer"></div>
 
 				<div class="statement">
-					<span class="accent-marker">[PROFILE]</span> Staff engineer. Zero handoffs. Ships on time.
+					<span class="accent-marker">[PROFILE]</span> Staff engineer. Zero
+					handoffs. Ships on time.
 				</div>
 
 				<div class="spacer"></div>
 
-				<div class="statement">Most of what people call software engineering isn't about writing code.</div>
-				
-				<div class="statement">It's about figuring out what problem actually matters and making sure it holds up when reality pushes back.</div>
+				<div class="statement">
+					Most of what people call software engineering isn't about writing
+					code.
+				</div>
+
+				<div class="statement">
+					It's about figuring out what problem actually matters and making sure
+					it holds up when reality pushes back.
+				</div>
 
 				<div class="spacer"></div>
 
 				<div class="section-header">What I build:</div>
-				
+
 				<div class="statement">
-					<span class="accent-marker">[+]</span> <span class="tooltip">Data infrastructure<span class="tooltip-content">The underlying systems that collect, store, process, and serve data across your organization - the foundation that makes AI possible</span></span> that actually processes what you need when you need it.
+					<span class="accent-marker">[+]</span>
+					<span class="tooltip"
+						>Data infrastructure<span class="tooltip-content"
+							>The underlying systems that collect, store, process, and serve
+							data across your organization - the foundation that makes AI
+							possible</span
+						></span
+					>
+					that actually processes what you need when you need it.
 				</div>
-				
+
 				<div class="statement">
-					<span class="accent-marker">[+]</span> <span class="tooltip">ML pipelines<span class="tooltip-content">Machine Learning systems: End-to-end pipelines for training, deploying, and monitoring AI models</span></span> that deploy, scale, and stay deployed.
+					<span class="accent-marker">[+]</span>
+					<span class="tooltip"
+						>ML pipelines<span class="tooltip-content"
+							>Machine Learning systems: End-to-end pipelines for training,
+							deploying, and monitoring AI models</span
+						></span
+					>
+					that deploy, scale, and stay deployed.
 				</div>
-				
+
 				<div class="statement">
-					<span class="accent-marker">[+]</span> <span class="tooltip">Automation<span class="tooltip-content">Workflows that eliminate manual work and reduce human error</span></span> that removes work instead of creating more work.
+					<span class="accent-marker">[+]</span>
+					<span class="tooltip"
+						>Automation<span class="tooltip-content"
+							>Workflows that eliminate manual work and reduce human error</span
+						></span
+					>
+					that removes work instead of creating more work.
 				</div>
-				
+
 				<div class="statement">
-					<span class="accent-marker">[+]</span> <span class="tooltip">Systems<span class="tooltip-content">End-to-end solutions that handle real-world complexity and edge cases</span></span> that work when everything else falls apart.
+					<span class="accent-marker">[+]</span>
+					<span class="tooltip"
+						>Systems<span class="tooltip-content"
+							>End-to-end solutions that handle real-world complexity and edge
+							cases</span
+						></span
+					>
+					that work when everything else falls apart.
 				</div>
 
 				<div class="spacer"></div>
 
 				<div class="section-header">How I work:</div>
-				
+
 				<div class="statement">
-					<span class="accent-marker">[*]</span> I scope the actual problem, not the problem you think you have.
+					<span class="accent-marker">[*]</span> I scope the actual problem, not
+					the problem you think you have.
 				</div>
-				
+
 				<div class="statement">
-					<span class="accent-marker">[*]</span> I write the code personally. Zero outsourcing.
+					<span class="accent-marker">[*]</span> I write the code personally.
+					Zero outsourcing.
 				</div>
-				
+
 				<div class="statement">
-					<span class="accent-marker">[*]</span> I build systems your team can own, extend, and understand.
+					<span class="accent-marker">[*]</span> I build systems your team can
+					own, extend, and understand.
 				</div>
-				
+
 				<div class="statement">
 					<span class="accent-marker">[*]</span> I ship on deadline. Always.
 				</div>
-				
+
 				<div class="statement">
-					<span class="accent-marker">[*]</span> No meetings unless they solve something specific.
+					<span class="accent-marker">[*]</span> No meetings unless they solve
+					something specific.
 				</div>
 
 				<div class="spacer"></div>
 
 				<div class="section-header">Stack:</div>
-				
+
 				<div class="statement">
-					Python, <span class="tooltip">LangChain<span class="tooltip-content">Framework for developing applications with large language models</span></span>, AWS, <span class="tooltip">Snowflake<span class="tooltip-content">Cloud-based data warehouse platform</span></span>, <span class="tooltip">dbt<span class="tooltip-content">Data build tool: Transforms data in your warehouse</span></span>, <span class="tooltip">Airflow<span class="tooltip-content">Platform for programmatically authoring and scheduling workflows</span></span>, Postgres, <span class="tooltip">Databricks<span class="tooltip-content">Unified analytics platform for big data and machine learning</span></span>, <span class="tooltip">Hugging Face<span class="tooltip-content">Platform hosting AI models and datasets</span></span>.
+					Python,
+					<span class="tooltip"
+						>LangChain<span class="tooltip-content"
+							>Framework for developing applications with large language
+							models</span
+						></span
+					>, AWS,
+					<span class="tooltip"
+						>Snowflake<span class="tooltip-content"
+							>Cloud-based data warehouse platform</span
+						></span
+					>,
+					<span class="tooltip"
+						>dbt<span class="tooltip-content"
+							>Data build tool: Transforms data in your warehouse</span
+						></span
+					>,
+					<span class="tooltip"
+						>Airflow<span class="tooltip-content"
+							>Platform for programmatically authoring and scheduling
+							workflows</span
+						></span
+					>, Postgres,
+					<span class="tooltip"
+						>Databricks<span class="tooltip-content"
+							>Unified analytics platform for big data and machine
+							learning</span
+						></span
+					>,
+					<span class="tooltip"
+						>Hugging Face<span class="tooltip-content"
+							>Platform hosting AI models and datasets</span
+						></span
+					>.
 				</div>
-				
+
 				<div class="statement">Whatever works. Simple beats complex.</div>
 
 				<div class="spacer"></div>
 
 				<div class="statement">
-					<a href="https://github.com/willmarzella" target="_blank">github.com/willmarzella</a>
+					<a href="https://github.com/willmarzella" target="_blank"
+						>github.com/willmarzella</a
+					>
 				</div>
 
 				<div class="spacer"></div>
 
 				<div class="section-header">Options:</div>
-				
+
 				<div class="statement">
-					<span class="accent-marker">[$]</span> Fixed-price projects. $20k minimum. 50% upfront, 50% on delivery.
+					<span class="accent-marker">[$]</span> Fixed-price projects. $20k
+					minimum. 50% upfront, 50% on delivery.
 				</div>
-				
+
 				<div class="statement">
-					<span class="accent-marker">[$]</span> $1,000/day for short-term work. Migrations, audits, <span class="tooltip">fire-fighting<span class="tooltip-content">Urgent troubleshooting and fixes for critical system failures or performance issues</span></span>.
+					<span class="accent-marker">[$]</span> $1,000/day for short-term work.
+					Migrations, audits,
+					<span class="tooltip"
+						>fire-fighting<span class="tooltip-content"
+							>Urgent troubleshooting and fixes for critical system failures or
+							performance issues</span
+						></span
+					>.
 				</div>
-				
+
 				<div class="statement">
-					<span class="accent-marker">[$]</span> <a href="https://calendly.com/motis-automation" target="_blank">$150–$300/hr</a> for advisory calls.
+					<span class="accent-marker">[$]</span>
+					<a href="https://calendly.com/motis-automation" target="_blank"
+						>$150–$300/hr</a
+					>
+					for advisory calls.
 				</div>
 
 				<div class="spacer"></div>
 
 				<div class="statement">
-					<span class="accent-marker">[LOCATION]</span> Melbourne timezone. Work globally.
+					<span class="accent-marker">[LOCATION]</span> Melbourne timezone. Work
+					globally.
 				</div>
 			</div>
 
