@@ -49,11 +49,21 @@
 				width: 100%;
 				height: 100%;
 				z-index: -2;
-				background-image: url('b6ea8215e62147969a6370cd5c7fb809.jpg');
 				background-size: cover;
 				background-position: center;
 				background-repeat: no-repeat;
 				background-attachment: fixed;
+			}
+
+			/* Canvas for dithered background */
+			#dithered-canvas {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				z-index: -2;
+				object-fit: cover;
 			}
 
 			.chain-background::before {
@@ -75,7 +85,7 @@
 				transform: translate(-50%, -50%);
 				width: 400px;
 				height: 300px;
-				z-index: -1;
+				z-index: 50;
 				opacity: 0.8;
 				pointer-events: none;
 			}
@@ -129,6 +139,7 @@
 
 			/* Text Content */
 			.text-content {
+				text-transform: uppercase;
 				margin-bottom: 4rem;
 				max-width: 700px;
 				margin-left: auto;
@@ -454,6 +465,109 @@
 				}
 			}
 
+			// Dithered Background Implementation
+			function initDitheredBackground() {
+				const canvas = document.getElementById('dithered-canvas');
+				if (!canvas) return;
+				
+				const ctx = canvas.getContext('2d');
+				const img = new Image();
+				
+				img.onload = function() {
+					// Set canvas size to match viewport
+					canvas.width = window.innerWidth;
+					canvas.height = window.innerHeight;
+					
+					// Calculate aspect ratios for cover-like behavior
+					const canvasAspect = canvas.width / canvas.height;
+					const imgAspect = img.width / img.height;
+					
+					let drawWidth, drawHeight, offsetX, offsetY;
+					
+					if (canvasAspect > imgAspect) {
+						// Canvas is wider than image
+						drawWidth = canvas.width;
+						drawHeight = canvas.width / imgAspect;
+						offsetX = 0;
+						offsetY = (canvas.height - drawHeight) / 2;
+					} else {
+						// Canvas is taller than image
+						drawWidth = canvas.height * imgAspect;
+						drawHeight = canvas.height;
+						offsetX = (canvas.width - drawWidth) / 2;
+						offsetY = 0;
+					}
+					
+					// Draw the image
+					ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+					
+					// Apply dithering effect
+					applyDithering(ctx, canvas.width, canvas.height);
+				};
+				
+				img.src = 'd2064fbd00e65134cf8566947fb52269.jpg';
+			}
+			
+			function applyDithering(ctx, width, height) {
+				// Get image data
+				const imageData = ctx.getImageData(0, 0, width, height);
+				const data = imageData.data;
+				
+				// 4x4 Bayer Matrix (same as in the shader)
+				const bayerMatrix = [
+					[0/16, 8/16, 2/16, 10/16],
+					[12/16, 4/16, 14/16, 6/16],
+					[3/16, 11/16, 1/16, 9/16],
+					[15/16, 7/16, 13/16, 5/16]
+				];
+				
+				// Orange color theme to match the site
+				const orangeColor = [232, 115, 26]; // --accent color
+				
+				// Process each pixel
+				for (let y = 0; y < height; y++) {
+					for (let x = 0; x < width; x++) {
+						const pixelIndex = (y * width + x) * 4;
+						
+						// Get RGB values
+						const r = data[pixelIndex];
+						const g = data[pixelIndex + 1];
+						const b = data[pixelIndex + 2];
+						
+						// Calculate luminance
+						const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+						
+						// Get Bayer matrix threshold
+						const bayerX = x % 4;
+						const bayerY = y % 4;
+						const threshold = bayerMatrix[bayerY][bayerX];
+						
+						// Apply dithering
+						const dithered = luminance > threshold ? 1 : 0;
+						
+						// Color quantization (4 levels like in the shader)
+						const quantized = Math.floor(dithered * 3 + 0.5) / 3;
+						
+						// Apply orange color theme
+						if (quantized > 0) {
+							data[pixelIndex] = orangeColor[0] * quantized;     // R
+							data[pixelIndex + 1] = orangeColor[1] * quantized; // G  
+							data[pixelIndex + 2] = orangeColor[2] * quantized; // B
+						} else {
+							data[pixelIndex] = 0;     // R
+							data[pixelIndex + 1] = 0; // G
+							data[pixelIndex + 2] = 0; // B
+						}
+						
+						// Keep original alpha
+						// data[pixelIndex + 3] = data[pixelIndex + 3];
+					}
+				}
+				
+				// Put the modified image data back
+				ctx.putImageData(imageData, 0, 0);
+			}
+
 			// 3D Dithered Infinity Symbol
 			let scene, camera, renderer, infinityGroup;
 
@@ -612,6 +726,7 @@
 			// Initialize when page loads
 			document.addEventListener('DOMContentLoaded', () => {
 				updateAvailabilityStatus();
+				initDitheredBackground();
 				initInfinitySymbol();
 
 				// Update status every minute
@@ -619,6 +734,11 @@
 
 				// Handle window resize
 				window.addEventListener('resize', () => {
+					// Reinitialize dithered background
+					setTimeout(() => {
+						initDitheredBackground();
+					}, 100);
+					
 					const container = document.getElementById('infinity-container');
 					if (renderer && camera && container && container.offsetWidth > 0) {
 						camera.aspect = container.offsetWidth / container.offsetHeight;
@@ -642,11 +762,13 @@
 		</script>
 	</head>
 	<body>
+		<!-- Dithered Background Canvas -->
+		<canvas id="dithered-canvas"></canvas>
+		
 		<!-- Chain Link Pattern Background -->
 		<div class="chain-background"></div>
 
 		<!-- 3D Dithered Infinity Symbol -->
-		<div id="infinity-container"></div>
 
 		<!-- Status Indicator -->
 		<div class="status-indicator">
@@ -656,6 +778,7 @@
 
 		<!-- Main Content -->
 		<div class="content">
+			<div id="infinity-container"></div>
 			<div class="hero">
 				<h1>MOTIS.GROUP</h1>
 				<div class="subtitle">Systems Architecture & Engineering</div>
@@ -664,51 +787,77 @@
 				</div>
 			</div>
 
-					<div class="text-content">
-			<p>I build systems that work when everything else falls apart.</p>
-			
-			<p>I won't bullshit you about AI - it's the infrastructure underneath that matters.</p>
-			
-			<p>Code is just the medium. Shaping outcomes is the job.</p>
-			
-			<p>Staff engineer. Zero handoffs. Ships on time.</p>
-			
-			<p>Most of what people call software engineering isn't about writing code.</p>
-			
-			<p>It's about figuring out what problem actually matters and making sure it holds up when reality pushes back.</p>
-			
-			<p>Data infrastructure that actually processes what you need when you need it.</p>
-			
-			<p>ML pipelines that deploy, scale, and stay deployed.</p>
-			
-			<p>Automation that removes work instead of creating more work.</p>
-			
-			<p>Systems that work when everything else falls apart.</p>
-			
-			<p>I scope the actual problem, not the problem you think you have.</p>
-			
-			<p>I write the code personally. Zero outsourcing.</p>
-			
-			<p>I build systems your team can own, extend, and understand.</p>
-			
-			<p>I ship on deadline. Always.</p>
-			
-			<p>No meetings unless they solve something specific.</p>
-			
-			<p>Python, LangChain, AWS, Snowflake, dbt, Airflow, Postgres, Databricks, Hugging Face.</p>
-			
-			<p>Whatever works. Simple beats complex.</p>
-			
-			<p><a href="https://github.com/willmarzella" target="_blank">github.com/willmarzella</a></p>
-			
-			<p>Fixed-price projects. $20k minimum. 50% upfront, 50% on delivery.</p>
-			
-			<p>$1,000/day for short-term work. Migrations, audits, fire-fighting.</p>
-			
-			<p><a href="https://calendly.com/motis-automation" target="_blank">$150–$300/hr</a> for advisory calls.</p>
-			
-			<p>Melbourne timezone. Work globally.</p>
-		</div>
+			<div class="text-content">
+				<p>I build systems that work when everything else falls apart.</p>
+
+				<p>
+					I won't bullshit you about AI - it's the infrastructure underneath
+					that matters.
+				</p>
+
+				<p>Code is just the medium. Shaping outcomes is the job.</p>
+
+				<p>Staff engineer. Zero handoffs. Ships on time.</p>
+
+				<p>
+					Most of what people call software engineering isn't about writing
+					code.
+				</p>
+
+				<p>
+					It's about figuring out what problem actually matters and making sure
+					it holds up when reality pushes back.
+				</p>
+
+				<p>
+					Data infrastructure that actually processes what you need when you
+					need it.
+				</p>
+
+				<p>ML pipelines that deploy, scale, and stay deployed.</p>
+
+				<p>Automation that removes work instead of creating more work.</p>
+
+				<p>Systems that work when everything else falls apart.</p>
+
+				<p>I scope the actual problem, not the problem you think you have.</p>
+
+				<p>I write the code personally. Zero outsourcing.</p>
+
+				<p>I build systems your team can own, extend, and understand.</p>
+
+				<p>I ship on deadline. Always.</p>
+
+				<p>No meetings unless they solve something specific.</p>
+
+				<p>
+					Python, LangChain, AWS, Snowflake, dbt, Airflow, Postgres, Databricks,
+					Hugging Face.
+				</p>
+
+				<p>Whatever works. Simple beats complex.</p>
+
+				<p>
+					<a href="https://github.com/willmarzella" target="_blank"
+						>github.com/willmarzella</a
+					>
+				</p>
+
+				<p>Fixed-price projects. $20k minimum. 50% upfront, 50% on delivery.</p>
+
+				<p>
+					$1,000/day for short-term work. Migrations, audits, fire-fighting.
+				</p>
+
+				<p>
+					<a href="https://calendly.com/motis-automation" target="_blank"
+						>$150–$300/hr</a
+					>
+					for advisory calls.
+				</p>
+
+				<p>Melbourne timezone. Work globally.</p>
+			</div>
 
 			<div class="contact">
 				<h2>Get In Touch</h2>
