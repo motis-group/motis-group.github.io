@@ -75,8 +75,8 @@
 				transform: translate(-50%, -50%);
 				width: 400px;
 				height: 300px;
-				z-index: 5;
-				opacity: 0.9;
+				z-index: -1;
+				opacity: 0.8;
 				pointer-events: none;
 			}
 
@@ -127,12 +127,27 @@
 				margin-bottom: 3rem;
 			}
 
-			/* Content Section */
-			.content-section {
+			/* Text Content */
+			.text-content {
 				margin-bottom: 4rem;
-				max-width: 800px;
+				max-width: 700px;
 				margin-left: auto;
 				margin-right: auto;
+				padding: 2rem;
+				border: 1px solid var(--accent);
+				background: rgba(0, 0, 0, 0.3);
+				backdrop-filter: blur(5px);
+			}
+
+			.text-content p {
+				margin-bottom: 1rem;
+				font-weight: 300;
+				line-height: 1.8;
+				color: var(--text-primary);
+			}
+
+			.text-content p:last-child {
+				margin-bottom: 0;
 			}
 
 			.statement {
@@ -223,33 +238,10 @@
 				transform: translateX(-50%) translateY(-5px);
 			}
 
-			/* Links */
+			/* Simple Links */
 			a {
 				color: var(--accent);
-				text-decoration: none;
-				position: relative;
-				transition: all 0.3s ease;
-				font-weight: 400;
-			}
-
-			a::after {
-				content: '';
-				position: absolute;
-				bottom: -2px;
-				left: 0;
-				width: 0;
-				height: 1px;
-				background: linear-gradient(90deg, var(--accent), var(--dot-secondary));
-				transition: width 0.3s ease;
-			}
-
-			a:hover {
-				color: var(--text-primary);
-				text-shadow: 0 0 10px var(--dot-glow);
-			}
-
-			a:hover::after {
-				width: 100%;
+				text-decoration: underline;
 			}
 
 			/* Contact Section */
@@ -375,24 +367,14 @@
 					font-size: 1rem;
 				}
 
-				.content-section {
-					padding: 0 0.5rem;
+				.text-content {
+					padding: 1.5rem;
+					margin: 0 1rem 4rem 1rem;
 				}
 
-				.statement {
-					padding: 0.6rem 0.8rem;
+				.text-content p {
 					font-size: 0.9rem;
-				}
-
-				.section-header {
-					font-size: 1rem;
-					margin: 1.5rem 0 0.8rem 0;
-				}
-
-				.tooltip-content {
-					font-size: 0.7rem;
-					max-width: 250px;
-					padding: 0.6rem;
+					margin-bottom: 0.8rem;
 				}
 
 				.contact-info {
@@ -528,49 +510,49 @@
 						varying vec3 vNormal;
 						
 						// 4x4 Bayer Matrix for ordered dithering
-						float bayerMatrix4x4[16] = float[16](
-							0.0/16.0,  8.0/16.0,  2.0/16.0, 10.0/16.0,
-							12.0/16.0, 4.0/16.0, 14.0/16.0,  6.0/16.0,
-							3.0/16.0, 11.0/16.0,  1.0/16.0,  9.0/16.0,
-							15.0/16.0, 7.0/16.0, 13.0/16.0,  5.0/16.0
-						);
+						const mat4 bayerMatrix = mat4(
+							0.0,  8.0,  2.0, 10.0,
+							12.0, 4.0,  14.0, 6.0,
+							3.0,  11.0, 1.0, 9.0,
+							15.0, 7.0,  13.0, 5.0
+						) / 16.0;
 						
 						float orderedDither(vec2 screenPos, float lum) {
 							int x = int(mod(screenPos.x, 4.0));
 							int y = int(mod(screenPos.y, 4.0));
-							float threshold = bayerMatrix4x4[y * 4 + x];
-							return lum > threshold ? 1.0 : 0.3;
+							float threshold = bayerMatrix[y][x];
+							return lum > threshold ? 1.0 : 0.0;
 						}
 						
 						void main() {
-							vec2 screenPos = gl_FragCoord.xy / 3.0; // Pixelization factor
+							vec2 screenPos = gl_FragCoord.xy;
 							
 							// Calculate lighting based on normal
 							vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
 							float NdotL = max(dot(vNormal, lightDir), 0.0);
 							
 							// Add some ambient and fresnel lighting
-							float fresnel = 1.0 - abs(dot(vNormal, vec3(0.0, 0.0, 1.0)));
+							float fresnel = 1.0 - dot(vNormal, vec3(0.0, 0.0, 1.0));
 							float luminance = NdotL * 0.7 + fresnel * 0.3 + 0.2;
 							
 							// Add animated glow effect
-							float glow = sin(time * 2.0 + vPosition.x * 3.0) * 0.1 + 0.9;
+							float glow = sin(time * 2.0 + vPosition.x * 5.0) * 0.1 + 0.9;
 							luminance *= glow;
 							
 							// Apply ordered dithering
 							float dithered = orderedDither(screenPos, luminance);
 							
 							// Color quantization (reduce to 4 levels)
-							float quantized = floor(dithered * 4.0) / 4.0;
+							float quantized = floor(dithered * 3.0 + 0.5) / 3.0;
 							
 							vec3 finalColor = color * quantized;
 							
-							// Add subtle glow for brighter pixels
-							if (quantized > 0.5) {
-								finalColor += color * 0.2 * glow;
+							// Add subtle glow for non-black pixels
+							if (quantized > 0.0) {
+								finalColor += color * 0.3 * glow;
 							}
 							
-							gl_FragColor = vec4(finalColor, quantized > 0.1 ? 0.9 : 0.0);
+							gl_FragColor = vec4(finalColor, quantized);
 						}
 					`,
 					transparent: true,
@@ -579,7 +561,7 @@
 
 				// Left torus (rotated)
 				const leftTorus = new THREE.Mesh(
-					new THREE.TorusGeometry(0.8, 0.3, 32, 64),
+					new THREE.TorusGeometry(0.8, 0.3, 16, 32),
 					ditheredMaterial.clone()
 				);
 				leftTorus.position.set(-0.6, 0, 0);
@@ -587,7 +569,7 @@
 
 				// Right torus (rotated opposite)
 				const rightTorus = new THREE.Mesh(
-					new THREE.TorusGeometry(0.8, 0.3, 32, 64),
+					new THREE.TorusGeometry(0.8, 0.3, 16, 32),
 					ditheredMaterial.clone()
 				);
 				rightTorus.position.set(0.6, 0, 0);
@@ -642,7 +624,7 @@
 						camera.aspect = container.offsetWidth / container.offsetHeight;
 						camera.updateProjectionMatrix();
 						renderer.setSize(container.offsetWidth, container.offsetHeight);
-						
+
 						// Update shader resolution uniform
 						if (infinityGroup) {
 							infinityGroup.children.forEach((child) => {
@@ -682,198 +664,51 @@
 				</div>
 			</div>
 
-			<div class="content-section">
-				<div class="statement">
-					<span class="accent-marker">></span> I won't bullshit you about AI -
-					it's the infrastructure underneath that matters.
-				</div>
-
-				<div class="statement">
-					<span class="accent-marker">></span> Code is just the medium. Shaping
-					outcomes is the job.
-				</div>
-
-				<div class="spacer"></div>
-
-				<div class="statement">
-					<span class="accent-marker">[PROFILE]</span> Staff engineer. Zero
-					handoffs. Ships on time.
-				</div>
-
-				<div class="spacer"></div>
-
-				<div class="statement">
-					Most of what people call software engineering isn't about writing
-					code.
-				</div>
-
-				<div class="statement">
-					It's about figuring out what problem actually matters and making sure
-					it holds up when reality pushes back.
-				</div>
-
-				<div class="spacer"></div>
-
-				<div class="section-header">What I build:</div>
-
-				<div class="statement">
-					<span class="accent-marker">[+]</span>
-					<span class="tooltip"
-						>Data infrastructure<span class="tooltip-content"
-							>The underlying systems that collect, store, process, and serve
-							data across your organization - the foundation that makes AI
-							possible</span
-						></span
-					>
-					that actually processes what you need when you need it.
-				</div>
-
-				<div class="statement">
-					<span class="accent-marker">[+]</span>
-					<span class="tooltip"
-						>ML pipelines<span class="tooltip-content"
-							>Machine Learning systems: End-to-end pipelines for training,
-							deploying, and monitoring AI models</span
-						></span
-					>
-					that deploy, scale, and stay deployed.
-				</div>
-
-				<div class="statement">
-					<span class="accent-marker">[+]</span>
-					<span class="tooltip"
-						>Automation<span class="tooltip-content"
-							>Workflows that eliminate manual work and reduce human error</span
-						></span
-					>
-					that removes work instead of creating more work.
-				</div>
-
-				<div class="statement">
-					<span class="accent-marker">[+]</span>
-					<span class="tooltip"
-						>Systems<span class="tooltip-content"
-							>End-to-end solutions that handle real-world complexity and edge
-							cases</span
-						></span
-					>
-					that work when everything else falls apart.
-				</div>
-
-				<div class="spacer"></div>
-
-				<div class="section-header">How I work:</div>
-
-				<div class="statement">
-					<span class="accent-marker">[*]</span> I scope the actual problem, not
-					the problem you think you have.
-				</div>
-
-				<div class="statement">
-					<span class="accent-marker">[*]</span> I write the code personally.
-					Zero outsourcing.
-				</div>
-
-				<div class="statement">
-					<span class="accent-marker">[*]</span> I build systems your team can
-					own, extend, and understand.
-				</div>
-
-				<div class="statement">
-					<span class="accent-marker">[*]</span> I ship on deadline. Always.
-				</div>
-
-				<div class="statement">
-					<span class="accent-marker">[*]</span> No meetings unless they solve
-					something specific.
-				</div>
-
-				<div class="spacer"></div>
-
-				<div class="section-header">Stack:</div>
-
-				<div class="statement">
-					Python,
-					<span class="tooltip"
-						>LangChain<span class="tooltip-content"
-							>Framework for developing applications with large language
-							models</span
-						></span
-					>, AWS,
-					<span class="tooltip"
-						>Snowflake<span class="tooltip-content"
-							>Cloud-based data warehouse platform</span
-						></span
-					>,
-					<span class="tooltip"
-						>dbt<span class="tooltip-content"
-							>Data build tool: Transforms data in your warehouse</span
-						></span
-					>,
-					<span class="tooltip"
-						>Airflow<span class="tooltip-content"
-							>Platform for programmatically authoring and scheduling
-							workflows</span
-						></span
-					>, Postgres,
-					<span class="tooltip"
-						>Databricks<span class="tooltip-content"
-							>Unified analytics platform for big data and machine
-							learning</span
-						></span
-					>,
-					<span class="tooltip"
-						>Hugging Face<span class="tooltip-content"
-							>Platform hosting AI models and datasets</span
-						></span
-					>.
-				</div>
-
-				<div class="statement">Whatever works. Simple beats complex.</div>
-
-				<div class="spacer"></div>
-
-				<div class="statement">
-					<a href="https://github.com/willmarzella" target="_blank"
-						>github.com/willmarzella</a
-					>
-				</div>
-
-				<div class="spacer"></div>
-
-				<div class="section-header">Options:</div>
-
-				<div class="statement">
-					<span class="accent-marker">[$]</span> Fixed-price projects. $20k
-					minimum. 50% upfront, 50% on delivery.
-				</div>
-
-				<div class="statement">
-					<span class="accent-marker">[$]</span> $1,000/day for short-term work.
-					Migrations, audits,
-					<span class="tooltip"
-						>fire-fighting<span class="tooltip-content"
-							>Urgent troubleshooting and fixes for critical system failures or
-							performance issues</span
-						></span
-					>.
-				</div>
-
-				<div class="statement">
-					<span class="accent-marker">[$]</span>
-					<a href="https://calendly.com/motis-automation" target="_blank"
-						>$150–$300/hr</a
-					>
-					for advisory calls.
-				</div>
-
-				<div class="spacer"></div>
-
-				<div class="statement">
-					<span class="accent-marker">[LOCATION]</span> Melbourne timezone. Work
-					globally.
-				</div>
-			</div>
+					<div class="text-content">
+			<p>I build systems that work when everything else falls apart.</p>
+			
+			<p>I won't bullshit you about AI - it's the infrastructure underneath that matters.</p>
+			
+			<p>Code is just the medium. Shaping outcomes is the job.</p>
+			
+			<p>Staff engineer. Zero handoffs. Ships on time.</p>
+			
+			<p>Most of what people call software engineering isn't about writing code.</p>
+			
+			<p>It's about figuring out what problem actually matters and making sure it holds up when reality pushes back.</p>
+			
+			<p>Data infrastructure that actually processes what you need when you need it.</p>
+			
+			<p>ML pipelines that deploy, scale, and stay deployed.</p>
+			
+			<p>Automation that removes work instead of creating more work.</p>
+			
+			<p>Systems that work when everything else falls apart.</p>
+			
+			<p>I scope the actual problem, not the problem you think you have.</p>
+			
+			<p>I write the code personally. Zero outsourcing.</p>
+			
+			<p>I build systems your team can own, extend, and understand.</p>
+			
+			<p>I ship on deadline. Always.</p>
+			
+			<p>No meetings unless they solve something specific.</p>
+			
+			<p>Python, LangChain, AWS, Snowflake, dbt, Airflow, Postgres, Databricks, Hugging Face.</p>
+			
+			<p>Whatever works. Simple beats complex.</p>
+			
+			<p><a href="https://github.com/willmarzella" target="_blank">github.com/willmarzella</a></p>
+			
+			<p>Fixed-price projects. $20k minimum. 50% upfront, 50% on delivery.</p>
+			
+			<p>$1,000/day for short-term work. Migrations, audits, fire-fighting.</p>
+			
+			<p><a href="https://calendly.com/motis-automation" target="_blank">$150–$300/hr</a> for advisory calls.</p>
+			
+			<p>Melbourne timezone. Work globally.</p>
+		</div>
 
 			<div class="contact">
 				<h2>Get In Touch</h2>
