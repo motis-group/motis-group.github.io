@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"
+		/>
+		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+		<title>MOTIS.GROUP | Systems Architect</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+		<link rel="stylesheet" href="styles.css">
+
+		<script>
+			// Availability Status Management
+			function updateAvailabilityStatus() {
+				const statusPing = document.getElementById('togglefonts');
+				const statusText = document.getElementById('status-text');
+
+				// Override: Not available until June 2026
+				const now = new Date();
+				const availableDate = new Date('2025-12-05T00:00:00+10:00'); // June 1, 2024 Melbourne time
+
+				console.log('Current time:', now);
+				console.log('Available date:', availableDate);
+				console.log('Is past available date:', now >= availableDate);
+
+				if (now < availableDate) {
+					// Show unavailable with red indicator
+					statusPing.className = 'status-ping unavailable';
+					statusPing.textContent = '[X]';
+					const availableDateFormatted = availableDate
+						.toLocaleDateString('en-US', {
+							month: 'long',
+							year: 'numeric',
+							timeZone: 'Australia/Melbourne',
+						})
+						.toUpperCase();
+					statusText.textContent = `${availableDateFormatted}`;
+					console.log(`Status: Unavailable until ${availableDateFormatted}`);
+				} else {
+					// After June 2024, revert to normal availability logic
+					const melbourneTime = new Date(
+						now.toLocaleString('en-US', { timeZone: 'Australia/Melbourne' })
+					);
+					const hour = melbourneTime.getHours();
+					const day = melbourneTime.getDay(); // 0 = Sunday, 6 = Saturday
+
+					console.log('Melbourne time:', melbourneTime);
+					console.log('Hour:', hour, 'Day:', day);
+
+					// Available: Monday-Friday, 9 AM - 6 PM Melbourne time
+					const isWeekday = day >= 1 && day <= 5;
+					const isWorkingHours = hour >= 9 && hour < 18;
+					const isAvailable = isWeekday && isWorkingHours;
+
+					console.log(
+						'Is weekday:',
+						isWeekday,
+						'Is working hours:',
+						isWorkingHours,
+						'Is available:',
+						isAvailable
+					);
+
+					if (isAvailable) {
+						statusPing.className = 'on';
+						statusPing.textContent = '[✓]';
+						statusText.textContent = 'AVAILABLE';
+						console.log('Status: Available');
+					} else {
+						statusPing.className = 'off';
+						statusPing.textContent = '[X]';
+
+						// Calculate next availability
+						let nextAvailable = new Date(melbourneTime);
+
+						if (!isWeekday) {
+							// Weekend - next Monday
+							const daysUntilMonday = (8 - day) % 7;
+							nextAvailable.setDate(nextAvailable.getDate() + daysUntilMonday);
+							nextAvailable.setHours(9, 0, 0, 0);
+						} else if (hour >= 18) {
+							// After hours - next morning
+							nextAvailable.setDate(nextAvailable.getDate() + 1);
+							nextAvailable.setHours(9, 0, 0, 0);
+						} else {
+							// Before hours - today at 9 AM
+							nextAvailable.setHours(9, 0, 0, 0);
+						}
+
+						const timeUntil = Math.ceil(
+							(nextAvailable - melbourneTime) / (1000 * 60 * 60)
+						);
+						statusText.textContent = `AVAILABLE IN ${timeUntil}H`;
+						console.log(
+							'Status: Unavailable, next available in',
+							timeUntil,
+							'hours'
+						);
+					}
+				}
+			}
+
+			// Initialize when page loads
+			document.addEventListener('DOMContentLoaded', () => {
+				updateAvailabilityStatus();
+				// Update status every minute
+				setInterval(updateAvailabilityStatus, 60000);
+			});
+
+
+		</script>
+	</link>
+	<body class="xform">
+		<!-- Chain Link Pattern Background -->
+		<div class="chain-background"></div>
+
+
+		<!-- Navigation Menu -->
+		<div id="nav">
+			<div id="fontsmenu">
+				<h1>Motis Group</h1>
+				<ul id="navlist-desktop">
+					<li><a href="/"><span>Home</span></a></li>
+					<li><a href="/faq"><span>FAQ</span></a></li>
+				</ul>
+				<div id="fontwidget">
+				<span id="row1">
+					Availability:
+				</span>
+				<span id="row2">
+					<a id="togglefonts" class="off" href="#-" onclick="toggleFonts();">[✓]</a>
+					<a id="status-text" class="selectactive on" href="#-" onclick="switchFont(1);">1</a>
+						
+				</span>
+				<span id="currentfont">IBM VGA 8x16</span>
+			</div>
+			</div>
+		</div>
+
+		<!-- Main Content -->
+		<div  id="content">
+
+			<div id="primary-container">
+				<div id="home-blurb">
+
+				<p>
+					Software engineering isn't about writing code—it's about identifying
+					what actually matters and building it to survive reality.
+				</p>
+
+				<ul>
+					<li>Data infrastructure that processes what you need, when you need it.</li>
+					<li>ML pipelines that deploy, scale, and stay deployed.</li>
+					<li>Automation that eliminates work instead of creating it.</li>
+				</ul>
+
+				<p>
+					Everyone's chasing AI hype while ignoring the fundamental truth: models are only as good as their
+					data. You can't build on broken infrastucture.
+				</p>
+
+				<p>
+					We write every line ourselves. Skilled local talent. No outsourcing to
+					shitty overseas bodyshops. Ever.
+				</p>
+
+				<p>We build systems your team will own, extend, and understand.</p>
+
+				<p>
+					We ship on deadline. No meetings unless they solve something specific.
+				</p>
+
+				<p>
+					Python, LangChain, AWS, Snowflake, dbt, Airflow, Postgres, Databricks,
+					Hugging Face. Whatever works. Simple beats complex.
+				</p>
+
+				<p>Three ways to work with us:</p>
+
+				<ul>
+					<li>
+						Fixed-price projects. $20k minimum. 50% upfront, 50% on delivery.
+					</li>
+					<li>
+						$1,000/day for urgent work. Migrations, audits, fire-fighting.
+					</li>
+					<li>
+						<a href="https://calendly.com/motis-automation" target="_blank"
+							>$150–$300/hr</a
+						>
+						for advisory calls.
+					</li>
+				</ul>
+
+				<p>Melbourne timezone. Work globally.</p>
+
+
+
+			</div>
+		</div>
+	</body>
+</html>
