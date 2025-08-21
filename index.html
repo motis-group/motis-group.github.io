@@ -1,982 +1,161 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-	<head>
-		<meta charset="UTF-8" />
-		<meta
-			name="viewport"
-			content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"
-		/>
-		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
-		<title>MOTIS.GROUP | Systems Architect</title>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-		<style>
-			:root {
-				--bg-dark: #0d0504;
-				--bg-mid: #1a0f0a;
-				--bg-light: #2d1b13;
-				--dot-primary: rgb(232, 115, 26);
-				--dot-secondary: #ff6b35;
-				--dot-glow: rgba(232, 115, 26, 0.8);
-				--text-primary: #ffb894;
-				--text-secondary: #ffb894;
-				--text-muted: #cc8a6b;
-				--accent: rgb(232, 115, 26);
-				--border: #6d0c03;
-			}
-
-			* {
-				margin: 0;
-				padding: 0;
-				box-sizing: border-box;
-			}
-
-			@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
-
-			@font-face {
-				font-family: 'IBMVGA8';
-				src: url('WebPlus_IBM_VGA_8x16.woff') format('woff');
-				font-weight: normal;
-				font-style: normal;
-				font-display: swap;
-			}
-
-			body {
-				font-family: 'IBMVGA8', 'JetBrains Mono', 'Courier New', monospace;
-				background: var(--bg-dark);
-				color: var(--text-primary);
-				line-height: 1.6;
-				min-height: 100vh;
-				position: relative;
-				overflow-x: hidden;
-			}
-
-			ul {
-				margin-bottom: 1rem;
-			}
-
-			ul li {
-				margin: 0 1ch;
-				text-indent: -3ch;
-				padding-left: 3ch;
-				display: block;
-			}
-
-			ul li::before {
-				content: '\2666\a0\A0';
-				color: #0a0;
-			}
-
-			/* Chain Link Pattern Background */
-			.chain-background {
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				z-index: -2;
-				background-image: url('b6ea8215e62147969a6370cd5c7fb809.jpg');
-				background-size: cover;
-				background-position: center;
-				background-repeat: no-repeat;
-				background-attachment: fixed;
-			}
-
-			/* Dithered Image Section */
-			.dithered-section {
-				margin: 3rem 0;
-				text-align: center;
-				padding: 2rem;
-				background: rgba(0, 0, 0, 0.3);
-				backdrop-filter: blur(5px);
-				border: 1px solid var(--accent);
-			}
-
-			.dithered-section h3 {
-				color: var(--accent);
-				font-size: 1.5rem;
-				margin-bottom: 1.5rem;
-				text-transform: uppercase;
-				letter-spacing: 2px;
-			}
-
-			.dithered-container {
-				position: relative;
-				display: inline-block;
-				max-width: 600px;
-				width: 100%;
-				border: 2px solid var(--accent);
-				background: var(--bg-dark);
-			}
-
-			#dithered-canvas {
-				display: block;
-				width: 100%;
-				height: auto;
-				max-height: 400px;
-				object-fit: contain;
-			}
-
-			.chain-background::before {
-				content: '';
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background: rgba(0, 0, 0, 0.4);
-				z-index: 1;
-			}
-
-			/* 3D Infinity Symbol Container */
-			#infinity-container {
-				position: fixed;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-				width: 400px;
-				height: 300px;
-				z-index: 50;
-				opacity: 0.8;
-				pointer-events: none;
-			}
-
-			/* Content Container */
-			.content {
-				position: relative;
-				z-index: 10;
-				max-width: 900px;
-				margin: 0 auto;
-				padding: 4rem 2rem;
-				display: flex;
-				flex-direction: column;
-				min-height: 100vh;
-				justify-content: center;
-			}
-
-			.hero {
-				text-align: center;
-				margin-bottom: 4rem;
-			}
-
-			.hero h1 {
-				font-size: 3.5rem;
-				font-weight: 700;
-				margin-bottom: 1rem;
-				background: linear-gradient(
-					135deg,
-					var(--text-primary) 0%,
-					var(--text-secondary) 100%
-				);
-				-webkit-background-clip: text;
-				-webkit-text-fill-color: transparent;
-				background-clip: text;
-				text-shadow: 0 0 30px var(--dot-glow);
-			}
-
-			.hero .subtitle {
-				font-size: 1.2rem;
-				color: var(--text-secondary);
-				font-weight: 300;
-				margin-bottom: 2rem;
-			}
-
-			.tagline {
-				font-size: 1.1rem;
-				color: var(--text-muted);
-				font-style: italic;
-				margin-bottom: 3rem;
-			}
-
-			/* Text Content */
-			.text-content {
-				margin-bottom: 4rem;
-				max-width: 700px;
-				margin-left: auto;
-				margin-right: auto;
-				padding: 2rem;
-				border: 1px solid var(--border);
-				background: rgba(0, 0, 0, 0.3);
-				backdrop-filter: blur(5px);
-			}
-
-			.text-content p {
-				margin-bottom: 1rem;
-				font-weight: 300;
-				line-height: 1.8;
-				color: var(--text-primary);
-			}
-
-			.text-content p:last-child {
-				margin-bottom: 0;
-			}
-
-			.statement {
-				padding: 0.8rem 1rem;
-				margin-bottom: 0.5rem;
-				font-weight: 300;
-				line-height: 1.8;
-				transition: all 0.3s ease;
-				border-left: 2px solid transparent;
-			}
-
-			.statement:hover {
-				background: rgba(232, 115, 26, 0.05);
-				border-left-color: var(--accent);
-				padding-left: 1.5rem;
-			}
-
-			.section-header {
-				color: var(--accent);
-				font-weight: 600;
-				font-size: 1.1rem;
-				margin: 2rem 0 1rem 0;
-				text-transform: uppercase;
-				letter-spacing: 1px;
-			}
-
-			.spacer {
-				height: 1.5rem;
-			}
-
-			.accent-marker {
-				color: var(--accent);
-				font-weight: bold;
-				text-shadow: 0 0 5px var(--dot-glow);
-				margin-right: 0.5rem;
-			}
-
-			/* Tooltips */
-			.tooltip {
-				position: relative;
-				border-bottom: 1px dotted var(--accent);
-				cursor: help;
-				color: var(--accent);
-				transition: all 0.3s ease;
-			}
-
-			.tooltip:hover {
-				text-shadow: 0 0 5px var(--dot-glow);
-			}
-
-			.tooltip-content {
-				visibility: hidden;
-				opacity: 0;
-				position: absolute;
-				z-index: 999;
-				bottom: 125%;
-				left: 50%;
-				transform: translateX(-50%);
-				background: rgba(0, 0, 0, 0.95);
-				color: var(--text-primary);
-				border: 1px solid var(--accent);
-				padding: 0.8rem;
-				font-size: 0.75rem;
-				line-height: 1.4;
-				white-space: normal;
-				max-width: 300px;
-				min-width: 120px;
-				word-wrap: break-word;
-				transition: all 0.3s ease;
-				backdrop-filter: blur(10px);
-				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5),
-					0 0 20px rgba(232, 115, 26, 0.2);
-			}
-
-			.tooltip-content::after {
-				content: '';
-				position: absolute;
-				top: 100%;
-				left: 50%;
-				transform: translateX(-50%);
-				border: 8px solid transparent;
-				border-top-color: var(--accent);
-			}
-
-			.tooltip:hover .tooltip-content {
-				visibility: visible;
-				opacity: 1;
-				transform: translateX(-50%) translateY(-5px);
-			}
-
-			/* Simple Links */
-			a {
-				color: var(--accent);
-				text-decoration: underline;
-			}
-
-			/* Contact Section */
-			.contact {
-				text-align: center;
-				padding: 3rem 0;
-				border-top: 1px solid rgba(255, 69, 0, 0.2);
-			}
-
-			.contact h2 {
-				color: var(--accent);
-				font-size: 2rem;
-				margin-bottom: 1rem;
-			}
-
-			.contact-info {
-				display: flex;
-				justify-content: center;
-				gap: 3rem;
-				margin-top: 2rem;
-				flex-wrap: wrap;
-			}
-
-			.contact-item {
-				color: var(--text-secondary);
-				text-decoration: none;
-				font-weight: 500;
-				transition: color 0.3s ease;
-				padding: 0.5rem 1rem;
-				border: 1px solid rgba(255, 69, 0, 0.3);
-				border-radius: 4px;
-				backdrop-filter: blur(5px);
-			}
-
-			.contact-item:hover {
-				color: var(--accent);
-				box-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
-			}
-
-			/* Status Indicator */
-			.status-indicator {
-				position: fixed;
-				top: 20px;
-				right: 20px;
-				display: flex;
-				align-items: center;
-				gap: 10px;
-				background: rgba(45, 27, 19, 0.8);
-				padding: 8px 12px;
-				border-radius: 4px;
-				backdrop-filter: blur(10px);
-				z-index: 100;
-				font-size: 0.8rem;
-				font-weight: 300;
-				text-transform: uppercase;
-				letter-spacing: 1px;
-				border: 1px solid rgba(255, 69, 0, 0.3);
-			}
-
-			.status-ping {
-				height: 18px;
-				width: auto;
-				display: inline-block;
-			}
-
-			.status-ping.available {
-				background: #040;
-				color: #03ff00;
-				box-shadow: 0 0 10px #040;
-			}
-
-			.status-ping.unavailable {
-				background: #800;
-				color: #f00 !important;
-				box-shadow: #800;
-			}
-
-			/* Animations */
-			@keyframes matrix-pulse {
-				0% {
-					opacity: 0.2;
-				}
-				100% {
-					opacity: 0.6;
-				}
-			}
-
-			@keyframes glow-pulse {
-				0%,
-				100% {
-					box-shadow: 0 0 10px var(--dot-glow),
-						inset 0 0 5px rgba(255, 69, 0, 0.3);
-					opacity: 0.6;
-				}
-				50% {
-					box-shadow: 0 0 20px var(--dot-glow),
-						inset 0 0 10px rgba(255, 69, 0, 0.5);
-					opacity: 1;
-				}
-			}
-
-			@keyframes ping {
-				0% {
-					opacity: 1;
-				}
-				75%,
-				100% {
-					opacity: 0.5;
-				}
-			}
-
-			/* Mobile Responsive */
-			@media (max-width: 768px) {
-				.content {
-					padding: 2rem 1rem;
-				}
-
-				.hero h1 {
-					font-size: 2.5rem;
-				}
-
-				.hero .subtitle {
-					font-size: 1rem;
-				}
-
-				.text-content {
-					padding: 1.5rem;
-					margin: 0 1rem 4rem 1rem;
-				}
-
-				.text-content p {
-					font-size: 0.9rem;
-					margin-bottom: 0.8rem;
-				}
-
-				.contact-info {
-					flex-direction: column;
-					gap: 1rem;
-				}
-
-				.chain-background {
-					background-attachment: scroll;
-					background-size: cover;
-				}
-
-				.chain-background::before {
-					background: rgba(0, 0, 0, 0.6);
-				}
-
-				#infinity-container {
-					width: 300px;
-					height: 200px;
-					opacity: 0.6;
-				}
-
-				.status-indicator {
-					top: 10px;
-					right: 10px;
-					padding: 6px 10px;
-					font-size: 0.7rem;
-				}
-
-				.dithered-section {
-					margin: 2rem 1rem;
-					padding: 1.5rem 1rem;
-				}
-
-				.dithered-section h3 {
-					font-size: 1.2rem;
-				}
-
-				.dithered-container {
-					max-width: 100%;
-				}
-
-				#dithered-canvas {
-					max-height: 300px;
-				}
-			}
-		</style>
-		<script>
-			// Availability Status Management
-			function updateAvailabilityStatus() {
-				const statusPing = document.getElementById('status-ping');
-				const statusText = document.getElementById('status-text');
-
-				// Override: Not available until June 2026
-				const now = new Date();
-				const availableDate = new Date('2025-12-05T00:00:00+10:00'); // June 1, 2024 Melbourne time
-
-				console.log('Current time:', now);
-				console.log('Available date:', availableDate);
-				console.log('Is past available date:', now >= availableDate);
-
-				if (now < availableDate) {
-					// Show unavailable with red indicator
-					statusPing.className = 'status-ping unavailable';
-					statusPing.textContent = '[X]';
-					const availableDateFormatted = availableDate
-						.toLocaleDateString('en-US', {
-							month: 'long',
-							year: 'numeric',
-							timeZone: 'Australia/Melbourne',
-						})
-						.toUpperCase();
-					statusText.textContent = `UNAVAILABLE UNTIL ${availableDateFormatted}`;
-					console.log(`Status: Unavailable until ${availableDateFormatted}`);
-				} else {
-					// After June 2024, revert to normal availability logic
-					const melbourneTime = new Date(
-						now.toLocaleString('en-US', { timeZone: 'Australia/Melbourne' })
-					);
-					const hour = melbourneTime.getHours();
-					const day = melbourneTime.getDay(); // 0 = Sunday, 6 = Saturday
-
-					console.log('Melbourne time:', melbourneTime);
-					console.log('Hour:', hour, 'Day:', day);
-
-					// Available: Monday-Friday, 9 AM - 6 PM Melbourne time
-					const isWeekday = day >= 1 && day <= 5;
-					const isWorkingHours = hour >= 9 && hour < 18;
-					const isAvailable = isWeekday && isWorkingHours;
-
-					console.log(
-						'Is weekday:',
-						isWeekday,
-						'Is working hours:',
-						isWorkingHours,
-						'Is available:',
-						isAvailable
-					);
-
-					if (isAvailable) {
-						statusPing.className = 'status-ping available';
-						statusPing.textContent = '[✓]';
-						statusText.textContent = 'AVAILABLE';
-						console.log('Status: Available');
-					} else {
-						statusPing.className = 'status-ping unavailable';
-						statusPing.textContent = '[X]';
-
-						// Calculate next availability
-						let nextAvailable = new Date(melbourneTime);
-
-						if (!isWeekday) {
-							// Weekend - next Monday
-							const daysUntilMonday = (8 - day) % 7;
-							nextAvailable.setDate(nextAvailable.getDate() + daysUntilMonday);
-							nextAvailable.setHours(9, 0, 0, 0);
-						} else if (hour >= 18) {
-							// After hours - next morning
-							nextAvailable.setDate(nextAvailable.getDate() + 1);
-							nextAvailable.setHours(9, 0, 0, 0);
-						} else {
-							// Before hours - today at 9 AM
-							nextAvailable.setHours(9, 0, 0, 0);
-						}
-
-						const timeUntil = Math.ceil(
-							(nextAvailable - melbourneTime) / (1000 * 60 * 60)
-						);
-						statusText.textContent = `AVAILABLE IN ${timeUntil}H`;
-						console.log(
-							'Status: Unavailable, next available in',
-							timeUntil,
-							'hours'
-						);
-					}
-				}
-			}
-
-			// Initialize when page loads
-			document.addEventListener('DOMContentLoaded', () => {
-				updateAvailabilityStatus();
-				// Update status every minute
-				setInterval(updateAvailabilityStatus, 60000);
-			});
-
-			// Dithered Image Implementation
-			function initDitheredImage() {
-				console.log('Initializing dithered image...');
-				const canvas = document.getElementById('dithered-canvas');
-				if (!canvas) {
-					console.error('Canvas not found!');
-					return;
-				}
-
-				const ctx = canvas.getContext('2d');
-				const img = new Image();
-
-				img.onerror = function () {
-					console.error(
-						'Failed to load image: b69a34cbbf0ccecdd69df5d618c84000.jpg'
-					);
-				};
-
-				img.onload = function () {
-					console.log('Image loaded, dimensions:', img.width, 'x', img.height);
-
-					// Set canvas size based on image aspect ratio and container constraints
-					const maxWidth = 600;
-					const maxHeight = 400;
-					const imgAspect = img.width / img.height;
-
-					let canvasWidth, canvasHeight;
-
-					if (imgAspect > maxWidth / maxHeight) {
-						// Image is wider - constrain by width
-						canvasWidth = maxWidth;
-						canvasHeight = maxWidth / imgAspect;
-					} else {
-						// Image is taller - constrain by height
-						canvasHeight = maxHeight;
-						canvasWidth = maxHeight * imgAspect;
-					}
-
-					canvas.width = canvasWidth;
-					canvas.height = canvasHeight;
-					console.log('Canvas size set to:', canvasWidth, 'x', canvasHeight);
-
-					// Draw the image to fill the entire canvas
-					ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
-					console.log('Image drawn to canvas');
-
-					// Apply dithering effect
-					console.log('Applying dithering...');
-					applyDithering(ctx, canvasWidth, canvasHeight);
-					console.log('Dithering complete');
-				};
-
-				img.src = 'fdcf09a103931fc865ffa82b4de12ee3.jpg';
-			}
-
-			function applyDithering(ctx, width, height) {
-				console.log('Getting image data for dithering...', width, 'x', height);
-
-				// Get image data
-				const imageData = ctx.getImageData(0, 0, width, height);
-				const data = imageData.data;
-				console.log('Image data length:', data.length);
-
-				// 4x4 Bayer Matrix (same as in the shader)
-				const bayerMatrix = [
-					[0 / 16, 8 / 16, 2 / 16, 10 / 16],
-					[12 / 16, 4 / 16, 14 / 16, 6 / 16],
-					[3 / 16, 11 / 16, 1 / 16, 9 / 16],
-					[15 / 16, 7 / 16, 13 / 16, 5 / 16],
-				];
-
-				// Orange color theme to match the site
-				const orangeColor = [232, 115, 26]; // --accent color
-
-				let processedPixels = 0;
-
-				// Process each pixel
-				for (let y = 0; y < height; y++) {
-					for (let x = 0; x < width; x++) {
-						const pixelIndex = (y * width + x) * 4;
-
-						// Get RGB values
-						const r = data[pixelIndex];
-						const g = data[pixelIndex + 1];
-						const b = data[pixelIndex + 2];
-
-						// Calculate luminance
-						const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-
-						// Get Bayer matrix threshold
-						const bayerX = x % 4;
-						const bayerY = y % 4;
-						const threshold = bayerMatrix[bayerY][bayerX];
-
-						// Apply dithering - make more aggressive
-						const dithered = luminance > threshold ? 1 : 0;
-
-						// Simplified: either full orange or black
-						if (dithered > 0) {
-							data[pixelIndex] = orangeColor[0]; // R
-							data[pixelIndex + 1] = orangeColor[1]; // G
-							data[pixelIndex + 2] = orangeColor[2]; // B
-						} else {
-							data[pixelIndex] = 0; // R
-							data[pixelIndex + 1] = 0; // G
-							data[pixelIndex + 2] = 0; // B
-						}
-
-						// Keep original alpha
-						data[pixelIndex + 3] = 255;
-						processedPixels++;
-					}
-				}
-
-				console.log('Processed pixels:', processedPixels);
-
-				// Put the modified image data back
-				ctx.putImageData(imageData, 0, 0);
-				console.log('Image data put back to canvas');
-			}
-
-			// 3D Dithered Infinity Symbol
-			let scene, camera, renderer, infinityGroup;
-
-			function initInfinitySymbol() {
-				const container = document.getElementById('infinity-container');
-				if (!container) return;
-
-				// Scene setup
-				scene = new THREE.Scene();
-				camera = new THREE.PerspectiveCamera(
-					75,
-					container.offsetWidth / container.offsetHeight,
-					0.1,
-					1000
-				);
-				renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
-				renderer.setSize(container.offsetWidth, container.offsetHeight);
-				renderer.setClearColor(0x000000, 0);
-				container.appendChild(renderer.domElement);
-
-				// Create infinity symbol using two torus geometries
-				infinityGroup = new THREE.Group();
-
-				// Create dithering material with custom shader
-				const ditheredMaterial = new THREE.ShaderMaterial({
-					uniforms: {
-						time: { value: 0 },
-						resolution: {
-							value: new THREE.Vector2(
-								container.offsetWidth,
-								container.offsetHeight
-							),
-						},
-						color: { value: new THREE.Color(0xff7300) },
-					},
-					vertexShader: `
-						varying vec2 vUv;
-						varying vec3 vPosition;
-						varying vec3 vNormal;
+<html lang="en-US"><head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Motis Group - Data Infrastructure & ML Engineering</title>
+	<meta name="description" content="Enterprise-grade data infrastructure and AI engineering. We build production-ready systems that scale. Strategic technology solutions for ambitious organizations.">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="styles.css">
+	<link rel="icon" type="image/x-icon" href="favicon.ico">
+		<meta name="theme-color" content="#000000">
+</head>
+<body class="xform" style="visibility: visible;">
+	<div id="nav">
+		<div id="fontsmenu">
+			<h1>Motis Group</h1><ul id="navlist-desktop">
+				<li><a class="thispage"><span>Home</span></a></li>
+        <li><a href="/readme.html"><span>Readme</span></a></li>
+        <!-- <li><a href="#blog"><span>Blog</span></a></li>
+        <li><a href="#tube"><span>Tube</span></a></li> -->
+				<li><a href="#projects"><span>Showcase</span></a></li>
+        <li><a href="https://github.com/motis-group"><span>Code</span></a></li>
+        <li><a href="/readme.html#contact"><span>Contact</span></a></li>
+			</ul>
+      <div id="fontwidget">
+				<span id="row1">
+					Availability:
+				</span>
+				<span id="row2">
+					<a id="togglefonts" class="off" href="#-" onclick="toggleFonts();">[✓]</a>
+					<a id="status-text" class="selectactive on" href="#-" onclick="switchFont(1);">1</a>
 						
-						void main() {
-							vUv = uv;
-							vPosition = position;
-							vNormal = normal;
-							gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-						}
-					`,
-					fragmentShader: `
-						uniform float time;
-						uniform vec2 resolution;
-						uniform vec3 color;
-						varying vec2 vUv;
-						varying vec3 vPosition;
-						varying vec3 vNormal;
-						
-						// 4x4 Bayer Matrix for ordered dithering
-						const mat4 bayerMatrix = mat4(
-							0.0,  8.0,  2.0, 10.0,
-							12.0, 4.0,  14.0, 6.0,
-							3.0,  11.0, 1.0, 9.0,
-							15.0, 7.0,  13.0, 5.0
-						) / 16.0;
-						
-						float orderedDither(vec2 screenPos, float lum) {
-							int x = int(mod(screenPos.x, 4.0));
-							int y = int(mod(screenPos.y, 4.0));
-							float threshold = bayerMatrix[y][x];
-							return lum > threshold ? 1.0 : 0.0;
-						}
-						
-						void main() {
-							vec2 screenPos = gl_FragCoord.xy;
-							
-							// Calculate lighting based on normal
-							vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
-							float NdotL = max(dot(vNormal, lightDir), 0.0);
-							
-							// Add some ambient and fresnel lighting
-							float fresnel = 1.0 - dot(vNormal, vec3(0.0, 0.0, 1.0));
-							float luminance = NdotL * 0.7 + fresnel * 0.3 + 0.2;
-							
-							// Add animated glow effect
-							float glow = sin(time * 2.0 + vPosition.x * 5.0) * 0.1 + 0.9;
-							luminance *= glow;
-							
-							// Apply ordered dithering
-							float dithered = orderedDither(screenPos, luminance);
-							
-							// Color quantization (reduce to 4 levels)
-							float quantized = floor(dithered * 3.0 + 0.5) / 3.0;
-							
-							vec3 finalColor = color * quantized;
-							
-							// Add subtle glow for non-black pixels
-							if (quantized > 0.0) {
-								finalColor += color * 0.3 * glow;
-							}
-							
-							gl_FragColor = vec4(finalColor, quantized);
-						}
-					`,
-					transparent: true,
-					wireframe: false,
-				});
-
-				// Left torus (rotated)
-				const leftTorus = new THREE.Mesh(
-					new THREE.TorusGeometry(0.8, 0.3, 16, 32),
-					ditheredMaterial.clone()
-				);
-				leftTorus.position.set(-0.6, 0, 0);
-				leftTorus.rotation.set(0, 0, Math.PI / 4);
-
-				// Right torus (rotated opposite)
-				const rightTorus = new THREE.Mesh(
-					new THREE.TorusGeometry(0.8, 0.3, 16, 32),
-					ditheredMaterial.clone()
-				);
-				rightTorus.position.set(0.6, 0, 0);
-				rightTorus.rotation.set(0, 0, -Math.PI / 4);
-
-				infinityGroup.add(leftTorus);
-				infinityGroup.add(rightTorus);
-				scene.add(infinityGroup);
-
-				// Camera position
-				camera.position.z = 4;
-				camera.position.y = 0;
-
-				// Start animation
-				animateInfinity();
-			}
-
-			function animateInfinity() {
-				requestAnimationFrame(animateInfinity);
-
-				const time = Date.now() * 0.001;
-
-				// Rotate the entire infinity symbol
-				if (infinityGroup) {
-					infinityGroup.rotation.x = Math.sin(time * 0.5) * 0.2;
-					infinityGroup.rotation.y = time * 0.3;
-					infinityGroup.rotation.z = Math.cos(time * 0.3) * 0.1;
-
-					// Update shader uniforms
-					infinityGroup.children.forEach((child) => {
-						if (child.material && child.material.uniforms) {
-							child.material.uniforms.time.value = time;
-						}
-					});
-				}
-
-				renderer.render(scene, camera);
-			}
-		</script>
-	</head>
-	<body>
-		<!-- Chain Link Pattern Background -->
-		<div class="chain-background"></div>
-
-		<!-- 3D Dithered Infinity Symbol -->
-
-		<!-- Status Indicator -->
-		<div class="status-indicator">
-			<div class="status-ping unavailable" id="status-ping">[X]</div>
-			<span id="status-text">UNAVAILABLE UNTIL JUNE 2026</span>
-		</div>
-
-		<!-- Main Content -->
-		<div class="content">
-			<!-- <div id="infinity-container"></div> -->
-			<div class="hero">
-				<pre style="line-height: 1">
- _______  _______ __________________ _______ 
-(       )(  ___  )\__   __/\__   __/(  ____ \
-| () () || (   ) |   ) (      ) (   | (    \/
-| || || || |   | |   | |      | |   | (_____ 
-| |(_)| || |   | |   | |      | |   (_____  )
-| |   | || |   | |   | |      | |         ) |
-| )   ( || (___) |   | |   ___) (___/\____) |
-|/     \|(_______)   )_(   \_______/\_______)
-                                             
- _______  _______  _______           _______ 
-(  ____ \(  ____ )(  ___  )|\     /|(  ____ )
-| (    \/| (    )|| (   ) || )   ( || (    )|
-| |      | (____)|| |   | || |   | || (____)|
-| | ____ |     __)| |   | || |   | ||  _____)
-| | \_  )| (\ (   | |   | || |   | || (      
-| (___) || ) \ \__| (___) || (___) || )      
-(_______)|/   \__/(_______)(_______)|/       </pre
-				>
-				<!-- <div class="subtitle">Systems Architecture & Engineering</div> -->
+				</span>
+				<span id="currentfont">IBM VGA 8x16</span>
 			</div>
-
-			<!-- Dithered Image Section -->
-			<!-- <div class="dithered-section">
-				<h3>Dithered Processing</h3>
-				<div class="dithered-container">
-					<canvas id="dithered-canvas"></canvas>
-				</div>
-			</div> -->
-
-			<div class="text-content">
-				<p>We build systems that work when everything else falls apart.</p>
-
-				<p>
-					Software engineering isn't about writing code—it's about identifying
-					what actually matters and building it to survive reality.
-				</p>
-
+			
+			<div id="mobile-nav-content">
 				<ul>
-					<li>
-						Data infrastructure that processes what you need, when you need it.
-					</li>
-					<li>ML pipelines that deploy, scale, and stay deployed.</li>
-					<li>Automation that eliminates work instead of creating it.</li>
+					<li>Motis Group:</li>
+					<li class="nobullet"><a class="thispage"><span>Home</span></a></li>
+					<li><a href="#services"><span>Blog</span></a></li>
+					<li><a href="#pricing"><span>Tube</span></a></li>
+					<li><a href="https://github.com/motis-group"><span>Code</span></a></li>
+					<li><a href="#contact"><span>Contact</span></a></li>
 				</ul>
-
-				<p>
-					Everyone's chasing AI hype while ignoring the fundamentals. You can't
-					build on broken foundations.
-				</p>
-
-				<p>
-					Infrastructure is the bottleneck. Models are only as good as their
-					data.
-				</p>
-
-				<p>We solve the real problem, not the problem you think you have.</p>
-
-				<p>
-					We write every line ourselves. Skilled local talent. No outsourcing to
-					shitty bodyshops. Ever.
-				</p>
-
-				<p>We build systems your team will own, extend, and understand.</p>
-
-				<p>
-					We ship on deadline. No meetings unless they solve something specific.
-				</p>
-
-				<p>
-					Python, LangChain, AWS, Snowflake, dbt, Airflow, Postgres, Databricks,
-					Hugging Face. Whatever works. Simple beats complex.
-				</p>
-
-				<p>
-					<a href="https://github.com/willmarzella" target="_blank"
-						>github.com/willmarzella</a
-					>
-				</p>
-
-				<p>Three ways to work with us:</p>
-
-				<ul>
-					<li>
-						Fixed-price projects. $20k minimum. 50% upfront, 50% on delivery.
-					</li>
-					<li>
-						$1,000/day for urgent work. Migrations, audits, fire-fighting.
-					</li>
-					<li>
-						<a href="https://calendly.com/motis-automation" target="_blank"
-							>$150–$300/hr</a
-						>
-						for advisory calls.
-					</li>
+				<div class="mobile-button disabled" id="mobile-button-burger"></div>
+			</div>
+			
+		</div>
+	</div>
+	<div id="content" class="wider" style="padding-left: 0.5px;">
+		
+		<div id="primary-container">
+			<div id="home-blurb">
+				<h3>Data infrastructure & AI that actually <strong class="grn">works</strong></h3>
+				
+				<p><strong>Your current data infrastructure is probably broken.</strong> Most companies have data scattered across systems that don't talk to each other, "AI initiatives" that never make it to production, and automation that creates more work than it eliminates.</p>
+				<ul class="tight">
+					<li><strong class="grn">Data infrastructure</strong> that actually processes what you need, when you need it.</li>
+					<li><strong class="grn">ML models</strong> that deploy to production and stay there.</li>
+					<li><strong class="grn">Automation</strong> that eliminates manual work instead of creating busy work.</li>
 				</ul>
-
-				<p>Melbourne timezone. Work globally.</p>
-
-				<p>
-					Get in touch:
-					<a href="mailto:automation@motis.group">automation@motis.group</a>
-				</p>
+				
+				<p>We don't build proof-of-concepts or "AI strategies." <strong>We build production systems that generate measurable business value.</strong> No consultant PowerPoints, no 6-month "discovery phases" - just working software.</p>
+			</div>
+			
+			<div id="home-news">
+				<h3>Why most data projects fail</h3>
+				<ul class="tight spaced">
+					<li class="tight-h"><strong class="grn">Wrong problem</strong>: Building AI before fixing data quality. You can't train models on garbage data.</li>
+					<li class="tight-h"><strong class="grn">Wrong team</strong>: Hiring data scientists to build infrastructure. You need engineers who understand production systems.</li>
+					<li class="tight-h"><strong class="grn">Wrong timeline</strong>: Expecting results in 3 months from systems that should have been built 3 years ago.</li>
+					<li class="tight-h"><strong class="grn">Wrong vendors</strong>: Outsourcing to consultants who've never deployed anything to production. We write every line of code ourselves.</li>
+				</ul>
 			</div>
 		</div>
-	</body>
-</html>
+		
+		<hr>
+		
+		<div id="action-panels" class="centerme ilbl">
+			<div class="panel-zaz shadow0xb0" id="services">
+				<h2 class="cap">Project Index</h2>
+				<div>Browse / preview all publicprojects</div>
+			</div>
+			<div class="panel-zaz shadow0xb0">
+				<h2 class="cap">Readme</h2>
+				<div>Documentation, FAQ,<br>and usage notes</div>
+			</div>
+			<div class="panel-zaz shadow0xb0">
+				<h2 class="cap">Samples+Showcase</h2>
+				<div>See some data projects<br>in action</div>
+			</div>
+			<div class="panel-zaz shadow0xb0" id="contact">
+				<h2 class="cap">Contact</h2>
+				<div>Get in touch</div>
+			</div>
+		</div>
+			
+		<div id="index-shortcuts" class="greyframe titledbox shadow0xb0">
+			<div class="hdr"><h2 class="cap">Project Index</h2></div>
+			<dl>
+				<dt><a href="#project1">I. Data Pipeline Modernization</a></dt>
+				<dd><a href="#healthcare">Healthcare Analytics Platform</a></dd>
+				<dd><a href="#etl-migration">Legacy ETL Migration</a></dd>
+				<dd><a href="#realtime-processing">Real-time Data Processing</a></dd>
+				<dd><a href="#ml-integration">ML Model Integration</a></dd>
+				<dd><a href="#dashboard-automation">Dashboard Automation</a></dd>
+				<dd><a href="#compliance-reporting">HIPAA Compliance Reporting</a></dd>
+				<dd><a href="#fintech">FinTech Infrastructure</a></dd>
+				<dd><a href="#transaction-processing">Transaction Processing</a></dd>
+				<dd><a href="#fraud-detection">Fraud Detection ML</a></dd>
+				<dd><a href="#api-gateway">API Gateway Setup</a></dd>
+				<dd><a href="#audit-trails">Audit Trail Systems</a></dd>
+			</dl>
+			<dl>
+				<dt><a href="#project2">II. ML Operations</a></dt>
+				<dd><a href="#model-deployment">Model Deployment Pipelines</a></dd>
+				<dd><a href="#feature-stores">Feature Store Architecture</a></dd>
+				<dd><a href="#monitoring">Model Performance Monitoring</a></dd>
+				<dd><a href="#ab-testing">A/B Testing Framework</a></dd>
+				<dd><a href="#vector-databases">Vector Database Setup</a></dd>
+				<dd><a href="#llm-integration">LLM Integration</a></dd>
+				<dd><a href="#recommendation">Recommendation Systems</a></dd>
+				<dd><a href="#nlp-pipeline">NLP Processing Pipeline</a></dd>
+				<dd><a href="#computer-vision">Computer Vision Models</a></dd>
+				<dd><a href="#time-series">Time Series Forecasting</a></dd>
+			</dl>
+			<dl>
+				<dt><a href="#project3">III. Cloud Infrastructure</a></dt>
+				<dd><a href="#aws-migration">AWS Migration</a></dd>
+				<dd><a href="#kubernetes">Kubernetes Orchestration</a></dd>
+				<dd><a href="#terraform">Infrastructure as Code</a></dd>
+				<dd><a href="#monitoring-stack">Monitoring Stack</a></dd>
+				<dd><a href="#ci-cd">CI/CD Pipelines</a></dd>
+				<dd><a href="#security">Security Hardening</a></dd>
+				<dd><a href="#cost-optimization">Cost Optimization</a></dd>
+				<dd><a href="#disaster-recovery">Disaster Recovery</a></dd>
+				<dd><a href="#multi-region">Multi-Region Setup</a></dd>
+			</dl>
+			<dl>
+				<dt><a href="#project4">IV. Automation Solutions</a></dt>
+				<dd><a href="#workflow-automation">Workflow Automation</a></dd>
+				<dd><a href="#data-quality">Data Quality Monitoring</a></dd>
+				<dd><a href="#reporting">Automated Reporting</a></dd>
+				<dd><a href="#alerting">Intelligent Alerting</a></dd>
+				<dd><a href="#batch-processing">Batch Processing</a></dd>
+				<dd><a href="#api-automation">API Automation</a></dd>
+				<dd><a href="#testing">Automated Testing</a></dd>
+				<dd><a href="#deployment">Deployment Automation</a></dd>
+				<dd><a href="#backup">Backup Automation</a></dd>
+			</dl>		
+		</div>
+		
+
+
+</div>
+		
+	</div>
+<div id="footer">
+	<a href="/" id="getback">INT10h.org</a> © 2015-2020 VileR
+</div>
+<script src="/oldschool-pc-fonts/scripts/font-ui-misc.js?ver=II.II" type="text/javascript"></script>
+
+<div class="cgw-ext" data-ext-id="pdnenlnelpdomajfejgapbdpmjkfpjkp"></div><cgw-writer-modal data-wxt-shadow-root="" class="cgw_main_container"></cgw-writer-modal><button id="cgw_action_btn" tabindex="-1" style="position: absolute; top: -9999px; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none;"></button></body></html>

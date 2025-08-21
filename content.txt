@@ -1,0 +1,36 @@
+Software engineering isn't about writing code—it's about identifying what actually matters and building it to survive reality.
+
+
+Data infrastructure that processes what you need, when you need it.
+ML pipelines that deploy, scale, and stay deployed.
+Automation that eliminates work instead of creating it.
+
+Everyone's chasing AI hype while ignoring the fundamental truth: models are only as good as their
+data. You can't build on broken infrastucture.
+
+We write every line ourselves. Skilled local talent. No outsourcing to
+shitty overseas bodyshops. Ever.
+
+We build systems your team will own, extend, and understand.
+
+We ship on deadline. No meetings unless they solve something specific.
+
+Python, LangChain, AWS, Snowflake, dbt, Airflow, Postgres, Databricks,
+Hugging Face. Whatever works. Simple beats complex.
+
+Three ways to work with us:
+
+- Fixed-price projects. $20k minimum. 50% upfront, 50% on delivery.
+- $1,000/day for urgent work. Migrations, audits, fire-fighting.
+- $150–$300/hr for advisory calls.
+
+Melbourne timezone. Work globally.
+
+
+
+
+
+
+
+
+

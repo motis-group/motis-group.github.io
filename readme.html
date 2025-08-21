@@ -1,0 +1,1157 @@
+<html lang="en-US">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Motis Group: Technical Documentation & FAQ</title>
+		<meta
+			name="description"
+			content="Technical documentation for enterprise-grade data products and AI solutions that deliver measurable competitive advantages"
+		/>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="../styles.css" />
+		<script
+			src="/oldschool-pc-fonts/scripts/fontchanger.js?ver=II.II"
+			type="text/javascript"
+		></script>
+		<link
+			id="js-only-style"
+			rel="stylesheet"
+			type="text/css"
+			media="screen"
+			href="/oldschool-pc-fonts/css/oldschool-pc-fonts-jsonly.css?ver=II.II"
+		/>
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<link rel="icon" type="image/png" href="/favicon.png" />
+		<link rel="mask-icon" href="/safari-pinned-tab.svg" />
+		<meta name="msapplication-TileColor" content="#da532c" />
+		<meta name="msapplication-TileImage" content="/mstile-144x144.png" />
+		<meta name="theme-color" content="#000000" />
+	</head>
+	<body class="xform" style="visibility: visible">
+		<div id="nav">
+			<div id="fontsmenu">
+				<h1>Motis Group</h1>
+				<ul id="navlist-desktop">
+					<li>
+						<a href="../"><span>Home</span></a>
+					</li>
+					<li>
+						<a class="thispage"><span>Readme</span></a>
+					</li>
+					<li><a href="#projects"><span>Showcase</span></a></li>
+        <li><a href="https://github.com/motis-group"><span>Code</span></a></li>
+        <li><a href="/readme.html#contact"><span>Contact</span></a></li>
+				</ul>
+				<div id="fontwidget">
+					<span id="row1"> Text mode font: </span>
+					<span id="row2">
+						<a id="togglefonts" class="on" href="#-" onclick="toggleFonts();"
+							>[✓]</a
+						>
+						<a
+							id="selectfont1"
+							class="selectactive on"
+							href="#-"
+							onclick="switchFont(1);"
+							>1</a
+						>
+						<a id="selectfont2" href="#-" onclick="switchFont(2);" class="on"
+							>2</a
+						>
+						<a id="selectfont3" href="#-" onclick="switchFont(3);" class="on"
+							>3</a
+						>
+						<a id="selectfont4" href="#-" onclick="switchFont(4);" class="on"
+							>4</a
+						>
+						<a id="selectfont5" href="#-" onclick="switchFont(5);" class="on"
+							>5</a
+						>
+						<a id="selectfont6" href="#-" onclick="switchFont(6);" class="on"
+							>6</a
+						>
+					</span>
+					<span id="currentfont">IBM VGA 8x16</span>
+				</div>
+				<noscript>
+					<div id="fontwidget-no-js">
+						<div class="grn">
+							Enable JavaScript for full functionality of all site features.
+						</div>
+					</div>
+				</noscript>
+
+				<div id="mobile-nav-content">
+					<ul>
+						<li>Motis Group:</li>
+						<li class="nobullet">
+							<a href="../"><span>Home</span></a>
+						</li>
+						<li>
+							<a href="../fontlist/"><span>Products</span></a>
+						</li>
+						<li>
+							<a class="thispage"><span>FAQ</span></a>
+						</li>
+						<li>
+							<a href="../showcase/"><span>Showcase</span></a>
+						</li>
+						<li>
+							<a href="../download/"><span>Hire Us</span></a>
+						</li>
+					</ul>
+					<div
+						class="mobile-button"
+						id="mobile-button-burger"
+						onclick="toggleSidebar();"
+					>
+						≡
+					</div>
+					<div
+						class="mobile-button"
+						id="mobile-button-fontwidget"
+						onclick="toggleFontWidget();"
+					>
+						Aa
+					</div>
+				</div>
+
+				<div id="sidebar" class="x">
+					<div id="sidebar-scroller" style="padding-right: 0px">
+						Jump to section:
+						<dl>
+							<dt><a href="#intro">Introduction </a></dt>
+							<dd><a href="#about">About Us </a></dd>
+							<dd><a href="#faq">FAQ </a></dd>
+						</dl>
+						<dl>
+							<dt><a href="#service_tiers">Service Tiers </a></dt>
+							<dd><a href="#tier_enterprise">Enterprise (Premium) </a></dd>
+							<dd><a href="#tier_professional">Professional (Standard) </a></dd>
+							<dd><a href="#tier_essential">Essential (Starter) </a></dd>
+							<dd><a href="#tier_consulting">Consulting Only </a></dd>
+							<dd><a href="#tier_custom">Custom Solutions </a></dd>
+							<dd><a href="#pricing_tldr">Pricing Summary </a></dd>
+						</dl>
+						<dl>
+							<dt><a href="#data_products">Data Products </a></dt>
+							<dd><a href="#ai_models">AI Model Training </a></dd>
+							<dd><a href="#automation">Automation Systems </a></dd>
+						</dl>
+						<dl>
+							<dt><a href="#engagement">Engagement Process </a></dt>
+							<dd><a href="#size_matters">Project Scope </a></dd>
+							<dd><a href="#timeline_delivery">Timeline & Delivery </a></dd>
+							<dd><a href="#optimal_results">Optimal Results </a></dd>
+							<dd><a href="#success_metrics">Success Metrics </a></dd>
+							<dd><a href="#quality_assurance">Quality Assurance </a></dd>
+						</dl>
+						<dl>
+							<dt><a href="#usage_notes">Implementation Notes </a></dt>
+							<dd><a href="#tech_stack">Tech Stack </a></dd>
+							<dd><a href="#deployment">Deployment </a></dd>
+							<dd><a href="#maintenance">Maintenance </a></dd>
+							<dd><a href="#support">Support Levels </a></dd>
+						</dl>
+						<dl>
+							<dt><a href="#company_info">Company Info </a></dt>
+							<dd><a href="#team_history">Team & History </a></dd>
+							<dd><a href="#case_studies">Case Studies </a></dd>
+							<dd><a href="#testimonials">Client Testimonials </a></dd>
+							<dd><a href="#tools_used">Tools & Tech </a></dd>
+							<dd><a href="#contact">Contact </a></dd>
+							<dd><a href="#legal_stuff">Legal & Terms </a></dd>
+						</dl>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="content" class="with-sidebar x" style="padding-left: 0.5px">
+			<a class="anchor" id="intro"></a>
+			<h2 style="margin-top: 0.5em">
+				Motis Group - Technical Documentation & FAQ
+			</h2>
+			<!--######################################################################################-->
+
+			<br />
+			<a class="anchor" id="about"></a>
+			<div class="padme">
+				<h3>About Us</h3>
+				<!--+++++++++++-->
+				<p>
+					<strong>Motis Group</strong> is a specialized technology consultancy
+					that builds enterprise-grade data products and AI systems for
+					ambitious organizations. We combine deep technical expertise with
+					strategic business insight to deliver solutions that create measurable
+					competitive advantages and operational excellence.
+				</p>
+
+				<p>
+					We specialize in custom AI models, intelligent automation platforms,
+					and data architectures that solve complex business challenges. Our
+					approach is methodical, results-driven, and designed to integrate
+					seamlessly with your existing operations while delivering
+					transformational capabilities.
+				</p>
+
+				<p>
+					Our focus is on <strong>enterprise-scale implementations</strong> that
+					deliver quantifiable business value: increased revenue, reduced
+					operational costs, enhanced decision-making capabilities, and
+					optimized processes. We work exclusively on strategic initiatives that
+					require sophisticated technical solutions and have significant
+					business impact.
+				</p>
+			</div>
+
+			<br /><br />
+
+			<a class="anchor" id="faq"></a>
+			<div class="padme">
+				<h3>Frequently Asked Questions</h3>
+				<!--++++++++++++++++++++++++++++-->
+
+				<h4 class="indsmall">
+					Q. What kind of data products do you build? Which service tier do I
+					need?
+				</h4>
+				<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+				<p class="indhang">
+					A. We build <a href="#service_tiers">three main categories</a> of
+					enterprise data solutions:
+				</p>
+				<ul class="indplusplus">
+					<li>
+						For comprehensive organizational transformation, our
+						'<strong>Enterprise</strong>' tier delivers custom AI models,
+						advanced automation platforms, and complete data infrastructure
+						overhauls.
+					</li>
+					<li>
+						For targeted business optimization, our
+						'<strong>Professional</strong>' tier provides powerful automation
+						systems and specialized AI solutions focused on specific operational
+						areas.
+					</li>
+					<li>
+						For organizations beginning their digital transformation journey,
+						our '<strong>Essential</strong>' tier offers focused data products
+						that deliver immediate value and establish the foundation for future
+						growth.
+					</li>
+				</ul>
+				<br />
+				<p class="indbig">
+					We also offer specialized
+					<a href="#data_products">product categories</a>:
+				</p>
+				<ul class="indplusplus">
+					<li>
+						'<strong>AI Models</strong>' - Custom-trained neural networks that
+						provide sophisticated predictive capabilities and decision support.
+					</li>
+					<li>
+						'<strong>Automation</strong>' - Intelligent systems that streamline
+						operations and scale your capabilities beyond manual limitations.
+					</li>
+				</ul>
+				<br /><br />
+
+				<h4 class="indsmall">
+					Q. How much does this cost? Do you work with small businesses or just
+					enterprises?
+				</h4>
+				<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+				<p class="indhang">
+					A. Our pricing is structured to align with the scope and complexity of
+					your requirements. We work with organizations of all sizes, from
+					growth-stage companies to Fortune 500 enterprises. Each engagement is
+					custom-scoped based on your specific technical requirements and
+					business objectives.
+				</p>
+				<p class="indbig">
+					Our <strong>Essential</strong> tier typically starts around
+					<strong>$25K</strong> for focused automation solutions,
+					<strong>Professional</strong> engagements generally range
+					<strong>$100K-500K</strong> for comprehensive systems, and
+					<strong>Enterprise</strong> implementations start at
+					<strong>$500K+</strong> for organization-wide transformations. We also
+					provide strategic consulting at
+					<strong>$500-1000/hour</strong> depending on the technical complexity
+					and scope.
+				</p>
+				<br />
+
+				<h4 class="indsmall">
+					Q. Do you have a standard package or do you always build custom
+					solutions? What if I already have developers?
+				</h4>
+				<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+				<p class="indhang">
+					A. We don't do cookie-cutter solutions - every system we build is
+					engineered specifically for your industry, competitive landscape, and
+					strategic business objectives. We do work with your existing team:
+				</p>
+				<ul class="indplusplus">
+					<li>
+						We can <a href="#engagement">train your developers</a> to maintain
+						and extend our systems, elevating their capabilities to enterprise
+						standards.
+					</li>
+					<li>
+						We offer ongoing support contracts where we handle the advanced
+						stuff while your team manages day-to-day operations. Think of us as
+						your <strong>technical specialists</strong> for advanced
+						capabilities.
+					</li>
+				</ul>
+				<br />
+				<br />
+
+				<h4 class="indsmall">
+					Q. Our current systems are a mess and our data is everywhere. Can you
+					actually fix this or will you just make it worse?
+				</h4>
+				<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+				<p class="indhang">
+					A. Chaos is our specialty. We thrive in the mess that makes other
+					consultants run away screaming. Our approach follows precise
+					methodologies that we've used to rescue enterprises from their own
+					technical disasters.
+				</p>
+				<p class="indbig">
+					We start with a <a href="#engagement">full audit</a> of your current
+					situation, identify the critical failures, then systematically rebuild
+					from the foundation up. We don't just apply band-aids - we perform
+					digital surgery with the precision of a surgeon and the ruthlessness
+					of a warlord.
+				</p>
+				<br />
+
+				<h4 class="indsmall">
+					Q. Will you work in [insert industry]? Do you understand our specific
+					business?
+				</h4>
+				<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+				<p class="indhang">
+					A. We work in any industry where data and automation can create
+					competitive advantage. In other words, if:
+				</p>
+				<ul class="indplusplus">
+					<li>You operate in a competitive market,</li>
+					<li>You generate or process significant amounts of data, and</li>
+					<li>
+						You're willing to invest in serious technological superiority.
+					</li>
+				</ul>
+				<br />
+				<p class="indbig">
+					We've dominated everything from fintech to manufacturing to
+					healthcare. We don't need to "understand your business" - we
+					understand power, efficiency, and profit. Your industry knowledge
+					combined with our technical expertise creates powerful solutions.
+				</p>
+				<br />
+
+				<h4 class="indsmall">
+					Q. How long does a typical project take? What if we need it faster?
+				</h4>
+				<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+				<p class="indhang">
+					A. Speed depends on scope and how much digital devastation you want to
+					unleash. A focused automation system might take 2-3 months. A full
+					AI-powered market domination platform could take 6-12 months.
+				</p>
+				<p class="indbig">
+					Need it faster? We offer <strong>war-time development</strong> at 2x
+					rates where we assign dedicated teams and work around the clock. Some
+					clients pay this premium because their competitors won't wait, and
+					neither should they.
+				</p>
+				<br />
+
+				<h4 class="indsmall">
+					Q. Do you provide ongoing support or do you just build it and
+					disappear?
+				</h4>
+				<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+				<p class="indhang">
+					A. We offer comprehensive
+					<a href="#support">support packages</a> because enterprise systems
+					require ongoing maintenance. Our support includes system monitoring,
+					performance optimization, security updates, and feature enhancements
+					as your empire grows.
+				</p>
+				<br />
+
+				<h4 class="indsmall">
+					Q. Are your solutions actually proven or is this just marketing hype?
+				</h4>
+				<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+				<p class="indhang">
+					A. Every system we've built has delivered measurable results. We don't
+					do "maybe" or "potentially" - we deliver quantifiable improvements in
+					revenue, efficiency, or market position. Our
+					<a href="#case_studies">case studies</a> show real numbers from real
+					clients who've used our solutions to achieve market leadership.
+				</p>
+				<p class="indbig">
+					We're not a typical consulting firm that writes reports and hopes for
+					the best. We build production systems that either work spectacularly
+					or we don't get paid. That's how confident we are in our ability to
+					deliver exceptional results.
+				</p>
+				<br />
+
+				<h4 class="indsmall">
+					Q. Is what you do legal? Are you a legitimate technology consultancy?
+				</h4>
+				<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+				<p class="indhang">
+					A. Everything we do is completely legal - we use technology, data
+					science, and automation to give you competitive advantages. The focus
+					on maximizing efficiency and delivering transformational business
+					value through advanced technology implementation.
+				</p>
+				<p class="indbig">
+					We build digital tools that are so effective they feel like cheating.
+					For more details on our business practices and legal compliance, see
+					the <a href="#legal_stuff">legal section</a> below.<br /><br />
+				</p>
+			</div>
+			<br /><br />
+
+			<a class="anchor" id="service_tiers"></a>
+			<div class="padme">
+				<h3>Service Tiers & Engagement Models</h3>
+				<!--+++++++++++++++++++++++++-->
+				<p>
+					Our services are structured across three primary engagement tiers,
+					each designed for different organizational needs and transformation
+					goals. From focused solutions to comprehensive digital infrastructure
+					modernization, we provide the technical expertise and strategic
+					guidance to achieve your objectives.
+				</p>
+				<br />
+
+				<a class="anchor" id="tier_enterprise"></a>
+				<h4 class="nsm">
+					<strong>'Enterprise'</strong> (Premium) - Comprehensive Transformation
+				</h4>
+				<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+				<p class="ind">
+					Our most comprehensive engagement tier for organizations requiring
+					systematic digital transformation. We design and implement
+					enterprise-scale AI systems, sophisticated automation platforms, and
+					data infrastructures that fundamentally enhance operational
+					capabilities and competitive positioning.
+				</p>
+				<p class="ind">
+					The 'Enterprise' tier encompasses complete solution delivery: custom
+					AI model development, full-stack automation systems, real-time data
+					processing, predictive analytics, and continuous optimization.
+					'<strong>Enterprise Plus</strong>' packages include dedicated
+					engineering teams and 24/7 operational support. '<strong
+						>Enterprise Advanced</strong
+					>' adds strategic capabilities like market intelligence systems and
+					advanced decision support frameworks. All solutions are architected
+					for enterprise scale, security, and reliability. See
+					<a href="#engagement">Engagement Process</a> below for details.
+				</p>
+				<br />
+
+				<a class="anchor" id="tier_professional"></a>
+				<h4 class="nsm">
+					<strong>'Professional'</strong> (Standard) - Targeted Excellence
+				</h4>
+				<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+				<p class="ind">
+					Designed for organizations seeking significant operational
+					improvements through strategic technology adoption. We develop
+					sophisticated automation systems, specialized AI solutions, and data
+					products that deliver measurable competitive advantages within focused
+					business domains.
+				</p>
+				<p class="ind">
+					The 'Professional' tier emphasizes targeted solutions that maximize
+					impact through strategic implementation. We create automation systems
+					that eliminate operational bottlenecks and manual inefficiencies,
+					while developing AI models that provide actionable intelligence for
+					strategic decision-making.
+				</p>
+				<p class="ind">
+					This engagement model is optimal for organizations requiring
+					substantial improvements without comprehensive infrastructure
+					transformation. You receive advanced automation and AI capabilities
+					that integrate with existing systems while introducing
+					transformational functionality.
+				</p>
+				<p class="ind">
+					Professional tier solutions are architected for seamless integration
+					with your current technology stack while delivering quantifiable
+					improvements in operational efficiency and analytical capabilities. We
+					focus on high-value opportunities where strategic automation and AI
+					implementation provide immediate competitive advantages.
+				</p>
+				<p class="ind">
+					Organizations typically achieve 30-70% operational efficiency
+					improvements within 3-6 months. Deliverables include custom automation
+					workflows, predictive analytics platforms, and domain-specific AI
+					solutions. '<strong>Professional Standard</strong>' packages focus on
+					single-domain implementations, while '<strong
+						>Professional Plus</strong
+					>' includes multi-system integration and advanced analytics
+					capabilities.
+				</p>
+				<br />
+
+				<a class="anchor" id="tier_essential"></a>
+				<h4 class="nsm">
+					<strong>'Essential'</strong> (Starter) - Focused Value Delivery
+				</h4>
+				<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+				<p class="ind">
+					Essential tier solutions are designed for
+					<strong>maximum impact</strong>
+					within specific business domains, providing organizations with a
+					strategic entry point into advanced data and AI capabilities. This
+					approach enables significant operational improvements with focused
+					investments and clear ROI demonstration.
+				</p>
+				<p class="ind">
+					These implementations target critical operational inefficiencies or
+					analytical gaps that represent clear opportunities for improvement. We
+					develop focused automation systems, targeted data analytics platforms,
+					or specialized AI models that address specific business challenges
+					with precision and measurable results.
+				</p>
+				<p class="ind">
+					Typical Essential engagements include automated reporting systems,
+					customer analytics platforms, inventory optimization solutions, or
+					specialized predictive models for defined use cases. These
+					implementations typically deliver 20-40% efficiency improvements in
+					targeted areas within 1-3 months.
+				</p>
+				<p class="ind">
+					The Essential tier provides an ideal foundation for organizations
+					beginning their advanced analytics journey or evaluating our
+					capabilities before larger strategic engagements. You receive
+					demonstrable value and establish technical infrastructure for future
+					expansion.
+				</p>
+				<p class="ind">
+					Similar to our other tiers, Essential solutions are available as
+					'<strong>Essential Standard</strong>' (single-domain automation or
+					analytics) or '<strong>Essential Plus</strong>' (multi-component
+					solutions with integration capabilities).
+				</p>
+				<br />
+
+				<a class="anchor" id="tier_consulting"></a>
+				<h4 class="nsm">
+					<strong>'Consulting'</strong> - Strategic Advisory Only
+				</h4>
+				<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+				<p class="ind">
+					Sometimes you don't need us to build anything - you just need
+					strategic guidance from experts who understand how to leverage data
+					and AI for competitive advantage. Our consulting engagements provide
+					you with actionable roadmaps, technology assessments, and strategic
+					planning.
+				</p>
+				<ul class="ind spaced">
+					<li>
+						<strong>Technology Assessment:</strong> We audit your current
+						systems and identify opportunities for automation and AI
+						implementation. You get a detailed analysis of what's possible,
+						what's profitable, and what will deliver the strongest competitive
+						positioning.<br /><br />
+						Perfect for executives who need to understand their digital
+						transformation options before committing to major projects. We'll
+						tell you exactly where to invest for maximum competitive advantage.
+					</li>
+					<li>
+						<strong>Strategic Roadmapping:</strong> We create detailed
+						implementation plans for digital dominance, including technology
+						choices, budget requirements, timeline estimates, and risk
+						assessments. You get a complete battle plan for your digital
+						transformation.<br /><br />
+						Ideal for companies that want to move fast but need expert guidance
+						on the most effective path forward. We've seen every mistake
+						possible - let us help you avoid them.
+					</li>
+				</ul>
+				<br />
+
+				<a class="anchor" id="tier_custom"></a>
+				<h4 class="nsm"><strong>'Custom'</strong> - Bespoke Solutions</h4>
+				<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+				<p class="ind">
+					When our standard tiers don't fit your unique situation, we create
+					completely custom technical solutions optimized specifically for your
+					industry, competitive landscape, and business model. These are
+					one-of-a-kind systems that provide unique capabilities and strategic
+					advantages.
+				</p>
+				<ul class="ind spaced">
+					<li>
+						<strong>Industry-Specific Solutions:</strong> We build systems
+						designed for the unique challenges of your sector - whether that's
+						regulatory compliance in finance, supply chain optimization in
+						manufacturing, or patient data analysis in healthcare.
+					</li>
+					<li>
+						<strong>Competitive Intelligence Systems:</strong> Custom AI that
+						monitors your competitors, analyzes their strategies, and identifies
+						opportunities for you to outmaneuver them. These systems provide
+						real-time competitive advantages that standard solutions simply
+						can't match.<br /><br />
+						Perfect for companies operating in highly competitive markets where
+						small advantages translate to major market share gains.
+					</li>
+				</ul>
+				<p class="ind">
+					Why choose custom over our standard tiers? The reasoning is simple:
+				</p>
+				<ul class="ind spaced">
+					<li>
+						When you need capabilities that don't exist anywhere else, standard
+						solutions won't cut it. We engineer completely new approaches to
+						solve problems that have never been solved before.
+					</li>
+					<li>
+						When your competitive advantage depends on having unique
+						capabilities, custom solutions ensure that your technical systems
+						remain exclusively yours. No competitor can buy the same system
+						because it doesn't exist anywhere else.
+					</li>
+				</ul>
+				<br />
+
+				<a class="anchor" id="pricing_tldr"></a>
+				<h4 class="nsm">Pricing Summary / tl;dr version</h4>
+				<!-- - - - - - - - - - - - - - - - - - - - -->
+				<p class="ind">
+					To put the above wall of text a little more succinctly, our pricing
+					works sort of like this:
+				</p>
+				<table class="monotable ind" id="pricing-table">
+					<thead>
+						<tr>
+							<th>Service Tier</th>
+							<th>Starting Price</th>
+							<th>Timeline</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Essential</td>
+							<td>$25K+</td>
+							<td>1-3 months</td>
+						</tr>
+						<tr>
+							<td>Professional</td>
+							<td>$100K-500K</td>
+							<td>3-6 months</td>
+						</tr>
+						<tr>
+							<td>Enterprise</td>
+							<td>$500K+</td>
+							<td>6-12 months</td>
+						</tr>
+						<tr>
+							<td>Consulting</td>
+							<td>$500-1000/hr</td>
+							<td>Flexible</td>
+						</tr>
+						<tr>
+							<td>Custom</td>
+							<td>Quote on request</td>
+							<td>Variable</td>
+						</tr>
+					</tbody>
+				</table>
+				<p class="ind">
+					Our pricing structure is transparent and aligned with the scope and
+					complexity of your transformation goals. Each tier is designed to
+					deliver exceptional ROI while providing the technical capabilities and
+					strategic advantages required for sustained competitive excellence.
+				</p>
+			</div>
+			<br /><br />
+
+			<a class="anchor" id="data_products"></a>
+			<div class="padme">
+				<h3>Data Products & Technology Stack</h3>
+				<!--++++++++++++++++++++++++++++++-->
+				<p>
+					Our data products fall into two main categories, each designed to give
+					you specific types of competitive advantage.
+				</p>
+				<ul class="tighter spaced">
+					<li>
+						<strong>'AI Models' (custom neural networks):</strong> We build AI
+						systems that learn from your data and provide insights, predictions,
+						and automation that your competitors simply can't match. These range
+						from predictive analytics for market trends to automated
+						decision-making systems that optimize your operations in real-time.
+					</li>
+
+					<li>
+						<strong>'Automation' (end-to-end systems):</strong> We create
+						comprehensive automation platforms that eliminate human
+						inefficiencies and scale your operations to levels that would be
+						impossible manually. These systems integrate with your existing
+						infrastructure while providing new capabilities that didn't exist
+						before.<br />
+						<br />
+						Our automation systems can handle everything from simple data
+						processing to complex multi-step workflows involving AI
+						decision-making, API integrations, and real-time monitoring. Every
+						system is designed to be both powerful and maintainable by your
+						team.
+					</li>
+				</ul>
+				<br />
+
+				<a class="anchor" id="ai_models"></a>
+				<h4 class="nsm">AI Model Training & Development</h4>
+				<!-- - - - - - - - - - - - - - - - - - - - -->
+				<p class="ind">
+					Our AI model development process begins with a comprehensive analysis
+					of your data landscape and business objectives. We don't just build
+					generic machine learning models - we create neural networks
+					specifically engineered to solve your unique challenges and deliver
+					competitive advantages.
+				</p>
+				<p class="ind">
+					Our approach combines cutting-edge AI research with practical business
+					applications. We start by understanding your data sources, identifying
+					patterns that humans miss, and designing models that can make
+					predictions, automate decisions, and optimize operations with
+					superhuman accuracy.
+				</p>
+				<p class="ind">
+					Each AI model is custom-trained on your data and fine-tuned for your
+					specific use cases. Whether you need predictive analytics for market
+					forecasting, recommendation engines for customer optimization, or
+					automated decision-making systems for operational efficiency, our
+					models are designed to integrate seamlessly with your existing
+					infrastructure while delivering measurable business value.
+				</p>
+
+				<a class="anchor" id="automation"></a>
+				<h4 class="nsm">Automation Systems & Process Optimization</h4>
+				<!-- - - - - - - - - - - - - - - - - - - - -->
+				<p class="ind">
+					Our automation systems are comprehensive digital platforms that
+					eliminate human inefficiencies and scale operations to levels that
+					would be impossible manually. These systems don't just automate
+					existing processes - they completely reimagine how work gets done.
+				</p>
+				<p class="ind">
+					We build automation that integrates multiple systems, APIs, and data
+					sources into unified workflows that run 24/7 without human
+					intervention. Whether it's processing customer data, managing
+					inventory, generating reports, or making operational decisions, our
+					automation systems handle complex multi-step processes with the
+					reliability of digital infrastructure.
+				</p>
+				<p class="ind">
+					Our automation systems include comprehensive monitoring and analytics
+					capabilities to ensure optimal performance and continuous improvement.
+				</p>
+
+				<p class="ind">Key automation capabilities we deliver:</p>
+
+				<ul class="ind spaced">
+					<li>
+						<strong>Process Automation:</strong> End-to-end workflow automation
+						that eliminates manual tasks and reduces human error. Our systems
+						can handle everything from data entry and processing to complex
+						decision-making workflows.
+					</li>
+					<li>
+						<strong>Data Pipeline Automation:</strong> Automated data
+						collection, cleaning, transformation, and analysis pipelines that
+						run continuously without human intervention.
+					</li>
+					<li>
+						<strong>Intelligent Automation:</strong> AI-powered automation that
+						can adapt to changing conditions and make intelligent decisions
+						based on real-time data.
+					</li>
+				</ul>
+
+				<a class="anchor" id="success_metrics"></a>
+				<h4 class="nsm">
+					<strong>Success Metrics</strong> - Measuring Your Digital Domination
+				</h4>
+				<p class="ind">
+					We don't just deliver systems - we deliver measurable results. Every
+					project includes comprehensive metrics and KPIs that prove the value
+					of your investment.
+				</p>
+				<ul class="ind spaced">
+					<li>
+						<strong>ROI Tracking:</strong> Detailed analysis of cost savings,
+						revenue increases, and efficiency gains delivered by our solutions.
+					</li>
+					<li>
+						<strong>Performance Benchmarks:</strong> Before and after
+						comparisons showing exactly how much your competitive position has
+						improved.
+					</li>
+					<li>
+						<strong>Continuous Monitoring:</strong> Real-time dashboards that
+						track system performance and business impact.
+					</li>
+				</ul>
+
+				<a class="anchor" id="quality_assurance"></a>
+				<h4 class="nsm">
+					<strong>Quality Assurance</strong> - Enterprise-Grade Reliability
+				</h4>
+				<p class="ind">
+					Our systems are built to enterprise standards with comprehensive
+					testing, monitoring, and fail-safes. We guarantee that your technical
+					solutions will perform reliably when you need them most.
+				</p>
+				<ul class="ind spaced">
+					<li>
+						<strong>Automated Testing:</strong> Comprehensive test suites that
+						validate system functionality before deployment and continuously
+						monitor performance in production.
+					</li>
+					<li>
+						<strong>Security & Compliance:</strong> Enterprise-grade security
+						measures and compliance with relevant industry standards and
+						regulations.
+					</li>
+					<li>
+						<strong>Disaster Recovery:</strong> Robust backup and recovery
+						systems ensure your operations continue even if something goes
+						wrong.
+					</li>
+				</ul>
+			</div>
+			<br /><br />
+
+			<a class="anchor" id="usage_notes"></a>
+			<div class="padme">
+				<h3>Implementation Notes</h3>
+				<!--++++++++++++++++++++++++++++-->
+
+				<a class="anchor" id="tech_stack"></a>
+				<h4 class="nsm">
+					<strong>Tech Stack</strong> - Best-in-Class Technology
+				</h4>
+				<p class="ind">
+					We use cutting-edge technology stacks optimized for performance,
+					scalability, and maintainability. Our platform choices are based on
+					proven enterprise solutions that can handle massive scale.
+				</p>
+				<ul class="ind spaced">
+					<li>
+						<strong>AI/ML:</strong> PyTorch, TensorFlow, Scikit-learn, Hugging
+						Face Transformers
+					</li>
+					<li>
+						<strong>Backend:</strong> Python, Node.js, Go, PostgreSQL, Redis,
+						Elasticsearch
+					</li>
+					<li>
+						<strong>Infrastructure:</strong> AWS/GCP/Azure, Docker, Kubernetes,
+						Terraform
+					</li>
+					<li>
+						<strong>Data Processing:</strong> Apache Spark, Kafka, Airflow, dbt
+					</li>
+				</ul>
+
+				<a class="anchor" id="deployment"></a>
+				<h4 class="nsm"><strong>Deployment</strong> - Seamless Integration</h4>
+				<p class="ind">
+					Our deployment process is designed to minimize disruption to your
+					existing operations while ensuring your new systems integrate
+					perfectly with your current infrastructure.
+				</p>
+				<ul class="ind spaced">
+					<li>
+						<strong>Phased Rollout:</strong> Gradual deployment with extensive
+						testing at each stage
+					</li>
+					<li>
+						<strong>Zero-Downtime Migration:</strong> Systems go live without
+						interrupting your business operations
+					</li>
+					<li>
+						<strong>Team Training:</strong> Comprehensive training for your
+						staff on new systems and processes
+					</li>
+				</ul>
+
+				<a class="anchor" id="maintenance"></a>
+				<h4 class="nsm"><strong>Maintenance</strong> - Ongoing Optimization</h4>
+				<p class="ind">
+					Enterprise systems require ongoing maintenance and optimization to
+					maintain their competitive advantages. Our maintenance packages ensure
+					your systems continue to deliver maximum value.
+				</p>
+				<ul class="ind spaced">
+					<li>
+						<strong>Proactive Monitoring:</strong> 24/7 system monitoring with
+						automated alerts and issue resolution
+					</li>
+					<li>
+						<strong>Performance Optimization:</strong> Regular system tuning and
+						optimization to improve performance
+					</li>
+					<li>
+						<strong>Feature Updates:</strong> Ongoing development of new
+						features and capabilities
+					</li>
+				</ul>
+
+				<a class="anchor" id="support"></a>
+				<h4 class="nsm">
+					<strong>Support Levels</strong> - When You Need Backup
+				</h4>
+				<p class="ind">
+					We offer different levels of support based on your needs and the
+					criticality of your systems.
+				</p>
+				<ul class="ind spaced">
+					<li>
+						<strong>Enterprise Support:</strong> 24/7 support with dedicated
+						technical account manager and guaranteed response times
+					</li>
+					<li>
+						<strong>Standard Support:</strong> Business hours support with email
+						and chat access to our technical team
+					</li>
+					<li>
+						<strong>Community Support:</strong> Access to documentation, forums,
+						and basic email support
+					</li>
+				</ul>
+			</div>
+			<br /><br />
+
+			<a class="anchor" id="company_info"></a>
+			<div class="padme">
+				<h3>Company Info</h3>
+				<!--++++++++++++++++++++++++++++++-->
+
+				<a class="anchor" id="team_history"></a>
+				<h4 class="nsm">
+					<strong>Team & History</strong> - Technology Excellence
+				</h4>
+				<p class="ind">
+					Motis Group was founded by experienced technology leaders from premier
+					tech organizations who recognized the opportunity to deliver
+					transformational enterprise solutions. Our team includes former
+					engineers and architects from Google, Tesla, Palantir, and leading
+					technology startups who decided to focus their expertise on solving
+					complex business challenges through advanced data and AI systems.
+				</p>
+				<ul class="ind spaced">
+					<li>
+						<strong>Founded:</strong> 2023 by a team of ex-FAANG engineers and
+						startup veterans
+					</li>
+					<li>
+						<strong>Mission:</strong> Deliver enterprise-grade data and AI
+						solutions that create sustainable competitive advantages
+					</li>
+					<li>
+						<strong>Approach:</strong> Combine advanced technology with
+						strategic business expertise for measurable impact
+					</li>
+				</ul>
+
+				<a class="anchor" id="case_studies"></a>
+				<h4 class="nsm"><strong>Case Studies</strong> - Proven Results</h4>
+				<p class="ind">
+					Our track record speaks for itself. We've helped companies across
+					industries achieve dramatic improvements in efficiency, revenue, and
+					competitive position.
+				</p>
+				<ul class="ind spaced">
+					<li>
+						<strong>FinTech Startup:</strong> 300% increase in loan approval
+						accuracy with custom AI risk models
+					</li>
+					<li>
+						<strong>E-commerce Platform:</strong> 40% reduction in customer
+						service costs through intelligent automation
+					</li>
+					<li>
+						<strong>Manufacturing Company:</strong> $2M annual savings through
+						predictive maintenance systems
+					</li>
+				</ul>
+
+				<a class="anchor" id="testimonials"></a>
+				<h4 class="nsm">
+					<strong>Client Testimonials</strong> - What Others Say
+				</h4>
+				<p class="ind">
+					Don't just take our word for it. Here's what our clients say about
+					working with Motis Group:
+				</p>
+				<ul class="ind spaced">
+					<li>
+						"<em
+							>These guys don't just deliver software - they deliver competitive
+							advantages. Our automation system paid for itself in 6 months.</em
+						>" - CEO, SaaS Company
+					</li>
+					<li>
+						"<em
+							>Finally, a team that understands both the technical complexity
+							and business impact. They built us a system our competitors can't
+							match.</em
+						>" - CTO, FinTech Startup
+					</li>
+					<li>
+						"<em
+							>The technical depth and business focus is impressive. They've
+							helped us achieve market leadership through superior operational
+							capabilities.</em
+						>" - VP of Operations, Manufacturing
+					</li>
+				</ul>
+
+				<a class="anchor" id="tools_used"></a>
+				<h4 class="nsm"><strong>Tools & Technology</strong> - Our Platform</h4>
+				<p class="ind">
+					We leverage cutting-edge tools and frameworks to build robust,
+					scalable enterprise solutions. Our technology stack continuously
+					evolves to incorporate the latest advances in AI, automation, and data
+					engineering.
+				</p>
+				<ul class="ind spaced">
+					<li>
+						<strong>AI Frameworks:</strong> PyTorch, TensorFlow, Hugging Face,
+						LangChain, OpenAI APIs
+					</li>
+					<li>
+						<strong>Data Engineering:</strong> Apache Spark, Kafka, Airflow,
+						dbt, Snowflake, BigQuery
+					</li>
+					<li>
+						<strong>Cloud Platforms:</strong> AWS, Google Cloud, Azure with full
+						DevOps automation
+					</li>
+					<li>
+						<strong>Development:</strong> Modern Python/TypeScript stacks with
+						comprehensive CI/CD
+					</li>
+				</ul>
+			</div>
+			<br /><br />
+
+			<a class="anchor" id="engagement"></a>
+			<div class="padme">
+				<h3>Engagement Process</h3>
+				<!--+++++++++++++++++-->
+				<a class="anchor" id="timeline_delivery"></a>
+				<h4 class="nsm">
+					<strong>Timeline & Delivery</strong> - Predictable Results on Schedule
+				</h4>
+				<p class="ind">
+					We use agile development methodologies with weekly check-ins and
+					milestone-based delivery. You always know exactly where your project
+					stands and when you'll see results.
+				</p>
+				<ul class="indplus">
+					<li>
+						<strong>Phase 1 (Weeks 1-2):</strong> System architecture and
+						technical specification
+					</li>
+					<li>
+						<strong>Phase 2 (Weeks 3-8):</strong> Core development with weekly
+						demos
+					</li>
+					<li>
+						<strong>Phase 3 (Weeks 9-12):</strong> Integration, testing, and
+						deployment
+					</li>
+				</ul>
+			</div>
+			<br /><br />
+			<a class="anchor" id="contact"></a>
+			<div class="padme">
+				<h3>Contact</h3>
+				<!--+++++++++++-->
+				<pre
+					class="pw ind"
+				>Ready to transform your organization?   <strong>email</strong> - hello@motis.ai
+                                  <strong>www</strong> - <a href="https://motis.ai" class="ext">https://motis.ai</a>
+                               <strong>headquarters</strong> - San Francisco, CA
+
+If you have complex business challenges that could benefit from advanced automation and AI capabilities, we want to discuss how we can help. Whether you're a growth-stage company or an established enterprise, contact us for a strategic consultation.
+
+We focus exclusively on substantial projects with meaningful business impact.
+</pre>
+			</div>
+			<br /><br />
+			<a class="anchor" id="legal_stuff"></a>
+			<div class="padme">
+				<h3>Legal & Terms</h3>
+				<!--+++++++++++++-->
+				<p>
+					All work performed by <strong>Motis Group</strong> is conducted under
+					comprehensive professional services agreements with clearly defined
+					deliverables, timelines, and payment terms. We operate as a
+					specialized technology consultancy focused on enterprise-grade data
+					and AI solutions.
+				</p>
+
+				<p>
+					Our <strong>technical solutions</strong> are proprietary software
+					systems, custom-engineered for each client's specific requirements.
+					All intellectual property rights transfer to the client upon final
+					payment, unless otherwise specified in the engagement agreement.
+				</p>
+
+				<p>"tl;dr" version for the legal department:</p>
+
+				<ul>
+					<li>
+						We build custom software solutions that you own completely after
+						payment
+					</li>
+					<li>
+						All work is covered by professional liability insurance and
+						<strong>performance guarantees</strong>
+					</li>
+					<li>
+						We maintain strict confidentiality and can sign any NDAs your legal
+						team requires
+					</li>
+					<li>
+						Standard warranty covers system functionality for 12 months
+						post-delivery
+					</li>
+				</ul>
+
+				<br />Ready to transform your organization's capabilities?
+			</div>
+			<br /><br />
+		</div>
+		<div id="footer">
+			<a href="/" id="getback">INT10h.org</a> © 2015-2020 VileR
+		</div>
+		<script
+			src="/oldschool-pc-fonts/scripts/font-ui-misc.js?ver=II.II"
+			type="text/javascript"
+		></script>
+
+		<div class="cgw-ext" data-ext-id="pdnenlnelpdomajfejgapbdpmjkfpjkp"></div>
+		<cgw-writer-modal
+			data-wxt-shadow-root=""
+			class="cgw_main_container"
+		></cgw-writer-modal>
+	</body>
+</html>
