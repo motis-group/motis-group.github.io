@@ -4,47 +4,38 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
+concurrency:
+  group: website-deploy
+  cancel-in-progress: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@v4
 
-      - name: Install sshpass
-        run: sudo apt-get install -y sshpass
-
-      - name: Deploy to server
-        env:
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_PASSWORD: ${{ secrets.REMOTE_PASSWORD }}
-          REMOTE_PATH: /var/www/motis-website
-          BRANCH_NAME: main
+      - name: Prepare static publish directory
         run: |
-          # Deploy to remote server
-          echo "Deploying to remote server..."
-          if ! sshpass -p $REMOTE_PASSWORD ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "rm -rf $REMOTE_PATH && mkdir -p $REMOTE_PATH && cd $REMOTE_PATH && git clone https://github.com/automationchad/website.git . && git checkout $BRANCH_NAME"; then
-            echo "::error::Failed to deploy to remote server!"
-            exit 1
-          fi
+          mkdir -p _site
+          rsync -av --delete \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude '_site' \
+            ./ _site/
+          echo "motis.group" > _site/CNAME
+          touch _site/.nojekyll
 
-          # Check nginx configuration
-          echo "Checking Nginx configuration..."
-          if ! sshpass -p $REMOTE_PASSWORD ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "nginx -t"; then
-            echo "::error::Nginx configuration test failed!"
-            exit 1
-          fi
-
-          # Restart nginx
-          echo "Restarting nginx..."
-          if ! sshpass -p $REMOTE_PASSWORD ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "systemctl stop nginx && systemctl start nginx && systemctl reload nginx"; then
-            echo "::error::Failed to restart nginx!"
-            exit 1
-          fi
-
-          echo "Deployment completed successfully!"
+      - name: Publish to motis-group.github.io
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.MOTIS_GH_PAGES_TOKEN }}
+          external_repository: motis-group/motis-group.github.io
+          publish_branch: main
+          publish_dir: ./_site
+          user_name: github-actions[bot]
+          user_email: github-actions[bot]@users.noreply.github.com
+          commit_message: "deploy: ${{ github.repository }}@${{ github.sha }}"
