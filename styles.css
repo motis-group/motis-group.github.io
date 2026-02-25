@@ -344,7 +344,7 @@ footer {
 				display: none;
 			}
 		}
-		&[href="https://github.com/motis-group"] {
+		&[href="https://github.com/wmarzella"] {
 			&::before {
 				content: 'G';
 			}

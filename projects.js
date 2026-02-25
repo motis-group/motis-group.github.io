@@ -1,211 +1,137 @@
 const projects = [
 	{
-		name: 'article-automation.py',
-		description: 'workflow automation script',
-		date: '2025-01-30',
-		link: '#',
-		status: 'WIP',
+		name: 'motis.group',
+		description: 'canonical website and operating profile',
+		date: '2026-02-25',
+		link: 'https://motis.group',
+		status: 'LIVE',
 		visibility: 'open',
-		company: 'dot2dotconsulting',
+		company: 'motis.group',
+		location: 'global',
+	},
+	{
+		name: 'kernel-bots',
+		description: 'multi-agent operations kernel',
+		date: '2026-02-24',
+		link: '#',
+		status: 'PRIVATE',
+		visibility: 'closed',
+		company: 'motis.group',
 		location: 'remote',
 	},
 	{
-		name: 'marzella',
-		description: 'personal wiki',
-		date: '2024-03-20',
+		name: 'flow-builder-ui',
+		description: 'visual workflow builder for operations teams',
+		date: '2026-02-24',
 		link: '#',
 		status: 'WIP',
+		visibility: 'closed',
+		company: 'motis.group',
+		location: 'remote',
+	},
+	{
+		name: 'runtime-service',
+		description: 'agent runtime orchestration and contracts',
+		date: '2026-02-23',
+		link: '#',
+		status: 'PRIVATE',
+		visibility: 'closed',
+		company: 'motis.group',
+		location: 'remote',
+	},
+	{
+		name: 'website-source',
+		description: 'source repo for this site',
+		date: '2026-02-20',
+		link: 'https://github.com/wmarzella/website',
+		status: 'OSS',
 		visibility: 'open',
 		company: 'motis.group',
-		location: 'sydney',
+		location: 'remote',
 	},
 	{
 		name: 'kanpeki',
-		description: 'costing cli tool',
+		description: 'costing CLI tool',
 		date: '2025-01-15',
-		link: 'https://github.com/automationchad/kanpeki',
+		link: 'https://github.com/wmarzella/kanpeki',
+		status: 'OSS',
 		visibility: 'open',
 		company: 'alfab',
 		location: 'sydney',
 	},
 	{
-		name: 'tsukuyomi',
-		description: 'experimental os',
-		date: '2024-03-10',
-		link: '#',
-		visibility: 'closed',
-		company: 'acme corp',
-		location: 'remote',
-	},
-
-	{
-		name: 'dynix.cpp',
-		description: 'physics engine',
-		date: '2025-01-20',
-		link: '#',
-		visibility: 'closed',
-		company: 'motis group',
-		location: 'melbourne',
-	},
-	{
-		name: 'hr-sync.py',
-		description: 'contract - data engineering',
-		date: '2024-10-15',
-		link: '#',
-		visibility: 'open',
-		company: 'kunes auto group',
-		location: 'remote',
-	},
-	{
-		name: 'motis.group',
-		description: 'personal website',
-		date: '2023-11-10',
-		link: 'https://github.com/automationchad/website',
-		visibility: 'open',
-		company: 'motis group',
-		location: 'sydney',
-	},
-	{
-		name: 'ironclad-sync.py',
-		description: 'contract - data engineering',
-		date: '2023-04-15',
-		link: '#',
-		visibility: 'closed',
-		company: 'molecular testing labs',
-		location: 'san diego',
-	},
-	{
-		name: 'crm-sync.py',
-		description: 'contract - data engineering',
-		date: '2022-10-19',
-		link: '#',
-		visibility: 'closed',
-		company: 'nova',
-		location: 'san diego',
-	},
-	{
-		name: 'lever-sync.py',
-		description: 'contract - data engineering',
-		date: '2023-06-19',
-		link: '#',
-		visibility: 'closed',
-		company: 'appen',
-		location: 'san diego',
-	},
-	{
 		name: 'revoltx',
-		description: 'auto job application script',
+		description: 'automation experiments for job workflows',
 		date: '2025-01-05',
-		link: 'https://github.com/automationchad/revoltx',
+		link: 'https://github.com/wmarzella/revoltx',
+		status: 'OSS',
 		visibility: 'open',
-		company: 'motis group',
+		company: 'motis.group',
 		location: 'sydney',
 	},
 	{
-		name: 'traci',
-		description: 'rag application',
-		date: '2023-04-15',
+		name: 'marzella-wiki',
+		description: 'personal wiki and operations notes',
+		date: '2024-03-20',
 		link: '#',
-		visibility: 'open',
-		company: 'tray.io',
-		location: 'italy',
+		status: 'PRIVATE',
+		visibility: 'closed',
+		company: 'motis.group',
+		location: 'sydney',
 	},
 	{
-		name: 'database-sync.py',
-		description: 'contract - data engineering',
-		date: '2024-04-30',
+		name: 'data-sync contracts',
+		description: 'delivery across HR/CRM/finance data pipelines',
+		date: '2024-01-15',
 		link: '#',
-		visibility: 'open',
-		company: 'sai360',
-		location: 'melbourne',
-	},
-	{
-		name: 'hubspot-sync.py',
-		description: 'contract - data engineering',
-		date: '2023-10-06',
-		link: '#',
-		visibility: 'open',
-		company: 'manobyte',
+		status: 'ARCHIVE',
+		visibility: 'closed',
+		company: 'consulting',
 		location: 'remote',
-	},
-	{
-		name: 'platform engineer',
-		description: 'work in sales, automation, and data',
-		date: '2021-04-12',
-		link: '#',
-		visibility: 'open',
-		company: 'tray.io',
-		location: 'san diego',
-	},
-	{
-		name: '*',
-		description: '*',
-		date: '*',
-		link: '*',
-		visibility: '*',
-		company: '*',
-		location: '*',
-	},
-	{
-		name: '*',
-		description: '*',
-		date: '*',
-		link: '*',
-		visibility: '*',
-		company: '*',
-		location: '*',
-	},
-	{
-		name: '*',
-		description: '*',
-		date: '*',
-		link: '*',
-		visibility: '*',
-		company: '*',
-		location: '*',
-	},
-	{
-		name: 'MISCALLANEOUS',
-		description: '*',
-		date: '*',
-		link: '*',
-		visibility: '*',
-		company: '*',
-		location: '*',
 	},
 	{
 		name: 'usc-tsc-podcast',
-		description: 'podcast',
+		description: 'podcast production and publishing',
 		date: '2020-09-25',
 		link: 'https://open.spotify.com/show/3QWs17CVzPMCdiciMXM4Nz?si=a22f46e7621341e5',
+		status: 'ARCHIVE',
 		visibility: 'open',
 		company: 'usc',
 		location: 'los angeles',
 	},
 	{
 		name: 'in-on-merit',
-		description: 't-shirt design',
+		description: 'campaign and merchandise launch',
 		date: '2019-04-19',
 		link: 'https://lamag.com/featured/these-usc-students-want-you-to-know-exactly-how-they-got-accepted',
+		status: 'ARCHIVE',
 		visibility: 'open',
 		company: 'usc',
 		location: 'los angeles',
 	},
 ];
 
-// Function to sort projects by date (newest first)
+function toTimestamp(dateValue) {
+	const parsed = Date.parse(dateValue);
+	return Number.isNaN(parsed) ? 0 : parsed;
+}
+
 function getSortedProjects() {
 	const sortedProjects = [...projects].sort(
-		(a, b) => new Date(b.date) - new Date(a.date)
+		(a, b) => toTimestamp(b.date) - toTimestamp(a.date)
 	);
-	// Add the id to the sorted projects
+
 	sortedProjects.forEach((project, index) => {
 		project.id = (index + 1).toString().padStart(3, '0');
 	});
+
 	return sortedProjects;
 }
 
-// Function to generate HTML for the projects table
+function canShowLink(project) {
+	return Boolean(project.link && project.link !== '#') && project.visibility === 'open';
+}
+
 function generateProjectsHTML() {
 	const sortedProjects = getSortedProjects();
 
@@ -214,30 +140,19 @@ function generateProjectsHTML() {
 			(project) => `
         <tr>
             <td class="project-name">
-                <span class="project-id">${project.id}</span> ${project.name} 
-                ${
-									project.status
-										? `<span class="project-status">${project.status}</span>`
-										: ''
-								}
-                ${
-									project.visibility === 'closed'
-										? '<span class="project-status closed">⊗</span>'
-										: ''
-								}
+                <span class="project-id">${project.id}</span> ${project.name}
+                ${project.status ? `<span class="project-status">${project.status}</span>` : ''}
+                ${project.visibility === 'closed' ? '<span class="project-status closed">⊗</span>' : ''}
             </td>
             <td class="project-description">${project.description}</td>
             <td class="company">${project.company}</td>
             <td class="location">${project.location}</td>
             <td class="view-link">
                 ${
-									project.description.includes('*')
-										? '*'
-										: project.status === 'WIP' ||
-										  project.visibility === 'closed'
-										? '<span class="disabled-link">link ⇱</span>'
-										: `<a href="${project.link}" target="_blank">link ⇱</a>`
-								}
+						canShowLink(project)
+							? `<a href="${project.link}" target="_blank" rel="noopener noreferrer">link ⇱</a>`
+							: '<span class="disabled-link">link ⇱</span>'
+					}
             </td>
         </tr>
     `
