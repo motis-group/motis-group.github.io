@@ -67,6 +67,46 @@
 			</tr>
 		</table>
 
+		<script>
+			(() => {
+				const p = new URLSearchParams(location.search);
+				const here = location.pathname;
+				const lines = [];
+				if (p.get('notices') === 'auditor') {
+					lines.push(
+						'You said an auditor or a regulator would find out. That puts a date on this, and it changes the order of the work: the thing you can show them comes before the thing that is convenient for you.'
+					);
+				} else if (p.get('notices') === 'customer' && !here.includes('it-broke')) {
+					lines.push(
+						'You said a customer would find out first. That is the expensive way to learn about it, and it is the case worth pricing against.'
+					);
+				}
+				if (p.get('catches') === 'nobody') {
+					lines.push(
+						'You said nobody catches it. Then there is no check to replace, and the first job is finding out what is already wrong rather than stopping it happening again.'
+					);
+				} else if (p.get('catches') === 'me' && !here.includes('its-you')) {
+					lines.push(
+						'You said you catch it yourself. <a href="/start/its-you">That has its own page</a>, and it is probably the one you want.'
+					);
+				}
+				if (!lines.length) return;
+				const table = document.querySelector('.projects-table');
+				const anchor = [...table.rows].find((r) =>
+					r.textContent.includes('Send me a login')
+				);
+				lines.reverse().forEach((t) => {
+					const row = table.insertRow(anchor ? anchor.rowIndex : -1);
+					const td = row.insertCell(0);
+					td.className = 'project-description';
+					td.innerHTML = t;
+					const gap = table.insertRow(anchor ? anchor.rowIndex : -1);
+					const g = gap.insertCell(0);
+					g.className = 'project-description';
+					g.innerHTML = '&nbsp;';
+				});
+			})();
+		</script>
 		<footer class="footer">
 			<div class="footer-logos">
 				<img src="/images/logo-black.png" alt="MOTIS.GROUP" class="footer-logo light-logo" />

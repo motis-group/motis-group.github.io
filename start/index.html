@@ -116,7 +116,16 @@
 						if (picked.q1) p.set('catches', picked.q1);
 						if (picked.q3) p.set('notices', picked.q3);
 						const qs = p.toString();
-						go.href = '/start/' + picked.q2 + (qs ? '?' + qs : '');
+						// a regulator or a customer finding out is a trigger, whatever
+						// question two said, so it overrides "just having a look"
+						let dest = picked.q2;
+						if (
+							dest === 'not-sure' &&
+							(picked.q3 === 'auditor' || picked.q3 === 'customer')
+						) {
+							dest = 'it-broke';
+						}
+						go.href = '/start/' + dest + (qs ? '?' + qs : '');
 						go.classList.remove('disabled-link');
 						go.textContent = 'continue ⊹';
 					}
