@@ -11,6 +11,19 @@
 		<title>start | MOTIS.GROUP</title>
 		<link rel="stylesheet" href="/styles.css" />
 		<script src="/theme.js"></script>
+		<style>
+			.opt .mark {
+				display: inline-block;
+				width: 1.1em;
+			}
+			.opt.passed {
+				text-decoration: line-through;
+				opacity: 0.4;
+			}
+			.opt.chosen .mark {
+				opacity: 1;
+			}
+		</style>
 	</head>
 	<body>
 		<table class="projects-table">
@@ -24,16 +37,16 @@
 				<td>When something is wrong in your numbers, who catches it?</td>
 			</tr>
 			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q1" data-v="person">⊹ a specific person</a></td>
+				<td class="project-description"><a href="#" class="opt" data-q="q1" data-v="person"><span class="mark">⊹</span> a specific person</a></td>
 			</tr>
 			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q1" data-v="system">⊹ a system</a></td>
+				<td class="project-description"><a href="#" class="opt" data-q="q1" data-v="system"><span class="mark">⊹</span> a system</a></td>
 			</tr>
 			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q1" data-v="nobody">⊹ honestly, nobody</a></td>
+				<td class="project-description"><a href="#" class="opt" data-q="q1" data-v="nobody"><span class="mark">⊹</span> honestly, nobody</a></td>
 			</tr>
 			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q1" data-v="me">⊹ me</a></td>
+				<td class="project-description"><a href="#" class="opt" data-q="q1" data-v="me"><span class="mark">⊹</span> me</a></td>
 			</tr>
 			<tr>
 				<td class="project-description">&nbsp;</td>
@@ -42,16 +55,16 @@
 				<td>What made you look into this now?</td>
 			</tr>
 			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q2" data-v="someone-left">⊹ someone left, or is leaving</a></td>
+				<td class="project-description"><a href="#" class="opt" data-q="q2" data-v="someone-left"><span class="mark">⊹</span> someone left, or is leaving</a></td>
 			</tr>
 			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q2" data-v="it-broke">⊹ we got caught out</a></td>
+				<td class="project-description"><a href="#" class="opt" data-q="q2" data-v="it-broke"><span class="mark">⊹</span> we got caught out</a></td>
 			</tr>
 			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q2" data-v="its-you">⊹ it is slowing us down</a></td>
+				<td class="project-description"><a href="#" class="opt" data-q="q2" data-v="its-you"><span class="mark">⊹</span> it is slowing us down</a></td>
 			</tr>
 			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q2" data-v="not-sure">⊹ just having a look</a></td>
+				<td class="project-description"><a href="#" class="opt" data-q="q2" data-v="not-sure"><span class="mark">⊹</span> just having a look</a></td>
 			</tr>
 			<tr>
 				<td class="project-description">&nbsp;</td>
@@ -60,16 +73,16 @@
 				<td>If your numbers were wrong for a week, who would find out?</td>
 			</tr>
 			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q3" data-v="customer">⊹ a customer</a></td>
+				<td class="project-description"><a href="#" class="opt" data-q="q3" data-v="customer"><span class="mark">⊹</span> a customer</a></td>
 			</tr>
 			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q3" data-v="auditor">⊹ an auditor or a regulator</a></td>
+				<td class="project-description"><a href="#" class="opt" data-q="q3" data-v="auditor"><span class="mark">⊹</span> an auditor or a regulator</a></td>
 			</tr>
 			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q3" data-v="us">⊹ just us</a></td>
+				<td class="project-description"><a href="#" class="opt" data-q="q3" data-v="us"><span class="mark">⊹</span> just us</a></td>
 			</tr>
 			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q3" data-v="nobody">⊹ nobody</a></td>
+				<td class="project-description"><a href="#" class="opt" data-q="q3" data-v="nobody"><span class="mark">⊹</span> nobody</a></td>
 			</tr>
 			<tr>
 				<td class="project-description">&nbsp;</td>
@@ -87,9 +100,16 @@
 					const q = a.dataset.q;
 					document
 						.querySelectorAll('.opt[data-q="' + q + '"]')
-						.forEach((o) => o.classList.remove('active'));
-					a.classList.add('active');
+						.forEach((o) => {
+							o.classList.remove('chosen');
+							o.classList.add('passed');
+							o.querySelector('.mark').textContent = '⊹';
+						});
+					a.classList.remove('passed');
+					a.classList.add('chosen');
+					a.querySelector('.mark').textContent = '✓';
 					picked[q] = a.dataset.v;
+
 					const go = document.getElementById('go');
 					if (picked.q2) {
 						const p = new URLSearchParams();
@@ -109,9 +129,9 @@
 				<img src="/images/logo-white.png" alt="MOTIS.GROUP" class="footer-logo dark-logo" />
 			</div>
 			<div class="footer-menu">
+				<a href="/start" class="active"><span>START</span></a>
 				<a href="/"><span>PROJECTS</span></a>
 				<a href="/about"><span>ABOUT</span></a>
-				<a href="/start" class="active"><span>START</span></a>
 				<a href="https://blog.motis.group" target="_blank"><span>ARTICLES</span></a>
 				<a href="https://github.com/motis-group" target="_blank"><span>GITHUB</span></a>
 			</div>
