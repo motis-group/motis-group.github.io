@@ -234,7 +234,8 @@ function generateProjectsHTML() {
 									project.description.includes('*')
 										? '*'
 										: project.status === 'WIP' ||
-										  project.visibility === 'closed'
+										  project.visibility === 'closed' ||
+										  project.link === '#'
 										? '<span class="disabled-link">link ⇱</span>'
 										: `<a href="${project.link}" target="_blank">link ⇱</a>`
 								}
