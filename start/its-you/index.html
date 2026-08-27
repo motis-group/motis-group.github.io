@@ -8,87 +8,17 @@
 		/>
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 		<link rel="icon" type="image/png" href="/favicon.png" />
-		<title>you are the last check | MOTIS.GROUP</title>
+		<title>start | MOTIS.GROUP</title>
+		<meta http-equiv="refresh" content="0; url=/start/" />
+		<link rel="canonical" href="/start/" />
 		<link rel="stylesheet" href="/styles.css" />
-		<script src="/theme.js"></script>
 	</head>
 	<body>
 		<table class="projects-table">
 			<tr>
-				<td class="project-description">You&rsquo;re the last check, and you can&rsquo;t take a week off.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description">Everything goes past you before it goes out. You&rsquo;ve tried handing that over and it half worked, because the person you handed it to doesn&rsquo;t carry what you carry. They don&rsquo;t know that one supplier always invoices late, or that the March figure looks wrong for a reason.</td>
-			</tr>
-			<tr>
-				<td class="project-description">What you know is real and it&rsquo;s worth money. It&rsquo;s also the ceiling you keep hitting.</td>
-			</tr>
-			<tr>
-				<td class="project-description">You can&rsquo;t hand over a rule you&rsquo;ve never written down. Most people in this position go looking for someone more careful, and careful was never the missing part.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description">The work is getting what&rsquo;s in your head into a form that runs without you. Not a document nobody reads. Checks that fail loudly when something is off, so the catching stops being a job.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description">Send me a login and I&rsquo;ll spend twenty minutes on it, then tell you what I found whether or not there&rsquo;s a job in it.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description"><a href="mailto:hello@motis.group">hello@motis.group</a></td>
+				<td class="project-description">Three questions first, so you land on the right page. <a href="/start/">Start here</a>.</td>
 			</tr>
 		</table>
-
-		<script>
-			(() => {
-				const p = new URLSearchParams(location.search);
-				const here = location.pathname;
-				const lines = [];
-				if (p.get('notices') === 'auditor') {
-					lines.push(
-						'You said an auditor or a regulator would find out. That puts a date on this, and it changes the order of the work: the thing you can show them comes before the thing that is convenient for you.'
-					);
-				} else if (p.get('notices') === 'customer' && !here.includes('it-broke')) {
-					lines.push(
-						'You said a customer would find out first. That is the expensive way to learn about it, and it is the case worth pricing against.'
-					);
-				}
-				if (p.get('catches') === 'nobody') {
-					lines.push(
-						'You said nobody catches it. Then there is no check to replace, and the first job is finding out what is already wrong rather than stopping it happening again.'
-					);
-				} else if (p.get('catches') === 'me' && !here.includes('its-you')) {
-					lines.push(
-						'You said you catch it yourself. <a href="/start/its-you">That has its own page</a>, and it is probably the one you want.'
-					);
-				}
-				if (!lines.length) return;
-				const table = document.querySelector('.projects-table');
-				const anchor = [...table.rows].find((r) =>
-					r.textContent.includes('Send me a login')
-				);
-				lines.reverse().forEach((t) => {
-					const row = table.insertRow(anchor ? anchor.rowIndex : -1);
-					const td = row.insertCell(0);
-					td.className = 'project-description';
-					td.innerHTML = t;
-					const gap = table.insertRow(anchor ? anchor.rowIndex : -1);
-					const g = gap.insertCell(0);
-					g.className = 'project-description';
-					g.innerHTML = '&nbsp;';
-				});
-			})();
-		</script>
 		<footer class="footer">
 			<div class="footer-logos">
 				<img src="/images/logo-black.png" alt="MOTIS.GROUP" class="footer-logo light-logo" />

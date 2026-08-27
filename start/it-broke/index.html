@@ -8,87 +8,17 @@
 		/>
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 		<link rel="icon" type="image/png" href="/favicon.png" />
-		<title>a customer found it first | MOTIS.GROUP</title>
+		<title>start | MOTIS.GROUP</title>
+		<meta http-equiv="refresh" content="0; url=/start/" />
+		<link rel="canonical" href="/start/" />
 		<link rel="stylesheet" href="/styles.css" />
-		<script src="/theme.js"></script>
 	</head>
 	<body>
 		<table class="projects-table">
 			<tr>
-				<td class="project-description">A customer found it before you did.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description">The wrong number stings for a day. What costs you is the conversation afterwards, when someone asks how you&rsquo;ll stop it happening again and you can&rsquo;t point at the thing that was meant to catch it, because there wasn&rsquo;t one. A person was doing that, and people miss things.</td>
-			</tr>
-			<tr>
-				<td class="project-description">With an auditor or a regulator involved, that answer now has a date attached to it.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description">Rebuilding trust in the numbers is slower than fixing them. It needs something you can show another person: the check that runs, what it looks at, what happens when it fails. Not a promise to be more careful next time.</td>
-			</tr>
-			<tr>
-				<td class="project-description">I find where the gap was, close it, and leave you something you can hold up in the room where you get asked.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description">Send me a login and I&rsquo;ll spend twenty minutes on it, then tell you what I found whether or not there&rsquo;s a job in it.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description"><a href="mailto:hello@motis.group">hello@motis.group</a></td>
+				<td class="project-description">Three questions first, so you land on the right page. <a href="/start/">Start here</a>.</td>
 			</tr>
 		</table>
-
-		<script>
-			(() => {
-				const p = new URLSearchParams(location.search);
-				const here = location.pathname;
-				const lines = [];
-				if (p.get('notices') === 'auditor') {
-					lines.push(
-						'You said an auditor or a regulator would find out. That puts a date on this, and it changes the order of the work: the thing you can show them comes before the thing that is convenient for you.'
-					);
-				} else if (p.get('notices') === 'customer' && !here.includes('it-broke')) {
-					lines.push(
-						'You said a customer would find out first. That is the expensive way to learn about it, and it is the case worth pricing against.'
-					);
-				}
-				if (p.get('catches') === 'nobody') {
-					lines.push(
-						'You said nobody catches it. Then there is no check to replace, and the first job is finding out what is already wrong rather than stopping it happening again.'
-					);
-				} else if (p.get('catches') === 'me' && !here.includes('its-you')) {
-					lines.push(
-						'You said you catch it yourself. <a href="/start/its-you">That has its own page</a>, and it is probably the one you want.'
-					);
-				}
-				if (!lines.length) return;
-				const table = document.querySelector('.projects-table');
-				const anchor = [...table.rows].find((r) =>
-					r.textContent.includes('Send me a login')
-				);
-				lines.reverse().forEach((t) => {
-					const row = table.insertRow(anchor ? anchor.rowIndex : -1);
-					const td = row.insertCell(0);
-					td.className = 'project-description';
-					td.innerHTML = t;
-					const gap = table.insertRow(anchor ? anchor.rowIndex : -1);
-					const g = gap.insertCell(0);
-					g.className = 'project-description';
-					g.innerHTML = '&nbsp;';
-				});
-			})();
-		</script>
 		<footer class="footer">
 			<div class="footer-logos">
 				<img src="/images/logo-black.png" alt="MOTIS.GROUP" class="footer-logo light-logo" />
