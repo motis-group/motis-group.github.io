@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+		/>
+		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+		<link rel="icon" type="image/png" href="/favicon.png" />
+		<title>you say you are looking, but someone outside would notice | MOTIS.GROUP</title>
+		<link rel="stylesheet" href="/styles.css" />
+		<script src="/theme.js"></script>
+	</head>
+	<body>
+		<table class="projects-table">
+			<tr>
+				<td class="project-description">You are having a look, and a customer or a regulator would find out if the numbers were wrong.</td>
+			</tr>
+			<tr>
+				<td class="project-description">			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+</td>
+			</tr>
+			<tr>
+				<td class="project-description">Those two things do not sit together. If somebody outside the business would notice, this is not idle curiosity, it is a risk you have not priced yet. You may simply not have had the incident that makes it feel urgent.</td>
+			</tr>
+			<tr>
+				<td class="project-description">			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+</td>
+			</tr>
+			<tr>
+				<td class="project-description">That is the good position to be in and the easy one to waste. Everything is cheaper before the incident: no deadline set by someone else, no explaining, no rebuilding trust while also fixing the cause.</td>
+			</tr>
+			<tr>
+				<td class="project-description">Twenty minutes tells you whether there is anything here. If there is not, you have lost twenty minutes and gained the ability to stop wondering.</td>
+			</tr>
+			<tr>
+				<td class="project-description">			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+</td>
+			</tr>
+			<tr>
+				<td class="project-description">Send me a login and I&rsquo;ll spend twenty minutes on it, then tell you what I found whether or not there&rsquo;s a job in it.</td>
+			</tr>
+			<tr>
+				<td class="project-description">			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+</td>
+			</tr>
+			<tr>
+				<td class="project-description"><a href="mailto:hello@motis.group">hello@motis.group</a></td>
+			</tr>
+		</table>
+
+		<script>
+			(() => {
+				const p = new URLSearchParams(location.search);
+				const here = location.pathname;
+				const lines = [];
+				if (p.get('notices') === 'auditor') {
+					lines.push(
+						'You said an auditor or a regulator would find out. That puts a date on this, and it changes the order of the work: the thing you can show them comes before the thing that is convenient for you.'
+					);
+				} else if (p.get('notices') === 'customer' && !here.includes('it-broke')) {
+					lines.push(
+						'You said a customer would find out first. That is the expensive way to learn about it, and it is the case worth pricing against.'
+					);
+				}
+				if (p.get('catches') === 'nobody') {
+					lines.push(
+						'You said nobody catches it. Then there is no check to replace, and the first job is finding out what is already wrong rather than stopping it happening again.'
+					);
+				} else if (p.get('catches') === 'me' && !here.includes('its-you')) {
+					lines.push(
+						'You said you catch it yourself. <a href="/start/its-you">That has its own page</a>, and it is probably the one you want.'
+					);
+				}
+				if (!lines.length) return;
+				const table = document.querySelector('.projects-table');
+				const anchor = [...table.rows].find((r) =>
+					r.textContent.includes('Send me a login')
+				);
+				lines.reverse().forEach((t) => {
+					const row = table.insertRow(anchor ? anchor.rowIndex : -1);
+					const td = row.insertCell(0);
+					td.className = 'project-description';
+					td.innerHTML = t;
+					const gap = table.insertRow(anchor ? anchor.rowIndex : -1);
+					const g = gap.insertCell(0);
+					g.className = 'project-description';
+					g.innerHTML = '&nbsp;';
+				});
+			})();
+		</script>
+		<footer class="footer">
+			<div class="footer-logos">
+				<img src="/images/logo-black.png" alt="MOTIS.GROUP" class="footer-logo light-logo" />
+				<img src="/images/logo-white.png" alt="MOTIS.GROUP" class="footer-logo dark-logo" />
+			</div>
+			<div class="footer-menu">
+				<a href="/start" class="active"><span>START</span></a>
+				<a href="/"><span>PROJECTS</span></a>
+				<a href="/about"><span>ABOUT</span></a>
+				<a href="https://blog.motis.group" target="_blank"><span>ARTICLES</span></a>
+				<a href="https://github.com/motis-group" target="_blank"><span>GITHUB</span></a>
+			</div>
+			<button id="theme-toggle" class="theme-toggle">☾</button>
+		</footer>
+	</body>
+</html>

@@ -116,16 +116,23 @@
 						p.set('catches', picked.q1);
 						p.set('notices', picked.q3);
 						const qs = p.toString();
-						// a regulator or a customer finding out is a trigger, whatever
-						// question two said, so it overrides "just having a look"
-						let dest = picked.q2;
-						if (
-							dest === 'not-sure' &&
-							(picked.q3 === 'auditor' || picked.q3 === 'customer')
-						) {
-							dest = 'it-broke';
-						}
-						go.href = '/start/' + dest + (qs ? '?' + qs : '');
+						// question three splits each trigger by who finds out
+						const EXPOSED = {
+							'someone-left': 'exposed',
+							'its-you': 'exposed',
+							'it-broke': 'outside',
+							'not-sure': 'exposed',
+						};
+						const QUIET = {
+							'someone-left': 'quiet',
+							'its-you': 'quiet',
+							'it-broke': 'caught',
+							'not-sure': 'quiet',
+						};
+						const seen =
+							picked.q3 === 'customer' || picked.q3 === 'auditor';
+						const sub = (seen ? EXPOSED : QUIET)[picked.q2];
+						go.href = '/start/' + picked.q2 + '/' + sub + '?' + qs;
 						go.classList.remove('disabled-link');
 						go.textContent = 'continue ⊹';
 					}
