@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+		/>
+		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+		<link rel="icon" type="image/png" href="/favicon.png" />
+		<title>start | MOTIS.GROUP</title>
+		<link rel="stylesheet" href="/styles.css" />
+		<script src="/theme.js"></script>
+	</head>
+	<body>
+		<table class="projects-table">
+			<tr>
+				<td class="project-description">Three questions. The second one is the only one that decides where you land.</td>
+			</tr>
+			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+			<tr>
+				<td>When something is wrong in your numbers, who catches it?</td>
+			</tr>
+			<tr>
+				<td class="project-description"><a href="#" class="opt" data-q="q1" data-v="person">⊹ a specific person</a></td>
+			</tr>
+			<tr>
+				<td class="project-description"><a href="#" class="opt" data-q="q1" data-v="system">⊹ a system</a></td>
+			</tr>
+			<tr>
+				<td class="project-description"><a href="#" class="opt" data-q="q1" data-v="nobody">⊹ honestly, nobody</a></td>
+			</tr>
+			<tr>
+				<td class="project-description"><a href="#" class="opt" data-q="q1" data-v="me">⊹ me</a></td>
+			</tr>
+			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+			<tr>
+				<td>What made you look into this now?</td>
+			</tr>
+			<tr>
+				<td class="project-description"><a href="#" class="opt" data-q="q2" data-v="someone-left">⊹ someone left, or is leaving</a></td>
+			</tr>
+			<tr>
+				<td class="project-description"><a href="#" class="opt" data-q="q2" data-v="it-broke">⊹ we got caught out</a></td>
+			</tr>
+			<tr>
+				<td class="project-description"><a href="#" class="opt" data-q="q2" data-v="its-you">⊹ it is slowing us down</a></td>
+			</tr>
+			<tr>
+				<td class="project-description"><a href="#" class="opt" data-q="q2" data-v="not-sure">⊹ just having a look</a></td>
+			</tr>
+			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+			<tr>
+				<td>If your numbers were wrong for a week, who would find out?</td>
+			</tr>
+			<tr>
+				<td class="project-description"><a href="#" class="opt" data-q="q3" data-v="customer">⊹ a customer</a></td>
+			</tr>
+			<tr>
+				<td class="project-description"><a href="#" class="opt" data-q="q3" data-v="auditor">⊹ an auditor or a regulator</a></td>
+			</tr>
+			<tr>
+				<td class="project-description"><a href="#" class="opt" data-q="q3" data-v="us">⊹ just us</a></td>
+			</tr>
+			<tr>
+				<td class="project-description"><a href="#" class="opt" data-q="q3" data-v="nobody">⊹ nobody</a></td>
+			</tr>
+			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="project-description"><a href="#" id="go" class="disabled-link">answer the second question to continue</a></td>
+			</tr>
+		</table>
+
+		<script>
+			const picked = {};
+			document.querySelectorAll('.opt').forEach((a) => {
+				a.addEventListener('click', (e) => {
+					e.preventDefault();
+					const q = a.dataset.q;
+					document
+						.querySelectorAll('.opt[data-q="' + q + '"]')
+						.forEach((o) => o.classList.remove('active'));
+					a.classList.add('active');
+					picked[q] = a.dataset.v;
+					const go = document.getElementById('go');
+					if (picked.q2) {
+						const p = new URLSearchParams();
+						if (picked.q1) p.set('catches', picked.q1);
+						if (picked.q3) p.set('notices', picked.q3);
+						const qs = p.toString();
+						go.href = '/start/' + picked.q2 + (qs ? '?' + qs : '');
+						go.classList.remove('disabled-link');
+						go.textContent = 'continue ⊹';
+					}
+				});
+			});
+		</script>
+		<footer class="footer">
+			<div class="footer-logos">
+				<img src="/images/logo-black.png" alt="MOTIS.GROUP" class="footer-logo light-logo" />
+				<img src="/images/logo-white.png" alt="MOTIS.GROUP" class="footer-logo dark-logo" />
+			</div>
+			<div class="footer-menu">
+				<a href="/"><span>PROJECTS</span></a>
+				<a href="/about"><span>ABOUT</span></a>
+				<a href="/start" class="active"><span>START</span></a>
+				<a href="https://blog.motis.group" target="_blank"><span>ARTICLES</span></a>
+				<a href="https://github.com/motis-group" target="_blank"><span>GITHUB</span></a>
+			</div>
+			<button id="theme-toggle" class="theme-toggle">☾</button>
+		</footer>
+	</body>
+</html>
