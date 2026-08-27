@@ -28,7 +28,7 @@
 	<body>
 		<table class="projects-table">
 			<tr>
-				<td class="project-description">Three questions. The second one is the only one that decides where you land.</td>
+				<td class="project-description">Three questions about what you can see day to day. You don&rsquo;t need to know what is causing it underneath. That part is my job.</td>
 			</tr>
 			<tr>
 				<td class="project-description">&nbsp;</td>
@@ -88,7 +88,7 @@
 				<td class="project-description">&nbsp;</td>
 			</tr>
 			<tr>
-				<td class="project-description"><a href="#" id="go" class="disabled-link">answer the second question to continue</a></td>
+				<td class="project-description"><a href="#" id="go" class="disabled-link">answer all three to continue</a></td>
 			</tr>
 		</table>
 
@@ -111,10 +111,10 @@
 					picked[q] = a.dataset.v;
 
 					const go = document.getElementById('go');
-					if (picked.q2) {
+					if (picked.q1 && picked.q2 && picked.q3) {
 						const p = new URLSearchParams();
-						if (picked.q1) p.set('catches', picked.q1);
-						if (picked.q3) p.set('notices', picked.q3);
+						p.set('catches', picked.q1);
+						p.set('notices', picked.q3);
 						const qs = p.toString();
 						// a regulator or a customer finding out is a trigger, whatever
 						// question two said, so it overrides "just having a look"
