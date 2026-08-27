@@ -96,7 +96,7 @@
 				if (!lines.length) return;
 				const table = document.querySelector('.projects-table');
 				const anchor = [...table.rows].find((r) =>
-					r.textContent.includes('Send me a login')
+					r.textContent.includes('read-only access')
 				);
 				lines.reverse().forEach((t) => {
 					const row = table.insertRow(anchor ? anchor.rowIndex : -1);

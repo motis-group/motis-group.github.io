@@ -39,7 +39,7 @@
 				<td class="project-description">&nbsp;</td>
 			</tr>
 			<tr>
-				<td class="project-description">Send me a login and I&rsquo;ll spend twenty minutes on it, then tell you what I found whether or not there&rsquo;s a job in it.</td>
+				<td class="project-description">Twenty minutes with read-only access is usually enough. I&rsquo;ll tell you what I found whether or not there&rsquo;s a job in it, and if your access has to go through a process, say so and we will work to it.</td>
 			</tr>
 			<tr>
 				<td class="project-description">&nbsp;</td>
@@ -75,7 +75,7 @@
 				if (!lines.length) return;
 				const table = document.querySelector('.projects-table');
 				const anchor = [...table.rows].find((r) =>
-					r.textContent.includes('Send me a login')
+					r.textContent.includes('read-only access')
 				);
 				lines.reverse().forEach((t) => {
 					const row = table.insertRow(anchor ? anchor.rowIndex : -1);
