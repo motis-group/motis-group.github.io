@@ -9,10 +9,10 @@
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 		<link rel="icon" type="image/png" href="/favicon.png" />
 		<title>you caught it before anyone else did | MOTIS.GROUP</title>
-		<link rel="stylesheet" href="/styles.css" />
+		<link rel="stylesheet" href="/styles.css?v=4" />
 		<script src="/theme.js"></script>
 	</head>
-	<body>
+	<body class="landing">
 		<header class="lp-topbar">
 			<a href="/" class="lp-brand">
 				<img src="/images/logo-black.png" alt="" class="light-logo" />
@@ -21,35 +21,27 @@
 			</a>
 			<a href="mailto:hello@motis.group" class="lp-pill">Get in touch</a>
 		</header>
-		<main class="lp-inner">
-			<p class="lp-kicker">Start &mdash; you got caught out</p>
-			<h2>Something went wrong and you found it yourselves.</h2>
-		<table class="projects-table">
-			<tr>
-				<td class="project-description">A number was wrong, or two systems disagreed, and somebody spotted it before it reached anyone who would have minded.</td>
-			</tr>
-			<tr>
-				<td class="project-description">Worth being precise about why it got caught. Somebody was paying attention. Attention works on the common case and fails on the exception, which is the one that matters, and the next exception arrives while that person is on leave or looking at something else.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description">This is the cheapest moment to fix it and the hardest to argue for internally, because nothing visibly broke. The argument is that you already know where the gap is. Most people are still looking for theirs.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description">Twenty minutes with read-only access is usually enough. Nothing is on fire, so there is no rush at this end either. I&rsquo;ll tell you what I found whether or not there&rsquo;s a job in it.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description"><a href="mailto:hello@motis.group">hello@motis.group</a></td>
-			</tr>
-		</table>
+
+		<main>
+			<section class="lp-pagehero">
+				<p class="lp-kicker">Start &mdash; you got caught out</p>
+				<h1>Something went wrong and you found it yourselves.</h1>
+			</section>
+
+			<section class="lp-section">
+				<div class="lp-prose" id="prose">
+					<p>A number was wrong, or two systems disagreed, and somebody spotted it before it reached anyone who would have minded.</p>
+					<p>Worth being precise about why it got caught. Somebody was paying attention. Attention works on the common case and fails on the exception, which is the one that matters, and the next exception arrives while that person is on leave or looking at something else.</p>
+					<p>This is the cheapest moment to fix it and the hardest to argue for internally, because nothing visibly broke. The argument is that you already know where the gap is. Most people are still looking for theirs.</p>
+					<p>Twenty minutes with read-only access is usually enough. Nothing is on fire, so there is no rush at this end either. I&rsquo;ll tell you what I found whether or not there&rsquo;s a job in it.</p>
+				</div>
+			</section>
+
+			<section class="lp-contact lp-contact--compact">
+				<img src="/images/dither-wires.png" alt="" class="lp-fade lp-dither" />
+				<h2>If this is where you are, write to me.</h2>
+				<a href="mailto:hello@motis.group" class="lp-pill">hello@motis.group &rarr;</a>
+			</section>
 		</main>
 
 		<script>
@@ -76,19 +68,14 @@
 					);
 				}
 				if (!lines.length) return;
-				const table = document.querySelector('.projects-table');
-				const anchor = [...table.rows].find((r) =>
-					r.textContent.includes('read-only access')
+				const prose = document.getElementById('prose');
+				const anchor = [...prose.children].find((el) =>
+					el.textContent.includes('read-only access')
 				);
-				lines.reverse().forEach((t) => {
-					const row = table.insertRow(anchor ? anchor.rowIndex : -1);
-					const td = row.insertCell(0);
-					td.className = 'project-description';
-					td.innerHTML = t;
-					const gap = table.insertRow(anchor ? anchor.rowIndex : -1);
-					const g = gap.insertCell(0);
-					g.className = 'project-description';
-					g.innerHTML = '&nbsp;';
+				lines.forEach((t) => {
+					const para = document.createElement('p');
+					para.innerHTML = t;
+					prose.insertBefore(para, anchor || null);
 				});
 			})();
 		</script>
@@ -106,6 +93,5 @@
 			</div>
 			<button id="theme-toggle" class="theme-toggle">☾</button>
 		</footer>
-		<script src="/rows.js"></script>
 	</body>
 </html>

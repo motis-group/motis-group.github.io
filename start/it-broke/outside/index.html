@@ -9,10 +9,10 @@
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 		<link rel="icon" type="image/png" href="/favicon.png" />
 		<title>someone outside found it first | MOTIS.GROUP</title>
-		<link rel="stylesheet" href="/styles.css" />
+		<link rel="stylesheet" href="/styles.css?v=4" />
 		<script src="/theme.js"></script>
 	</head>
-	<body>
+	<body class="landing">
 		<header class="lp-topbar">
 			<a href="/" class="lp-brand">
 				<img src="/images/logo-black.png" alt="" class="light-logo" />
@@ -21,41 +21,28 @@
 			</a>
 			<a href="mailto:hello@motis.group" class="lp-pill">Get in touch</a>
 		</header>
-		<main class="lp-inner">
-			<p class="lp-kicker">Start &mdash; you got caught out</p>
-			<h2>A customer or a regulator found it before you did.</h2>
-		<table class="projects-table">
-			<tr>
-				<td class="project-description">The wrong number stings for a day. The cost is the conversation afterwards, when somebody asks how you will stop it happening again and you cannot point at the thing that was meant to catch it, because a person was doing that and people miss things.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description">Worth knowing how long the gap had been open before it showed. If the failure arrived immediately and the cause was obvious, it is a technical fault with a technical fix and you do not need me.</td>
-			</tr>
-			<tr>
-				<td class="project-description">If it surfaced months later, looked like a data quality problem or a vendor problem, and has happened before in a slightly different shape, then what drifted is the description of how the work is meant to run. Nobody reconciled it against how the work actually runs, and it will keep recurring in new shapes until somebody does.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description">With a regulator involved there is a date on the answer now. What closes it is something you can show another person: the check that runs, what it looks at, what happens when it fails.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description">Twenty minutes with read-only access is usually enough. If there is already a date on this, say so and I will work to it. If your access has to go through a process, that is fine, I have done it before.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description"><a href="mailto:hello@motis.group">hello@motis.group</a></td>
-			</tr>
-		</table>
+
+		<main>
+			<section class="lp-pagehero">
+				<p class="lp-kicker">Start &mdash; you got caught out</p>
+				<h1>A customer or a regulator found it before you did.</h1>
+			</section>
+
+			<section class="lp-section">
+				<div class="lp-prose" id="prose">
+					<p>The wrong number stings for a day. The cost is the conversation afterwards, when somebody asks how you will stop it happening again and you cannot point at the thing that was meant to catch it, because a person was doing that and people miss things.</p>
+					<p>Worth knowing how long the gap had been open before it showed. If the failure arrived immediately and the cause was obvious, it is a technical fault with a technical fix and you do not need me.</p>
+					<p>If it surfaced months later, looked like a data quality problem or a vendor problem, and has happened before in a slightly different shape, then what drifted is the description of how the work is meant to run. Nobody reconciled it against how the work actually runs, and it will keep recurring in new shapes until somebody does.</p>
+					<p>With a regulator involved there is a date on the answer now. What closes it is something you can show another person: the check that runs, what it looks at, what happens when it fails.</p>
+					<p>Twenty minutes with read-only access is usually enough. If there is already a date on this, say so and I will work to it. If your access has to go through a process, that is fine, I have done it before.</p>
+				</div>
+			</section>
+
+			<section class="lp-contact lp-contact--compact">
+				<img src="/images/dither-wires.png" alt="" class="lp-fade lp-dither" />
+				<h2>If this is where you are, write to me.</h2>
+				<a href="mailto:hello@motis.group" class="lp-pill">hello@motis.group &rarr;</a>
+			</section>
 		</main>
 
 		<script>
@@ -82,19 +69,14 @@
 					);
 				}
 				if (!lines.length) return;
-				const table = document.querySelector('.projects-table');
-				const anchor = [...table.rows].find((r) =>
-					r.textContent.includes('read-only access')
+				const prose = document.getElementById('prose');
+				const anchor = [...prose.children].find((el) =>
+					el.textContent.includes('read-only access')
 				);
-				lines.reverse().forEach((t) => {
-					const row = table.insertRow(anchor ? anchor.rowIndex : -1);
-					const td = row.insertCell(0);
-					td.className = 'project-description';
-					td.innerHTML = t;
-					const gap = table.insertRow(anchor ? anchor.rowIndex : -1);
-					const g = gap.insertCell(0);
-					g.className = 'project-description';
-					g.innerHTML = '&nbsp;';
+				lines.forEach((t) => {
+					const para = document.createElement('p');
+					para.innerHTML = t;
+					prose.insertBefore(para, anchor || null);
 				});
 			})();
 		</script>
@@ -112,6 +94,5 @@
 			</div>
 			<button id="theme-toggle" class="theme-toggle">☾</button>
 		</footer>
-		<script src="/rows.js"></script>
 	</body>
 </html>

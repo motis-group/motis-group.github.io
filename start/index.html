@@ -9,23 +9,19 @@
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 		<link rel="icon" type="image/png" href="/favicon.png" />
 		<title>start | MOTIS.GROUP</title>
-		<link rel="stylesheet" href="/styles.css" />
+		<link rel="stylesheet" href="/styles.css?v=4" />
 		<script src="/theme.js"></script>
 		<style>
 			.opt .mark {
 				display: inline-block;
 				width: 1.1em;
 			}
-			.opt.passed {
-				text-decoration: line-through;
-				opacity: 0.4;
-			}
 			.opt.chosen .mark {
 				opacity: 1;
 			}
 		</style>
 	</head>
-	<body>
+	<body class="landing">
 		<header class="lp-topbar">
 			<a href="/" class="lp-brand">
 				<img src="/images/logo-black.png" alt="" class="light-logo" />
@@ -34,74 +30,40 @@
 			</a>
 			<a href="mailto:hello@motis.group" class="lp-pill">Get in touch</a>
 		</header>
-		<main class="lp-inner">
-			<p class="lp-kicker">Start</p>
-			<h2>Three questions about what you can see day to day.</h2>
-		<table class="projects-table">
-			<tr>
-				<td class="project-description">You don&rsquo;t need to know what is causing it underneath. That part is my job.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td>When something is wrong in your numbers, who catches it?</td>
-			</tr>
-			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q1" data-v="person"><span class="mark">⊹</span> a specific person</a></td>
-			</tr>
-			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q1" data-v="system"><span class="mark">⊹</span> a system</a></td>
-			</tr>
-			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q1" data-v="nobody"><span class="mark">⊹</span> honestly, nobody</a></td>
-			</tr>
-			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q1" data-v="me"><span class="mark">⊹</span> me</a></td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td>What made you look into this now?</td>
-			</tr>
-			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q2" data-v="someone-left"><span class="mark">⊹</span> someone left, or is leaving</a></td>
-			</tr>
-			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q2" data-v="it-broke"><span class="mark">⊹</span> we got caught out</a></td>
-			</tr>
-			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q2" data-v="its-you"><span class="mark">⊹</span> it is slowing us down</a></td>
-			</tr>
-			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q2" data-v="not-sure"><span class="mark">⊹</span> just having a look</a></td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td>If your numbers were wrong for a week, who would find out?</td>
-			</tr>
-			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q3" data-v="customer"><span class="mark">⊹</span> a customer</a></td>
-			</tr>
-			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q3" data-v="auditor"><span class="mark">⊹</span> an auditor or a regulator</a></td>
-			</tr>
-			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q3" data-v="us"><span class="mark">⊹</span> just us</a></td>
-			</tr>
-			<tr>
-				<td class="project-description"><a href="#" class="opt" data-q="q3" data-v="nobody"><span class="mark">⊹</span> nobody</a></td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description"><a href="#" id="go" class="disabled-link">answer all three to continue</a></td>
-			</tr>
-		</table>
+
+		<main>
+			<section class="lp-pagehero">
+				<p class="lp-kicker">Start</p>
+				<h1>Three questions about what you can see day to day.</h1>
+				<p class="lp-lede">
+					You don&rsquo;t need to know what is causing it underneath. That part
+					is my job.
+				</p>
+			</section>
+
+			<section class="lp-section lp-quiz">
+				<h3><span class="lp-qnum">01</span>When something is wrong in your numbers, who catches it?</h3>
+				<a href="#" class="opt" data-q="q1" data-v="person"><span class="mark">⊹</span> a specific person</a>
+				<a href="#" class="opt" data-q="q1" data-v="system"><span class="mark">⊹</span> a system</a>
+				<a href="#" class="opt" data-q="q1" data-v="nobody"><span class="mark">⊹</span> honestly, nobody</a>
+				<a href="#" class="opt" data-q="q1" data-v="me"><span class="mark">⊹</span> me</a>
+
+				<h3><span class="lp-qnum">02</span>What made you look into this now?</h3>
+				<a href="#" class="opt" data-q="q2" data-v="someone-left"><span class="mark">⊹</span> someone left, or is leaving</a>
+				<a href="#" class="opt" data-q="q2" data-v="it-broke"><span class="mark">⊹</span> we got caught out</a>
+				<a href="#" class="opt" data-q="q2" data-v="its-you"><span class="mark">⊹</span> it is slowing us down</a>
+				<a href="#" class="opt" data-q="q2" data-v="not-sure"><span class="mark">⊹</span> just having a look</a>
+
+				<h3><span class="lp-qnum">03</span>If your numbers were wrong for a week, who would find out?</h3>
+				<a href="#" class="opt" data-q="q3" data-v="customer"><span class="mark">⊹</span> a customer</a>
+				<a href="#" class="opt" data-q="q3" data-v="auditor"><span class="mark">⊹</span> an auditor or a regulator</a>
+				<a href="#" class="opt" data-q="q3" data-v="us"><span class="mark">⊹</span> just us</a>
+				<a href="#" class="opt" data-q="q3" data-v="nobody"><span class="mark">⊹</span> nobody</a>
+
+				<p style="margin-top: 3rem">
+					<a href="#" id="go" class="lp-pill disabled-link">answer all three to continue</a>
+				</p>
+			</section>
 		</main>
 
 		<script>
@@ -165,6 +127,5 @@
 			</div>
 			<button id="theme-toggle" class="theme-toggle">☾</button>
 		</footer>
-		<script src="/rows.js"></script>
 	</body>
 </html>

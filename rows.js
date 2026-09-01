@@ -11,11 +11,13 @@
 
 		const limit = footer.getBoundingClientRect().top;
 		let guard = 0;
+		const columns = table.rows[0] ? table.rows[0].cells.length : 1;
 		while (table.getBoundingClientRect().bottom < limit && guard++ < 300) {
 			const row = table.insertRow(-1);
 			row.dataset.filler = '1';
 			const cell = row.insertCell(0);
 			cell.className = 'project-description';
+			cell.colSpan = columns;
 			cell.innerHTML = '&nbsp;';
 		}
 

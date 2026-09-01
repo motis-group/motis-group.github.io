@@ -9,10 +9,10 @@
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 		<link rel="icon" type="image/png" href="/favicon.png" />
 		<title>you don&rsquo;t trust the numbers | MOTIS.GROUP</title>
-		<link rel="stylesheet" href="/styles.css" />
+		<link rel="stylesheet" href="/styles.css?v=4" />
 		<script src="/theme.js"></script>
 	</head>
-	<body>
+	<body class="landing">
 		<header class="lp-topbar">
 			<a href="/" class="lp-brand">
 				<img src="/images/logo-black.png" alt="" class="light-logo" />
@@ -21,59 +21,33 @@
 			</a>
 			<a href="mailto:hello@motis.group" class="lp-pill">Get in touch</a>
 		</header>
-		<main class="lp-inner">
-			<p class="lp-kicker">Start &mdash; just having a look</p>
-			<h2>You don&rsquo;t quite believe your own reporting.</h2>
-		<table class="projects-table">
-			<tr>
-				<td class="project-description">Nothing is on fire. Two reports disagree by a bit, somebody quietly reconciles them before the meeting, and nobody is sure which one was right. It has been that way long enough to feel normal.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description">Nobody outside would notice, which tells me there is probably nothing here urgent enough to pay me for yet. Work like this gets done when an event arrives with a date on it. Without one it competes with everything else on the list and loses, every quarter, and that is the correct outcome. If I took your money today I would be selling you a fix for something you have already absorbed.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description">So take the method instead. This is how I read a system I&rsquo;ve never seen and work out where it has drifted from what it describes. It takes about twenty minutes and you can run it on your own this afternoon.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description">⊹ start with whatever claims to be the complete list: the register, the master sheet, the report with &ldquo;all&rdquo; in its name</td>
-			</tr>
-			<tr>
-				<td class="project-description">⊹ take two systems that describe the same thing and count where they disagree</td>
-			</tr>
-			<tr>
-				<td class="project-description">⊹ look for the version words: new, v2, final, current, copy. Anything carrying two of them has no owner</td>
-			</tr>
-			<tr>
-				<td class="project-description">⊹ find the field meant to classify every record, and count how many are blank</td>
-			</tr>
-			<tr>
-				<td class="project-description">⊹ find the spreadsheet somebody keeps on the side. Whatever is in it is what the system does not hold, and that gap is the whole problem</td>
-			</tr>
-			<tr>
-				<td class="project-description">⊹ ask who would notice if each of those was wrong for a week</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description">The things that change this: somebody who holds the rules in their head hands in notice, a customer or an auditor notices before you do, or a contract turns up asking for numbers you cannot currently produce. Any of those, call me.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description"><a href="mailto:hello@motis.group">hello@motis.group</a></td>
-			</tr>
-		</table>
+
+		<main>
+			<section class="lp-pagehero">
+				<p class="lp-kicker">Start &mdash; just having a look</p>
+				<h1>You don&rsquo;t quite believe your own reporting.</h1>
+			</section>
+
+			<section class="lp-section">
+				<div class="lp-prose" id="prose">
+					<p>Nothing is on fire. Two reports disagree by a bit, somebody quietly reconciles them before the meeting, and nobody is sure which one was right. It has been that way long enough to feel normal.</p>
+					<p>Nobody outside would notice, which tells me there is probably nothing here urgent enough to pay me for yet. Work like this gets done when an event arrives with a date on it. Without one it competes with everything else on the list and loses, every quarter, and that is the correct outcome. If I took your money today I would be selling you a fix for something you have already absorbed.</p>
+					<p>So take the method instead. This is how I read a system I&rsquo;ve never seen and work out where it has drifted from what it describes. It takes about twenty minutes and you can run it on your own this afternoon.</p>
+					<p>⊹ start with whatever claims to be the complete list: the register, the master sheet, the report with &ldquo;all&rdquo; in its name</p>
+					<p>⊹ take two systems that describe the same thing and count where they disagree</p>
+					<p>⊹ look for the version words: new, v2, final, current, copy. Anything carrying two of them has no owner</p>
+					<p>⊹ find the field meant to classify every record, and count how many are blank</p>
+					<p>⊹ find the spreadsheet somebody keeps on the side. Whatever is in it is what the system does not hold, and that gap is the whole problem</p>
+					<p>⊹ ask who would notice if each of those was wrong for a week</p>
+					<p>The things that change this: somebody who holds the rules in their head hands in notice, a customer or an auditor notices before you do, or a contract turns up asking for numbers you cannot currently produce. Any of those, call me.</p>
+				</div>
+			</section>
+
+			<section class="lp-contact lp-contact--compact">
+				<img src="/images/dither-wires.png" alt="" class="lp-fade lp-dither" />
+				<h2>If this is where you are, write to me.</h2>
+				<a href="mailto:hello@motis.group" class="lp-pill">hello@motis.group &rarr;</a>
+			</section>
 		</main>
 
 		<script>
@@ -100,19 +74,14 @@
 					);
 				}
 				if (!lines.length) return;
-				const table = document.querySelector('.projects-table');
-				const anchor = [...table.rows].find((r) =>
-					r.textContent.includes('read-only access')
+				const prose = document.getElementById('prose');
+				const anchor = [...prose.children].find((el) =>
+					el.textContent.includes('read-only access')
 				);
-				lines.reverse().forEach((t) => {
-					const row = table.insertRow(anchor ? anchor.rowIndex : -1);
-					const td = row.insertCell(0);
-					td.className = 'project-description';
-					td.innerHTML = t;
-					const gap = table.insertRow(anchor ? anchor.rowIndex : -1);
-					const g = gap.insertCell(0);
-					g.className = 'project-description';
-					g.innerHTML = '&nbsp;';
+				lines.forEach((t) => {
+					const para = document.createElement('p');
+					para.innerHTML = t;
+					prose.insertBefore(para, anchor || null);
 				});
 			})();
 		</script>
@@ -130,6 +99,5 @@
 			</div>
 			<button id="theme-toggle" class="theme-toggle">☾</button>
 		</footer>
-		<script src="/rows.js"></script>
 	</body>
 </html>

@@ -9,10 +9,10 @@
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 		<link rel="icon" type="image/png" href="/favicon.png" />
 		<title>you are the check, and it shows outside | MOTIS.GROUP</title>
-		<link rel="stylesheet" href="/styles.css" />
+		<link rel="stylesheet" href="/styles.css?v=4" />
 		<script src="/theme.js"></script>
 	</head>
-	<body>
+	<body class="landing">
 		<header class="lp-topbar">
 			<a href="/" class="lp-brand">
 				<img src="/images/logo-black.png" alt="" class="light-logo" />
@@ -21,38 +21,28 @@
 			</a>
 			<a href="mailto:hello@motis.group" class="lp-pill">Get in touch</a>
 		</header>
-		<main class="lp-inner">
-			<p class="lp-kicker">Start &mdash; it is slowing you down</p>
-			<h2>You are the last check, and what gets past you reaches customers or a regulator.</h2>
-		<table class="projects-table">
-			<tr>
-				<td class="project-description">In most businesses there is one person, not a system, who catches the error before it goes out. Nobody appointed them. It accreted around a gap, and here that person is you.</td>
-			</tr>
-			<tr>
-				<td class="project-description">You have tried handing it over and it half worked, because whoever you handed it to does not know that one supplier always invoices late, or which figure looks wrong for a reason. You know because you have been there for all of it.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description">Which makes you a single point of failure with consequences attached to it. A week of illness and something reaches somebody who counts.</td>
-			</tr>
-			<tr>
-				<td class="project-description">The work is getting what you know into checks that fail loudly, starting with whatever faces outward, so that being unavailable stops being a risk to the business.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description">Twenty minutes with read-only access is usually enough. If there is already a date on this, say so and I will work to it. If your access has to go through a process, that is fine, I have done it before.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description"><a href="mailto:hello@motis.group">hello@motis.group</a></td>
-			</tr>
-		</table>
+
+		<main>
+			<section class="lp-pagehero">
+				<p class="lp-kicker">Start &mdash; it is slowing you down</p>
+				<h1>You are the last check, and what gets past you reaches customers or a regulator.</h1>
+			</section>
+
+			<section class="lp-section">
+				<div class="lp-prose" id="prose">
+					<p>In most businesses there is one person, not a system, who catches the error before it goes out. Nobody appointed them. It accreted around a gap, and here that person is you.</p>
+					<p>You have tried handing it over and it half worked, because whoever you handed it to does not know that one supplier always invoices late, or which figure looks wrong for a reason. You know because you have been there for all of it.</p>
+					<p>Which makes you a single point of failure with consequences attached to it. A week of illness and something reaches somebody who counts.</p>
+					<p>The work is getting what you know into checks that fail loudly, starting with whatever faces outward, so that being unavailable stops being a risk to the business.</p>
+					<p>Twenty minutes with read-only access is usually enough. If there is already a date on this, say so and I will work to it. If your access has to go through a process, that is fine, I have done it before.</p>
+				</div>
+			</section>
+
+			<section class="lp-contact lp-contact--compact">
+				<img src="/images/dither-wires.png" alt="" class="lp-fade lp-dither" />
+				<h2>If this is where you are, write to me.</h2>
+				<a href="mailto:hello@motis.group" class="lp-pill">hello@motis.group &rarr;</a>
+			</section>
 		</main>
 
 		<script>
@@ -79,19 +69,14 @@
 					);
 				}
 				if (!lines.length) return;
-				const table = document.querySelector('.projects-table');
-				const anchor = [...table.rows].find((r) =>
-					r.textContent.includes('read-only access')
+				const prose = document.getElementById('prose');
+				const anchor = [...prose.children].find((el) =>
+					el.textContent.includes('read-only access')
 				);
-				lines.reverse().forEach((t) => {
-					const row = table.insertRow(anchor ? anchor.rowIndex : -1);
-					const td = row.insertCell(0);
-					td.className = 'project-description';
-					td.innerHTML = t;
-					const gap = table.insertRow(anchor ? anchor.rowIndex : -1);
-					const g = gap.insertCell(0);
-					g.className = 'project-description';
-					g.innerHTML = '&nbsp;';
+				lines.forEach((t) => {
+					const para = document.createElement('p');
+					para.innerHTML = t;
+					prose.insertBefore(para, anchor || null);
 				});
 			})();
 		</script>
@@ -109,6 +94,5 @@
 			</div>
 			<button id="theme-toggle" class="theme-toggle">☾</button>
 		</footer>
-		<script src="/rows.js"></script>
 	</body>
 </html>

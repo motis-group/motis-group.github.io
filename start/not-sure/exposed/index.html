@@ -9,10 +9,10 @@
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 		<link rel="icon" type="image/png" href="/favicon.png" />
 		<title>you are looking, but someone outside would notice | MOTIS.GROUP</title>
-		<link rel="stylesheet" href="/styles.css" />
+		<link rel="stylesheet" href="/styles.css?v=4" />
 		<script src="/theme.js"></script>
 	</head>
-	<body>
+	<body class="landing">
 		<header class="lp-topbar">
 			<a href="/" class="lp-brand">
 				<img src="/images/logo-black.png" alt="" class="light-logo" />
@@ -21,41 +21,28 @@
 			</a>
 			<a href="mailto:hello@motis.group" class="lp-pill">Get in touch</a>
 		</header>
-		<main class="lp-inner">
-			<p class="lp-kicker">Start &mdash; just having a look</p>
-			<h2>You are having a look, and a customer or a regulator would find out if the numbers were wrong.</h2>
-		<table class="projects-table">
-			<tr>
-				<td class="project-description">Those two answers pull against each other. If somebody outside would notice, there is exposure here that nobody has priced. You may simply not have had the incident that makes it feel urgent yet.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description">Nothing is forcing it, which is why it stays on the list. Work like this gets done when an event turns up with a date on it: an acquisition, a renewal, an audit, a contract that requires numbers you cannot currently produce. Until one arrives it is always next quarter.</td>
-			</tr>
-			<tr>
-				<td class="project-description">Doing it before the event is cheaper in every direction. No deadline set by somebody else, no explaining, and no rebuilding confidence at the same time as fixing the cause.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description">Twenty minutes tells you whether there is anything here worth acting on.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description">Twenty minutes with read-only access is usually enough. If there is already a date on this, say so and I will work to it. If your access has to go through a process, that is fine, I have done it before.</td>
-			</tr>
-			<tr>
-				<td class="project-description">&nbsp;</td>
-			</tr>
-			<tr>
-				<td class="project-description"><a href="mailto:hello@motis.group">hello@motis.group</a></td>
-			</tr>
-		</table>
+
+		<main>
+			<section class="lp-pagehero">
+				<p class="lp-kicker">Start &mdash; just having a look</p>
+				<h1>You are having a look, and a customer or a regulator would find out if the numbers were wrong.</h1>
+			</section>
+
+			<section class="lp-section">
+				<div class="lp-prose" id="prose">
+					<p>Those two answers pull against each other. If somebody outside would notice, there is exposure here that nobody has priced. You may simply not have had the incident that makes it feel urgent yet.</p>
+					<p>Nothing is forcing it, which is why it stays on the list. Work like this gets done when an event turns up with a date on it: an acquisition, a renewal, an audit, a contract that requires numbers you cannot currently produce. Until one arrives it is always next quarter.</p>
+					<p>Doing it before the event is cheaper in every direction. No deadline set by somebody else, no explaining, and no rebuilding confidence at the same time as fixing the cause.</p>
+					<p>Twenty minutes tells you whether there is anything here worth acting on.</p>
+					<p>Twenty minutes with read-only access is usually enough. If there is already a date on this, say so and I will work to it. If your access has to go through a process, that is fine, I have done it before.</p>
+				</div>
+			</section>
+
+			<section class="lp-contact lp-contact--compact">
+				<img src="/images/dither-wires.png" alt="" class="lp-fade lp-dither" />
+				<h2>If this is where you are, write to me.</h2>
+				<a href="mailto:hello@motis.group" class="lp-pill">hello@motis.group &rarr;</a>
+			</section>
 		</main>
 
 		<script>
@@ -82,19 +69,14 @@
 					);
 				}
 				if (!lines.length) return;
-				const table = document.querySelector('.projects-table');
-				const anchor = [...table.rows].find((r) =>
-					r.textContent.includes('read-only access')
+				const prose = document.getElementById('prose');
+				const anchor = [...prose.children].find((el) =>
+					el.textContent.includes('read-only access')
 				);
-				lines.reverse().forEach((t) => {
-					const row = table.insertRow(anchor ? anchor.rowIndex : -1);
-					const td = row.insertCell(0);
-					td.className = 'project-description';
-					td.innerHTML = t;
-					const gap = table.insertRow(anchor ? anchor.rowIndex : -1);
-					const g = gap.insertCell(0);
-					g.className = 'project-description';
-					g.innerHTML = '&nbsp;';
+				lines.forEach((t) => {
+					const para = document.createElement('p');
+					para.innerHTML = t;
+					prose.insertBefore(para, anchor || null);
 				});
 			})();
 		</script>
@@ -112,6 +94,5 @@
 			</div>
 			<button id="theme-toggle" class="theme-toggle">☾</button>
 		</footer>
-		<script src="/rows.js"></script>
 	</body>
 </html>

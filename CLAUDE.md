@@ -27,6 +27,11 @@ Unsplash photos (Unsplash License) run through
 - `dither-racks.png` — images.unsplash.com/photo-1695668548342-c0c1ad479aee
 - `dither-wires.png` — images.unsplash.com/photo-1780766824485-b43c751ae6b4
 
-All copy speaks in the first person singular. Every inner page carries the
-landing shell: `.lp-topbar`, then `<main class="lp-inner">` with a kicker and
-an h2 pulled from the page's opening line, around the existing ruled table.
+All copy speaks in the first person singular. Every page is built from the
+same design system: `.lp-topbar`, a `.lp-pagehero` (kicker, display headline,
+lede), `.lp-section` blocks with prose or `.lp-card` grids, an inverted
+`.lp-method` band where a page needs one, and a `.lp-contact` CTA band with a
+dithered background. The only table left is the projects list. The quiz's
+routing script hangs off `a.opt[data-q][data-v]` and `#go`; the leaf pages'
+personalisation scripts insert paragraphs into `#prose` before the paragraph
+containing "read-only access" — keep those hooks when editing.

@@ -777,25 +777,102 @@ footer {
 	margin-top: 1rem;
 }
 
-/* Inner pages (about, projects, start) share the landing shell */
+/* Inner pages share the landing design system */
+
+.lp-pagehero {
+	width: 100%;
+	max-width: 72rem;
+	margin: 0 auto;
+	padding: 5rem 1.5rem 1rem;
+}
+
+.lp-pagehero h1 {
+	font-size: clamp(2rem, 4.5vw, 3.4rem);
+	line-height: 1.1;
+	letter-spacing: -0.015em;
+	max-width: 24ch;
+	margin: 0.75rem 0 1rem;
+}
+
+.lp-lede {
+	max-width: 62ch;
+	color: var(--secondary-text-color);
+}
+
+.lp-prose {
+	max-width: 66ch;
+}
+
+.lp-prose p {
+	margin-bottom: 1rem;
+}
+
+.lp-prose a {
+	background: none;
+	color: var(--accent);
+}
+
+.lp-prose a:hover {
+	background: none;
+	text-decoration: underline;
+}
+
+.lp-quiz h3 {
+	text-decoration: none;
+	text-transform: none;
+	font-size: 1.15rem;
+	margin: 3rem 0 0.75rem;
+}
+
+.lp-quiz .lp-qnum {
+	color: var(--accent);
+	margin-right: 0.5rem;
+}
+
+.lp-quiz .opt {
+	display: block;
+	border-top: 1px solid var(--border-color);
+	padding: 0.85rem 0.25rem;
+	text-decoration: none;
+	background: none;
+	max-width: 40rem;
+}
+
+.lp-quiz .opt:last-of-type {
+	border-bottom: 1px solid var(--border-color);
+}
+
+.lp-quiz .opt:hover {
+	background: none;
+	color: var(--accent);
+}
+
+.lp-quiz .opt.passed {
+	opacity: 0.4;
+	text-decoration: line-through;
+}
+
+.lp-quiz .opt.chosen {
+	color: var(--accent);
+}
+
+.lp-pill.disabled-link {
+	opacity: 0.45;
+	cursor: not-allowed;
+	text-decoration: none;
+	background-color: var(--footer-btn-bg);
+	color: var(--text-color);
+}
+
+.lp-contact--compact {
+	padding: 5rem 1.5rem 10rem;
+}
 
 .lp-inner {
 	width: 100%;
 	max-width: 72rem;
 	margin: 0 auto;
-	padding: 2.5rem 1.5rem 3rem;
-}
-
-.lp-inner .lp-kicker {
-	margin-bottom: 0.75rem;
-}
-
-.lp-inner h2 {
-	font-size: clamp(1.5rem, 3.4vw, 2.4rem);
-	line-height: 1.15;
-	letter-spacing: -0.01em;
-	max-width: 28ch;
-	margin-bottom: 2rem;
+	padding: 1rem 1.5rem 3rem;
 }
 
 .lp-inner table {
