@@ -543,7 +543,7 @@ footer {
 	font-size: clamp(2.1rem, 6vw, 4.2rem);
 	line-height: 1.05;
 	letter-spacing: -0.02em;
-	max-width: 18ch;
+	max-width: 20ch;
 	margin: 2rem auto 1.5rem;
 }
 

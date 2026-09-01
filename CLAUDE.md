@@ -6,7 +6,7 @@ distribution is the flagship vertical.
 
 Pages: `index.html` is the landing page (Geminus-style: full-bleed hero, stat
 band, service cards, inverted method band, industries). `start/` is a
-three-question quiz that routes visitors to eight destination pages.
+three-question quiz that routes visitors to ten destination pages.
 `projects/` lists work from a static array in `projects.js` (`rows.js` pads
 short ruled tables down to the fixed footer). `about/` is the long-form
 first-person pitch.

@@ -52,6 +52,7 @@
 				<a href="#" class="opt" data-q="q2" data-v="someone-left"><span class="mark">⊹</span> someone left, or is leaving</a>
 				<a href="#" class="opt" data-q="q2" data-v="it-broke"><span class="mark">⊹</span> we got caught out</a>
 				<a href="#" class="opt" data-q="q2" data-v="its-you"><span class="mark">⊹</span> it is slowing us down</a>
+				<a href="#" class="opt" data-q="q2" data-v="costs"><span class="mark">⊹</span> the bills keep growing</a>
 				<a href="#" class="opt" data-q="q2" data-v="not-sure"><span class="mark">⊹</span> just having a look</a>
 
 				<h3><span class="lp-qnum">03</span>If your numbers were wrong for a week, who would find out?</h3>
@@ -96,19 +97,25 @@
 							'its-you': 'exposed',
 							'it-broke': 'outside',
 							'not-sure': 'exposed',
+							'costs': 'exposed',
 						};
 						const QUIET = {
 							'someone-left': 'quiet',
 							'its-you': 'quiet',
 							'it-broke': 'caught',
 							'not-sure': 'quiet',
+							'costs': 'quiet',
 						};
 						const seen =
 							picked.q3 === 'customer' || picked.q3 === 'auditor';
 						const sub = (seen ? EXPOSED : QUIET)[picked.q2];
 						go.href = '/start/' + picked.q2 + '/' + sub + '?' + qs;
+						const firstEnable = go.classList.contains('disabled-link');
 						go.classList.remove('disabled-link');
 						go.textContent = 'continue ⊹';
+						if (firstEnable) {
+							go.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+						}
 					}
 				});
 			});

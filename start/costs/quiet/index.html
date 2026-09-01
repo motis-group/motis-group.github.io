@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+		/>
+		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+		<link rel="icon" type="image/png" href="/favicon.png" />
+		<title>the bill keeps growing, and only you are watching it | MOTIS.GROUP</title>
+		<link rel="stylesheet" href="/styles.css?v=4" />
+		<script src="/theme.js"></script>
+	</head>
+	<body class="landing">
+		<header class="lp-topbar">
+			<a href="/" class="lp-brand">
+				<img src="/images/logo-black.png" alt="" class="light-logo" />
+				<img src="/images/logo-white.png" alt="" class="dark-logo" />
+				MOTIS.GROUP
+			</a>
+			<a href="mailto:hello@motis.group" class="lp-pill">Get in touch</a>
+		</header>
+
+		<main>
+			<section class="lp-pagehero">
+				<p class="lp-kicker">Start &mdash; the bills keep growing</p>
+				<h1>The bill keeps growing, and nobody can say why.</h1>
+			</section>
+
+			<section class="lp-section">
+				<div class="lp-prose" id="prose">
+					<p>Warehouse spend has a shape. It rarely jumps; it creeps. A query gets copied into a dashboard, the dashboard gets scheduled hourly, the table underneath doubles, and eighteen months later the bill is a line item somebody asks about in a budget meeting.</p>
+					<p>The awkward part is that nobody owns it. The engineers who wrote the queries have moved on to other work, finance sees a total and not a cause, and the platform keeps doing exactly what it was told.</p>
+					<p>This is a findable problem. The query history says which workloads cost what, which schedules run for nobody, and which tables get scanned in full for a filter on one column. Most of the spend usually sits in a handful of places.</p>
+					<p>Fixing it once is easy, and it grows back. What I leave behind is the check that notices the creep while it is still one query, not a quarter&rsquo;s overrun &mdash; the agent flags it, I review the fix.</p>
+					<p>Twenty minutes with read-only access to the query history is usually enough. I&rsquo;ll tell you what I found and what it costs you per month, whether or not there&rsquo;s a job in it.</p>
+				</div>
+			</section>
+
+			<section class="lp-contact lp-contact--compact">
+				<img src="/images/dither-wires.png" alt="" class="lp-fade lp-dither" />
+				<h2>If this is where you are, write to me.</h2>
+				<a href="mailto:hello@motis.group" class="lp-pill">hello@motis.group &rarr;</a>
+			</section>
+		</main>
+
+		<script>
+			(() => {
+				const p = new URLSearchParams(location.search);
+				const here = location.pathname;
+				const lines = [];
+				if (p.get('notices') === 'auditor') {
+					lines.push(
+						'You said an auditor or a regulator would find out. That puts a date on this, and it changes the order of the work: the thing you can show them comes before the thing that is convenient for you.'
+					);
+				} else if (p.get('notices') === 'customer' && !here.includes('it-broke')) {
+					lines.push(
+						'You said a customer would find out first. That is the expensive way to learn about it, and it is the case worth pricing against.'
+					);
+				}
+				if (p.get('catches') === 'nobody') {
+					lines.push(
+						'You said nobody catches it. Then there is no check to replace, and the first job is finding out what is already wrong rather than stopping it happening again.'
+					);
+				} else if (p.get('catches') === 'me' && !here.includes('its-you')) {
+					lines.push(
+						'You said you catch it yourself. <a href="/start/its-you">That has its own page</a>, and it is probably the one you want.'
+					);
+				}
+				if (!lines.length) return;
+				const prose = document.getElementById('prose');
+				const anchor = [...prose.children].find((el) =>
+					el.textContent.includes('read-only access')
+				);
+				lines.forEach((t) => {
+					const para = document.createElement('p');
+					para.innerHTML = t;
+					prose.insertBefore(para, anchor || null);
+				});
+			})();
+		</script>
+		<footer class="footer">
+			<div class="footer-logos">
+				<a href="/"><img src="/images/logo-black.png" alt="MOTIS.GROUP" class="footer-logo light-logo" /></a>
+				<a href="/"><img src="/images/logo-white.png" alt="MOTIS.GROUP" class="footer-logo dark-logo" /></a>
+			</div>
+			<div class="footer-menu">
+				<a href="/start" class="active"><span>START</span></a>
+				<a href="/projects"><span>PROJECTS</span></a>
+				<a href="/about"><span>ABOUT</span></a>
+				<a href="https://blog.motis.group" target="_blank"><span>ARTICLES</span></a>
+				<a href="https://github.com/motis-group" target="_blank"><span>GITHUB</span></a>
+			</div>
+			<button id="theme-toggle" class="theme-toggle">☾</button>
+		</footer>
+	</body>
+</html>

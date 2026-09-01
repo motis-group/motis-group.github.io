@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+		/>
+		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+		<link rel="icon" type="image/png" href="/favicon.png" />
+		<title>the bill keeps growing, and somebody is asking about it | MOTIS.GROUP</title>
+		<link rel="stylesheet" href="/styles.css?v=4" />
+		<script src="/theme.js"></script>
+	</head>
+	<body class="landing">
+		<header class="lp-topbar">
+			<a href="/" class="lp-brand">
+				<img src="/images/logo-black.png" alt="" class="light-logo" />
+				<img src="/images/logo-white.png" alt="" class="dark-logo" />
+				MOTIS.GROUP
+			</a>
+			<a href="mailto:hello@motis.group" class="lp-pill">Get in touch</a>
+		</header>
+
+		<main>
+			<section class="lp-pagehero">
+				<p class="lp-kicker">Start &mdash; the bills keep growing</p>
+				<h1>The bill keeps growing, and now somebody is asking about it.</h1>
+			</section>
+
+			<section class="lp-section">
+				<div class="lp-prose" id="prose">
+					<p>A number on an invoice got big enough to be noticed by somebody whose job is noticing. Now there is a question on the table &mdash; what is this spend, and what do we get for it &mdash; and &ldquo;the platform needs it&rdquo; does not survive a second asking.</p>
+					<p>The honest answer usually exists in the query history: which workloads cost what, which of them anyone still reads, and which run hourly for a dashboard nobody has opened since March.</p>
+					<p>I put that answer together fixed price and fast: per-workload cost, what is deletable today, what needs a fix, and the check that stops it creeping back once the question has been answered.</p>
+					<p>Twenty minutes with read-only access to the query history is usually enough. I&rsquo;ll tell you what I found and what it costs you per month, whether or not there&rsquo;s a job in it.</p>
+				</div>
+			</section>
+
+			<section class="lp-contact lp-contact--compact">
+				<img src="/images/dither-wires.png" alt="" class="lp-fade lp-dither" />
+				<h2>If this is where you are, write to me.</h2>
+				<a href="mailto:hello@motis.group" class="lp-pill">hello@motis.group &rarr;</a>
+			</section>
+		</main>
+
+		<script>
+			(() => {
+				const p = new URLSearchParams(location.search);
+				const here = location.pathname;
+				const lines = [];
+				if (p.get('notices') === 'auditor') {
+					lines.push(
+						'You said an auditor or a regulator would find out. That puts a date on this, and it changes the order of the work: the thing you can show them comes before the thing that is convenient for you.'
+					);
+				} else if (p.get('notices') === 'customer' && !here.includes('it-broke')) {
+					lines.push(
+						'You said a customer would find out first. That is the expensive way to learn about it, and it is the case worth pricing against.'
+					);
+				}
+				if (p.get('catches') === 'nobody') {
+					lines.push(
+						'You said nobody catches it. Then there is no check to replace, and the first job is finding out what is already wrong rather than stopping it happening again.'
+					);
+				} else if (p.get('catches') === 'me' && !here.includes('its-you')) {
+					lines.push(
+						'You said you catch it yourself. <a href="/start/its-you">That has its own page</a>, and it is probably the one you want.'
+					);
+				}
+				if (!lines.length) return;
+				const prose = document.getElementById('prose');
+				const anchor = [...prose.children].find((el) =>
+					el.textContent.includes('read-only access')
+				);
+				lines.forEach((t) => {
+					const para = document.createElement('p');
+					para.innerHTML = t;
+					prose.insertBefore(para, anchor || null);
+				});
+			})();
+		</script>
+		<footer class="footer">
+			<div class="footer-logos">
+				<a href="/"><img src="/images/logo-black.png" alt="MOTIS.GROUP" class="footer-logo light-logo" /></a>
+				<a href="/"><img src="/images/logo-white.png" alt="MOTIS.GROUP" class="footer-logo dark-logo" /></a>
+			</div>
+			<div class="footer-menu">
+				<a href="/start" class="active"><span>START</span></a>
+				<a href="/projects"><span>PROJECTS</span></a>
+				<a href="/about"><span>ABOUT</span></a>
+				<a href="https://blog.motis.group" target="_blank"><span>ARTICLES</span></a>
+				<a href="https://github.com/motis-group" target="_blank"><span>GITHUB</span></a>
+			</div>
+			<button id="theme-toggle" class="theme-toggle">☾</button>
+		</footer>
+	</body>
+</html>
