@@ -27,5 +27,6 @@ Unsplash photos (Unsplash License) run through
 - `dither-racks.png` — images.unsplash.com/photo-1695668548342-c0c1ad479aee
 - `dither-wires.png` — images.unsplash.com/photo-1780766824485-b43c751ae6b4
 
-Gotcha: the landing copy speaks as "we"; `about/` and the `start/` pages speak
-as "I". Pick one before adding new copy.
+All copy speaks in the first person singular. Every inner page carries the
+landing shell: `.lp-topbar`, then `<main class="lp-inner">` with a kicker and
+an h2 pulled from the page's opening line, around the existing ruled table.

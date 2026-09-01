@@ -777,6 +777,36 @@ footer {
 	margin-top: 1rem;
 }
 
+/* Inner pages (about, projects, start) share the landing shell */
+
+.lp-inner {
+	width: 100%;
+	max-width: 72rem;
+	margin: 0 auto;
+	padding: 2.5rem 1.5rem 3rem;
+}
+
+.lp-inner .lp-kicker {
+	margin-bottom: 0.75rem;
+}
+
+.lp-inner h2 {
+	font-size: clamp(1.5rem, 3.4vw, 2.4rem);
+	line-height: 1.15;
+	letter-spacing: -0.01em;
+	max-width: 28ch;
+	margin-bottom: 2rem;
+}
+
+.lp-inner table {
+	padding: 0;
+}
+
+.lp-inner td {
+	border-bottom: 1px solid var(--border-color);
+	padding: 0.4rem 0.25rem;
+}
+
 .lp-contact {
 	text-align: center;
 	padding: 7rem 1.5rem 13rem;
