@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+		/>
+		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+		<link rel="icon" type="image/png" href="/favicon.png" />
+		<title>you are looking, but someone outside would notice | MOTIS.GROUP</title>
+		<link rel="stylesheet" href="/styles.css" />
+		<script src="/theme.js"></script>
+	</head>
+	<body>
+		<table class="projects-table">
+			<tr>
+				<td class="project-description">You are having a look, and a customer or a regulator would find out if the numbers were wrong.</td>
+			</tr>
+			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="project-description">Those two answers pull against each other. If somebody outside would notice, there is exposure here that nobody has priced. You may simply not have had the incident that makes it feel urgent yet.</td>
+			</tr>
+			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="project-description">Nothing is forcing it, which is why it stays on the list. Work like this gets done when an event turns up with a date on it: an acquisition, a renewal, an audit, a contract that requires numbers you cannot currently produce. Until one arrives it is always next quarter.</td>
+			</tr>
+			<tr>
+				<td class="project-description">Doing it before the event is cheaper in every direction. No deadline set by somebody else, no explaining, and no rebuilding confidence at the same time as fixing the cause.</td>
+			</tr>
+			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="project-description">Twenty minutes tells you whether there is anything here worth acting on.</td>
+			</tr>
+			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="project-description">Twenty minutes with read-only access is usually enough. If there is already a date on this, say so and I will work to it. If your access has to go through a process, that is fine, I have done it before.</td>
+			</tr>
+			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="project-description"><a href="mailto:hello@motis.group">hello@motis.group</a></td>
+			</tr>
+		</table>
+
+		<script>
+			(() => {
+				const p = new URLSearchParams(location.search);
+				const here = location.pathname;
+				const lines = [];
+				if (p.get('notices') === 'auditor') {
+					lines.push(
+						'You said an auditor or a regulator would find out. That puts a date on this, and it changes the order of the work: the thing you can show them comes before the thing that is convenient for you.'
+					);
+				} else if (p.get('notices') === 'customer' && !here.includes('it-broke')) {
+					lines.push(
+						'You said a customer would find out first. That is the expensive way to learn about it, and it is the case worth pricing against.'
+					);
+				}
+				if (p.get('catches') === 'nobody') {
+					lines.push(
+						'You said nobody catches it. Then there is no check to replace, and the first job is finding out what is already wrong rather than stopping it happening again.'
+					);
+				} else if (p.get('catches') === 'me' && !here.includes('its-you')) {
+					lines.push(
+						'You said you catch it yourself. <a href="/start/its-you">That has its own page</a>, and it is probably the one you want.'
+					);
+				}
+				if (!lines.length) return;
+				const table = document.querySelector('.projects-table');
+				const anchor = [...table.rows].find((r) =>
+					r.textContent.includes('read-only access')
+				);
+				lines.reverse().forEach((t) => {
+					const row = table.insertRow(anchor ? anchor.rowIndex : -1);
+					const td = row.insertCell(0);
+					td.className = 'project-description';
+					td.innerHTML = t;
+					const gap = table.insertRow(anchor ? anchor.rowIndex : -1);
+					const g = gap.insertCell(0);
+					g.className = 'project-description';
+					g.innerHTML = '&nbsp;';
+				});
+			})();
+		</script>
+		<footer class="footer">
+			<div class="footer-logos">
+				<a href="/"><img src="/images/logo-black.png" alt="MOTIS.GROUP" class="footer-logo light-logo" /></a>
+				<a href="/"><img src="/images/logo-white.png" alt="MOTIS.GROUP" class="footer-logo dark-logo" /></a>
+			</div>
+			<div class="footer-menu">
+				<a href="/start" class="active"><span>START</span></a>
+				<a href="/projects"><span>PROJECTS</span></a>
+				<a href="/about"><span>ABOUT</span></a>
+				<a href="https://blog.motis.group" target="_blank"><span>ARTICLES</span></a>
+				<a href="https://github.com/motis-group" target="_blank"><span>GITHUB</span></a>
+			</div>
+			<button id="theme-toggle" class="theme-toggle">☾</button>
+		</footer>
+		<script src="/rows.js"></script>
+	</body>
+</html>

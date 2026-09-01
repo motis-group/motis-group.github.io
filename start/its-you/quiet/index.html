@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+		/>
+		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+		<link rel="icon" type="image/png" href="/favicon.png" />
+		<title>you are the check, and it is your ceiling | MOTIS.GROUP</title>
+		<link rel="stylesheet" href="/styles.css" />
+		<script src="/theme.js"></script>
+	</head>
+	<body>
+		<table class="projects-table">
+			<tr>
+				<td class="project-description">You are the last check, and the cost lands on you rather than on a customer.</td>
+			</tr>
+			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="project-description">Everything goes past you before it goes out. You have tried handing it over and it half worked, because whoever you handed it to does not carry what you carry. They do not know which supplier always invoices late, or which figure looks odd in March for a reason. You know because you were there.</td>
+			</tr>
+			<tr>
+				<td class="project-description">Nobody outside is affected, so nothing forces the issue. What it costs you is room. You cannot hand the job on, so the business cannot take more work than you personally have hours for.</td>
+			</tr>
+			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="project-description">You cannot delegate a rule you have never written down. Most people in this position go looking for somebody more careful, and careful was never the missing part.</td>
+			</tr>
+			<tr>
+				<td class="project-description">The work is writing the rule down in a form that runs without you, so the checking stops being anyone&rsquo;s job.</td>
+			</tr>
+			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="project-description">Twenty minutes with read-only access is usually enough. Nothing is on fire, so there is no rush at this end either. I&rsquo;ll tell you what I found whether or not there&rsquo;s a job in it.</td>
+			</tr>
+			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="project-description"><a href="mailto:hello@motis.group">hello@motis.group</a></td>
+			</tr>
+		</table>
+
+		<script>
+			(() => {
+				const p = new URLSearchParams(location.search);
+				const here = location.pathname;
+				const lines = [];
+				if (p.get('notices') === 'auditor') {
+					lines.push(
+						'You said an auditor or a regulator would find out. That puts a date on this, and it changes the order of the work: the thing you can show them comes before the thing that is convenient for you.'
+					);
+				} else if (p.get('notices') === 'customer' && !here.includes('it-broke')) {
+					lines.push(
+						'You said a customer would find out first. That is the expensive way to learn about it, and it is the case worth pricing against.'
+					);
+				}
+				if (p.get('catches') === 'nobody') {
+					lines.push(
+						'You said nobody catches it. Then there is no check to replace, and the first job is finding out what is already wrong rather than stopping it happening again.'
+					);
+				} else if (p.get('catches') === 'me' && !here.includes('its-you')) {
+					lines.push(
+						'You said you catch it yourself. <a href="/start/its-you">That has its own page</a>, and it is probably the one you want.'
+					);
+				}
+				if (!lines.length) return;
+				const table = document.querySelector('.projects-table');
+				const anchor = [...table.rows].find((r) =>
+					r.textContent.includes('read-only access')
+				);
+				lines.reverse().forEach((t) => {
+					const row = table.insertRow(anchor ? anchor.rowIndex : -1);
+					const td = row.insertCell(0);
+					td.className = 'project-description';
+					td.innerHTML = t;
+					const gap = table.insertRow(anchor ? anchor.rowIndex : -1);
+					const g = gap.insertCell(0);
+					g.className = 'project-description';
+					g.innerHTML = '&nbsp;';
+				});
+			})();
+		</script>
+		<footer class="footer">
+			<div class="footer-logos">
+				<a href="/"><img src="/images/logo-black.png" alt="MOTIS.GROUP" class="footer-logo light-logo" /></a>
+				<a href="/"><img src="/images/logo-white.png" alt="MOTIS.GROUP" class="footer-logo dark-logo" /></a>
+			</div>
+			<div class="footer-menu">
+				<a href="/start" class="active"><span>START</span></a>
+				<a href="/projects"><span>PROJECTS</span></a>
+				<a href="/about"><span>ABOUT</span></a>
+				<a href="https://blog.motis.group" target="_blank"><span>ARTICLES</span></a>
+				<a href="https://github.com/motis-group" target="_blank"><span>GITHUB</span></a>
+			</div>
+			<button id="theme-toggle" class="theme-toggle">☾</button>
+		</footer>
+		<script src="/rows.js"></script>
+	</body>
+</html>

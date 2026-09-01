@@ -8,14 +8,13 @@
 		/>
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 		<link rel="icon" type="image/png" href="/favicon.png" />
-		<title>STYGIAN | AI-powered data engineering, BI &amp; analytics</title>
+		<title>motis.group | AI-powered data engineering, BI &amp; analytics</title>
 		<meta
 			name="description"
-			content="Stygian deploys AI agents into your cloud account that monitor and maintain your data infrastructure 24/7 — with a senior engineer reviewing every material change."
+			content="Motis deploys AI agents into your cloud account that monitor and maintain your data infrastructure 24/7 — with a senior engineer reviewing every material change."
 		/>
 		<link rel="stylesheet" href="/styles.css?v=3" />
 		<script src="/theme.js"></script>
-		<script src="/projects.js"></script>
 	</head>
 	<body class="landing">
 		<header class="lp-topbar">
@@ -30,9 +29,9 @@
 					alt=""
 					class="dark-logo"
 				/>
-				STYGIAN
+				MOTIS.GROUP
 			</a>
-			<a href="mailto:marzella@motis.group" class="lp-pill">Get in touch</a>
+			<a href="mailto:hello@motis.group" class="lp-pill">Get in touch</a>
 		</header>
 
 		<main>
@@ -40,12 +39,12 @@
 				<img src="/images/dither-tower.png" alt="" class="lp-orb lp-dither" />
 				<h1>Autonomous data engineering for high&#8209;consequence operations</h1>
 				<p class="lp-sub">
-					Stygian deploys AI agents into your cloud account that monitor and
+					Motis deploys AI agents into your cloud account that monitor and
 					maintain your data infrastructure 24/7 &mdash; dbt, Snowflake,
 					Airflow, Terraform &mdash; with a senior engineer reviewing every
 					material change.
 				</p>
-				<a href="mailto:marzella@motis.group" class="lp-pill">Get in touch &rarr;</a>
+				<a href="/start" class="lp-pill">Start here &rarr;</a>
 				<p class="lp-trustline">
 					Data engineering &middot; Business intelligence &middot; Analytics
 					&mdash; run by agents, owned by engineers
@@ -68,13 +67,13 @@
 			</section>
 
 			<section class="lp-section">
-				<p class="lp-kicker">What Stygian delivers</p>
+				<p class="lp-kicker">What Motis delivers</p>
 				<h2>
 					Data engineering, BI, and analytics &mdash; run by agents, owned by
 					engineers.
 				</h2>
 				<p class="lp-intro">
-					Most data teams drown in maintenance. Stygian puts AI agents inside
+					Most data teams drown in maintenance. Motis puts AI agents inside
 					your own cloud account to do the toil &mdash; monitoring, diagnosis,
 					repair, optimisation &mdash; while senior engineers design the
 					platform and review every material change. A fully managed data
@@ -181,7 +180,7 @@
 							program and one sent back.
 						</p>
 						<p class="lp-deliverable">
-							&#8627; <a href="/about">The full grid practice &rarr;</a>
+							&#8627; <a href="/about">How I work &rarr;</a>
 						</p>
 					</div>
 					<ul class="lp-vert-list">
@@ -231,14 +230,6 @@
 				</div>
 			</section>
 
-			<section class="lp-section lp-projects">
-				<p class="lp-kicker">Projects</p>
-				<h2>The work, in the open.</h2>
-				<table class="projects-table" id="projects-table">
-					<!-- Table content will be dynamically generated -->
-				</table>
-			</section>
-
 			<section class="lp-contact">
 				<img src="/images/dither-wires.png" alt="" class="lp-fade lp-dither" />
 				<h2>If the problem is real, let's talk about it.</h2>
@@ -247,7 +238,7 @@
 					keeps failing, the bill that keeps growing, or the platform that
 					needs standing up &mdash; and we'll tell you whether we can help.
 				</p>
-				<a href="mailto:marzella@motis.group" class="lp-pill">Get in touch &rarr;</a>
+				<a href="mailto:hello@motis.group" class="lp-pill">Get in touch &rarr;</a>
 				<p class="lp-location">
 					Melbourne, AU &mdash; Agents in your account &mdash; Engineers on
 					every change
@@ -257,32 +248,17 @@
 
 		<footer class="footer">
 			<div class="footer-logos">
-				<img
-					src="/images/logo-black.png"
-					alt="STYGIAN"
-					class="footer-logo light-logo"
-				/>
-				<img
-					src="/images/logo-white.png"
-					alt="STYGIAN"
-					class="footer-logo dark-logo"
-				/>
+				<a href="/"><img src="/images/logo-black.png" alt="MOTIS.GROUP" class="footer-logo light-logo" /></a>
+				<a href="/"><img src="/images/logo-white.png" alt="MOTIS.GROUP" class="footer-logo dark-logo" /></a>
 			</div>
 			<div class="footer-menu">
-				<a href="/" class="active"><span>PROJECTS</span></a>
+				<a href="/start"><span>START</span></a>
+				<a href="/projects"><span>PROJECTS</span></a>
 				<a href="/about"><span>ABOUT</span></a>
-				<a href="https://github.com/wmarzella" target="_blank"
-					><span>GITHUB</span></a
-				>
+				<a href="https://blog.motis.group" target="_blank"><span>ARTICLES</span></a>
+				<a href="https://github.com/motis-group" target="_blank"><span>GITHUB</span></a>
 			</div>
 			<button id="theme-toggle" class="theme-toggle">☾</button>
 		</footer>
-
-		<script>
-			document.addEventListener('DOMContentLoaded', () => {
-				const tableElement = document.getElementById('projects-table');
-				tableElement.innerHTML = generateProjectsHTML();
-			});
-		</script>
 	</body>
 </html>

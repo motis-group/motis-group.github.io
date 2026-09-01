@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+		/>
+		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+		<link rel="icon" type="image/png" href="/favicon.png" />
+		<title>you don&rsquo;t trust the numbers | MOTIS.GROUP</title>
+		<link rel="stylesheet" href="/styles.css" />
+		<script src="/theme.js"></script>
+	</head>
+	<body>
+		<table class="projects-table">
+			<tr>
+				<td class="project-description">You don&rsquo;t quite believe your own reporting.</td>
+			</tr>
+			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="project-description">Nothing is on fire. Two reports disagree by a bit, somebody quietly reconciles them before the meeting, and nobody is sure which one was right. It has been that way long enough to feel normal.</td>
+			</tr>
+			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="project-description">Nobody outside would notice, which tells me there is probably nothing here urgent enough to pay me for yet. Work like this gets done when an event arrives with a date on it. Without one it competes with everything else on the list and loses, every quarter, and that is the correct outcome. If I took your money today I would be selling you a fix for something you have already absorbed.</td>
+			</tr>
+			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="project-description">So take the method instead. This is how I read a system I&rsquo;ve never seen and work out where it has drifted from what it describes. It takes about twenty minutes and you can run it on your own this afternoon.</td>
+			</tr>
+			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="project-description">⊹ start with whatever claims to be the complete list: the register, the master sheet, the report with &ldquo;all&rdquo; in its name</td>
+			</tr>
+			<tr>
+				<td class="project-description">⊹ take two systems that describe the same thing and count where they disagree</td>
+			</tr>
+			<tr>
+				<td class="project-description">⊹ look for the version words: new, v2, final, current, copy. Anything carrying two of them has no owner</td>
+			</tr>
+			<tr>
+				<td class="project-description">⊹ find the field meant to classify every record, and count how many are blank</td>
+			</tr>
+			<tr>
+				<td class="project-description">⊹ find the spreadsheet somebody keeps on the side. Whatever is in it is what the system does not hold, and that gap is the whole problem</td>
+			</tr>
+			<tr>
+				<td class="project-description">⊹ ask who would notice if each of those was wrong for a week</td>
+			</tr>
+			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="project-description">The things that change this: somebody who holds the rules in their head hands in notice, a customer or an auditor notices before you do, or a contract turns up asking for numbers you cannot currently produce. Any of those, call me.</td>
+			</tr>
+			<tr>
+				<td class="project-description">&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="project-description"><a href="mailto:hello@motis.group">hello@motis.group</a></td>
+			</tr>
+		</table>
+
+		<script>
+			(() => {
+				const p = new URLSearchParams(location.search);
+				const here = location.pathname;
+				const lines = [];
+				if (p.get('notices') === 'auditor') {
+					lines.push(
+						'You said an auditor or a regulator would find out. That puts a date on this, and it changes the order of the work: the thing you can show them comes before the thing that is convenient for you.'
+					);
+				} else if (p.get('notices') === 'customer' && !here.includes('it-broke')) {
+					lines.push(
+						'You said a customer would find out first. That is the expensive way to learn about it, and it is the case worth pricing against.'
+					);
+				}
+				if (p.get('catches') === 'nobody') {
+					lines.push(
+						'You said nobody catches it. Then there is no check to replace, and the first job is finding out what is already wrong rather than stopping it happening again.'
+					);
+				} else if (p.get('catches') === 'me' && !here.includes('its-you')) {
+					lines.push(
+						'You said you catch it yourself. <a href="/start/its-you">That has its own page</a>, and it is probably the one you want.'
+					);
+				}
+				if (!lines.length) return;
+				const table = document.querySelector('.projects-table');
+				const anchor = [...table.rows].find((r) =>
+					r.textContent.includes('read-only access')
+				);
+				lines.reverse().forEach((t) => {
+					const row = table.insertRow(anchor ? anchor.rowIndex : -1);
+					const td = row.insertCell(0);
+					td.className = 'project-description';
+					td.innerHTML = t;
+					const gap = table.insertRow(anchor ? anchor.rowIndex : -1);
+					const g = gap.insertCell(0);
+					g.className = 'project-description';
+					g.innerHTML = '&nbsp;';
+				});
+			})();
+		</script>
+		<footer class="footer">
+			<div class="footer-logos">
+				<a href="/"><img src="/images/logo-black.png" alt="MOTIS.GROUP" class="footer-logo light-logo" /></a>
+				<a href="/"><img src="/images/logo-white.png" alt="MOTIS.GROUP" class="footer-logo dark-logo" /></a>
+			</div>
+			<div class="footer-menu">
+				<a href="/start" class="active"><span>START</span></a>
+				<a href="/projects"><span>PROJECTS</span></a>
+				<a href="/about"><span>ABOUT</span></a>
+				<a href="https://blog.motis.group" target="_blank"><span>ARTICLES</span></a>
+				<a href="https://github.com/motis-group" target="_blank"><span>GITHUB</span></a>
+			</div>
+			<button id="theme-toggle" class="theme-toggle">☾</button>
+		</footer>
+		<script src="/rows.js"></script>
+	</body>
+</html>

@@ -340,7 +340,15 @@ footer {
 				display: none;
 			}
 		}
-		&[href="https://github.com/wmarzella"] {
+		&[href="https://blog.motis.group"] {
+			&::before {
+				content: 'B';
+			}
+			span {
+				display: none;
+			}
+		}
+		&[href="https://github.com/motis-group"] {
 			&::before {
 				content: 'G';
 			}
