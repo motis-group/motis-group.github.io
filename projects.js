@@ -1,5 +1,5 @@
 const GITHUB_OWNERS = ['wmarzella', 'motis-group'];
-const PROJECT_CACHE_KEY = 'motis.projects.cache.v2';
+const PROJECT_CACHE_KEY = 'stygian.projects.cache.v1';
 const PROJECT_CACHE_TTL_MS = 1000 * 60 * 60;
 const MAX_PROJECTS = 40;
 
@@ -12,18 +12,18 @@ const EXCLUDED_REPOS = new Set([
 const REPO_OVERRIDES = {
 	'wmarzella/website': {
 		name: 'website-source',
-		description: 'Canonical source repository for motis.group.',
+		description: 'Canonical source repository for stygian.',
 		status: 'SOURCE',
 		company: 'wmarzella',
 		location: 'github',
 	},
 	'motis-group/motis-group.github.io': {
-		name: 'motis.group',
-		link: 'https://motis.group',
-		description: 'Production pages repository for motis.group.',
+		name: 'stygian.com.au',
+		link: 'https://stygian',
+		description: 'Production pages repository for stygian.com.au.',
 		status: 'LIVE',
-		company: 'motis.group',
-		location: 'global',
+		company: 'stygian',
+		location: 'melbourne',
 	},
 	'wmarzella/ronin': {
 		status: 'ACTIVE',
@@ -67,7 +67,7 @@ const LOCAL_PRIVATE_PROJECTS = [
 		link: '#',
 		status: 'PRIVATE',
 		visibility: 'closed',
-		company: 'motis.group',
+		company: 'stygian',
 		location: 'local',
 	},
 	{
@@ -78,7 +78,7 @@ const LOCAL_PRIVATE_PROJECTS = [
 		link: '#',
 		status: 'PRIVATE',
 		visibility: 'closed',
-		company: 'motis.group',
+		company: 'stygian',
 		location: 'local',
 	},
 	{
@@ -88,7 +88,7 @@ const LOCAL_PRIVATE_PROJECTS = [
 		link: '#',
 		status: 'PRIVATE',
 		visibility: 'closed',
-		company: 'motis.group',
+		company: 'stygian',
 		location: 'local',
 	},
 	{
@@ -99,7 +99,7 @@ const LOCAL_PRIVATE_PROJECTS = [
 		link: '#',
 		status: 'PRIVATE',
 		visibility: 'closed',
-		company: 'motis.group',
+		company: 'stygian',
 		location: 'local',
 	},
 	{
@@ -109,7 +109,7 @@ const LOCAL_PRIVATE_PROJECTS = [
 		link: '#',
 		status: 'IN-PROGRESS',
 		visibility: 'closed',
-		company: 'motis.group',
+		company: 'stygian',
 		location: 'local',
 	},
 	{
@@ -119,7 +119,7 @@ const LOCAL_PRIVATE_PROJECTS = [
 		link: '#',
 		status: 'ACTIVE',
 		visibility: 'closed',
-		company: 'motis.group',
+		company: 'stygian',
 		location: 'local',
 	},
 ];
@@ -193,7 +193,7 @@ function normalizeDescription(value) {
 
 function mapRepoToProject(repo) {
 	const owner = repo.owner && repo.owner.login ? repo.owner.login : 'github';
-	const company = owner === 'motis-group' ? 'motis.group' : owner;
+	const company = owner === 'motis-group' ? 'motis-group' : owner;
 	const homepage = typeof repo.homepage === 'string' ? repo.homepage.trim() : '';
 	const link = homepage.startsWith('http://') || homepage.startsWith('https://')
 		? homepage
@@ -335,7 +335,7 @@ function renderLoadingState() {
     <tr>
         <td class="project-name"><span class="project-id">...</span> syncing projects <span class="project-status">LIVE</span></td>
         <td class="project-description">Pulling from GitHub (wmarzella + motis-group) and local metadata.</td>
-        <td class="company">motis.group</td>
+        <td class="company">stygian</td>
         <td class="location">sync</td>
         <td class="view-link"><span class="disabled-link">link ⇱</span></td>
     </tr>
@@ -405,7 +405,7 @@ async function refreshProjectsTable() {
             <tr>
                 <td class="project-name"><span class="project-id">ERR</span> project sync failed <span class="project-status">OFFLINE</span></td>
                 <td class="project-description">${escapeHtml(error.message || 'Unable to load dynamic projects.')}</td>
-                <td class="company">motis.group</td>
+                <td class="company">stygian</td>
                 <td class="location">sync</td>
                 <td class="view-link"><span class="disabled-link">link ⇱</span></td>
             </tr>
