@@ -318,11 +318,16 @@ footer {
 
 	.footer-menu a {
 		/* Add data attributes to elements to show single letters */
-		&[href="/"] {
-			&:not(.active)::before {
-				content: 'P';
+		&[href="/start"] {
+			&::before {
+				content: 'S';
 			}
-			&.active::before {
+			span {
+				display: none;
+			}
+		}
+		&[href="/projects"] {
+			&::before {
 				content: 'P';
 			}
 			span {
