@@ -7,9 +7,10 @@ distribution is the flagship vertical.
 Pages: `index.html` is the landing page (Geminus-style: full-bleed hero, stat
 band, service cards, inverted method band, industries). `start/` is a
 three-question quiz that routes visitors to ten destination pages.
-`projects/` lists work from a static array in `projects.js` (`rows.js` pads
-short ruled tables down to the fixed footer). `about/` is the long-form
-first-person pitch.
+`projects/` is three anonymised engagement write-ups, each a `.lp-section`
+with prose and a closing `.lp-deliverable` line. `about/` is the long-form
+first-person pitch. `rows.js` pads the ruled tables on the quiz's redirect
+stubs down to the fixed footer.
 
 Static site, no build step. Berkeley Mono is the only typeface. Light and dark
 themes via `data-theme` on `<html>` (`theme.js`); every colour goes through the
@@ -31,7 +32,7 @@ All copy speaks in the first person singular. Every page is built from the
 same design system: `.lp-topbar`, a `.lp-pagehero` (kicker, display headline,
 lede), `.lp-section` blocks with prose or `.lp-card` grids, an inverted
 `.lp-method` band where a page needs one, and a `.lp-contact` CTA band with a
-dithered background. The only table left is the projects list. The quiz's
+dithered background. The only tables left are the quiz redirect stubs. The quiz's
 routing script hangs off `a.opt[data-q][data-v]` and `#go`; the leaf pages'
 personalisation scripts insert paragraphs into `#prose` before the paragraph
 containing "read-only access" — keep those hooks when editing.
