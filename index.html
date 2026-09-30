@@ -18,23 +18,14 @@
 		<header class="nav">
 			<div class="wrap nav-in">
 				<a href="/" class="brand"><img src="/images/logo-black.png" alt="" />motis.group</a>
-				<nav class="nav-links">
+				<nav class="nav-links" id="nav-links">
 					<a href="#how">How it works</a>
 					<a href="#agents">Agents</a>
 					<a href="#work">Work</a>
 					<a href="#faq">FAQ</a>
+					<a href="#contact" class="btn btn-blue">Book a call</a>
 				</nav>
-				<a href="#contact" class="btn btn-blue nav-cta">Book a call</a>
-				<details class="menu">
-					<summary aria-label="Menu"><span></span><span></span></summary>
-					<nav>
-						<a href="#how">How it works</a>
-						<a href="#agents">Agents</a>
-						<a href="#work">Work</a>
-						<a href="#faq">FAQ</a>
-						<a href="#contact">Book a call</a>
-					</nav>
-				</details>
+				<button class="menu" aria-label="Menu" aria-controls="nav-links" aria-expanded="false"><span></span><span></span></button>
 			</div>
 		</header>
 
@@ -229,7 +220,6 @@ on_break:   fail the build, name the owner</pre>
 					</p>
 					<div class="apply-grid">
 						<div>
-							<i class="ico"></i>
 							<h3>Maintenance and reliability</h3>
 							<p>
 								Work orders, condition monitoring and shutdown scopes described once,
@@ -238,7 +228,6 @@ on_break:   fail the build, name the owner</pre>
 							</p>
 						</div>
 						<div>
-							<i class="ico ico-round"></i>
 							<h3>Production and reconciliation</h3>
 							<p>
 								Mine-to-mill figures from the fleet system, the historian and the lab
@@ -247,7 +236,6 @@ on_break:   fail the build, name the owner</pre>
 							</p>
 						</div>
 						<div>
-							<i class="ico"></i>
 							<h3>Network and asset data</h3>
 							<p>
 								Asset registers, GIS and the network model held to one definition, so
@@ -256,7 +244,6 @@ on_break:   fail the build, name the owner</pre>
 							</p>
 						</div>
 						<div>
-							<i class="ico ico-round"></i>
 							<h3>Emissions and compliance</h3>
 							<p>
 								Energy, emissions and safety figures that walk back to the meter, so
@@ -265,14 +252,14 @@ on_break:   fail the build, name the owner</pre>
 							</p>
 						</div>
 					</div>
-					<p class="tag tag-light">And whatever check only one person runs</p>
+					<p class="tag">And whatever check only one person runs</p>
 				</div>
 			</section>
 
 			<section class="integr">
 				<div class="wrap integr-in">
 					<div>
-						<span class="tag tag-dark">No migration</span>
+						<span class="tag">No migration</span>
 						<h2 data-split>Nothing moves.<br />The schema joins it.</h2>
 						<p>
 							Each system keeps its own records. Your data stays in your account and
@@ -309,16 +296,13 @@ on_break:   fail the build, name the owner</pre>
 							awake to be paged.
 						</p>
 					</div>
-					<div>
-						<span class="caps">Capabilities</span>
-						<ul>
-							<li>Failed runs traced to root cause</li>
-							<li>Fix drafted on a branch, never on main</li>
-							<li>Tests run before the pull request opens</li>
-							<li>Compute spikes attributed to a workload and owner</li>
-							<li>Lineage from dashboard back to sensor</li>
-						</ul>
-					</div>
+					<ul class="caps">
+						<li>Failed runs traced to root cause</li>
+						<li>Fix drafted on a branch, never on main</li>
+						<li>Tests run before the pull request opens</li>
+						<li>Compute spikes attributed to a workload and owner</li>
+						<li>Lineage from dashboard back to sensor</li>
+					</ul>
 					<div class="agent-ctas">
 						<a class="btn btn-blue" href="#contact">Book a call</a>
 						<a class="btn btn-navy" href="#work">Selected work</a>
@@ -335,16 +319,13 @@ on_break:   fail the build, name the owner</pre>
 							and explains every variance it can.
 						</p>
 					</div>
-					<div>
-						<span class="caps">Capabilities</span>
-						<ul>
-							<li>Mine-to-mill reconciled every day</li>
-							<li>Variances explained against written rules</li>
-							<li>Unexplained gaps raised, never smoothed</li>
-							<li>Month-end figures that walk back to source</li>
-							<li>Exceptions routed to a named owner</li>
-						</ul>
-					</div>
+					<ul class="caps">
+						<li>Mine-to-mill reconciled every day</li>
+						<li>Variances explained against written rules</li>
+						<li>Unexplained gaps raised, never smoothed</li>
+						<li>Month-end figures that walk back to source</li>
+						<li>Exceptions routed to a named owner</li>
+					</ul>
 					<div class="agent-ctas">
 						<a class="btn btn-white" href="#contact">Book a call</a>
 						<a class="btn btn-blue" href="#how">How it works</a>
@@ -361,16 +342,13 @@ on_break:   fail the build, name the owner</pre>
 							before the submission date.
 						</p>
 					</div>
-					<div>
-						<span class="caps">Capabilities</span>
-						<ul>
-							<li>Asset register checked against GIS and the network model</li>
-							<li>Outage and reliability records tested against the rules</li>
-							<li>Submission packs generated from one run</li>
-							<li>Evidence trail an auditor can rerun</li>
-							<li>Sign-off that points at a run</li>
-						</ul>
-					</div>
+					<ul class="caps">
+						<li>Asset register checked against GIS and the network model</li>
+						<li>Outage and reliability records tested against the rules</li>
+						<li>Submission packs generated from one run</li>
+						<li>Evidence trail an auditor can rerun</li>
+						<li>Sign-off that points at a run</li>
+					</ul>
 					<div class="agent-ctas">
 						<a class="btn btn-navy" href="#contact">Book a call</a>
 						<a class="btn btn-white" href="#faq">Questions</a>
@@ -383,7 +361,7 @@ on_break:   fail the build, name the owner</pre>
 				<p class="sub">Three engagements, and what stayed behind.</p>
 				<div class="work-grid">
 					<article>
-						<span class="tag tag-dark">01</span>
+						<span class="tag">01</span>
 						<h3>An ERP go-live pushed development compute up 842 hours in a week.</h3>
 						<p>
 							The question on the table was how much capacity to buy. I attributed
@@ -393,7 +371,7 @@ on_break:   fail the build, name the owner</pre>
 						<p class="left">↳ The attribution queries stayed, as a playbook anyone on the team can rerun.</p>
 					</article>
 					<article>
-						<span class="tag tag-dark">02</span>
+						<span class="tag">02</span>
 						<h3>A new emissions standard put a penalty balance on every vehicle sold.</h3>
 						<p>
 							The only check lived in one analyst's spreadsheet. I wrote it down as
@@ -403,7 +381,7 @@ on_break:   fail the build, name the owner</pre>
 						<p class="left">↳ The test register, the daily status and sign-off all generate from one run.</p>
 					</article>
 					<article>
-						<span class="tag tag-dark">03</span>
+						<span class="tag">03</span>
 						<h3>A platform team had good models and no end-to-end test.</h3>
 						<p>
 							Testing meant dropping and recreating schemas, and one engineer held
@@ -636,7 +614,10 @@ on_break:   fail the build, name the owner</pre>
 			addEventListener('resize', () => (fit(), draw()));
 			fit();
 
-			document.querySelectorAll('.menu a').forEach((a) => (a.onclick = () => (a.closest('details').open = false)));
+			const nav = document.querySelector('.nav'), menu = nav.querySelector('.menu');
+			const openMenu = (open) => (nav.classList.toggle('open', open), menu.setAttribute('aria-expanded', open));
+			menu.onclick = () => openMenu(!nav.classList.contains('open'));
+			nav.querySelectorAll('.nav-links a').forEach((a) => (a.onclick = () => openMenu(false)));
 
 			// No backend: the form opens a pre-filled email.
 			document.getElementById('enquiry').addEventListener('submit', (e) => {

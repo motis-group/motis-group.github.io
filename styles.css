@@ -206,55 +206,36 @@ h2 {
 
 .nav-links {
 	display: flex;
+	align-items: center;
 	gap: 36px;
 	margin-left: auto;
 	font: 14px/1 var(--mono);
 	text-transform: uppercase;
 }
 
-.nav-links a:hover {
+.nav-links a:not(.btn):hover {
 	color: var(--blue);
+}
+
+.nav-links .btn {
+	font: 16px/1 var(--sans);
+	text-transform: none;
 }
 
 .menu {
 	display: none;
-}
-
-.menu summary {
-	display: flex;
 	flex-direction: column;
 	gap: 6px;
 	padding: 12px 0;
+	background: none;
+	border: 0;
 	cursor: pointer;
-	list-style: none;
 }
 
-.menu summary::-webkit-details-marker {
-	display: none;
-}
-
-.menu summary span {
+.menu span {
 	width: 24px;
 	height: 2px;
 	background: var(--mute);
-}
-
-.menu nav {
-	position: absolute;
-	top: 72px;
-	left: 0;
-	right: 0;
-	display: grid;
-	padding: 0 16px 16px;
-	background: var(--paper);
-	border-top: 1px solid var(--line);
-}
-
-.menu nav a {
-	padding: 16px 0;
-	font: 14px/1 var(--mono);
-	text-transform: uppercase;
-	border-bottom: 1px solid var(--line);
 }
 
 /* Hero */
@@ -410,7 +391,8 @@ h2 {
 	text-align: left;
 }
 
-.step-split > div {
+.step-split > div,
+.work article {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
@@ -568,14 +550,15 @@ h2 {
 	color: var(--on-navy);
 }
 
-.ico {
+.apply-grid > div::before {
+	content: '';
 	display: block;
 	width: 8px;
 	height: 8px;
 	background: var(--paper);
 }
 
-.ico-round {
+.apply-grid > div:nth-child(even)::before {
 	border-radius: 50%;
 }
 
@@ -741,7 +724,8 @@ h2 {
 	opacity: 0.85;
 }
 
-.caps {
+.caps::before {
+	content: 'Capabilities';
 	display: block;
 	margin-bottom: 14px;
 	font-size: 13px;
@@ -786,10 +770,6 @@ h2 {
 }
 
 .work article {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 16px;
 	padding: 32px 24px;
 	background: var(--card);
 }
@@ -1094,13 +1074,35 @@ details p {
 }
 
 @media (max-width: 960px) {
-	.nav-links,
-	.nav-cta {
+	.nav-links {
+		position: absolute;
+		top: 72px;
+		left: 0;
+		right: 0;
 		display: none;
+		flex-direction: column;
+		align-items: stretch;
+		gap: 0;
+		padding: 0 16px 16px;
+		background: var(--paper);
+		border-top: 1px solid var(--line);
+	}
+
+	.nav.open .nav-links,
+	.menu {
+		display: flex;
+	}
+
+	.nav-links a:not(.btn) {
+		padding: 16px 0;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.nav-links .btn {
+		margin-top: 16px;
 	}
 
 	.menu {
-		display: block;
 		margin-left: auto;
 	}
 
