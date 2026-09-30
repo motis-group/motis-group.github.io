@@ -1,276 +1,651 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-		/>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 		<link rel="icon" type="image/png" href="/favicon.png" />
-		<title>motis.group | Data infrastructure that catches its own mistakes</title>
+		<title>motis.group | AI agents for mining and energy</title>
 		<meta
 			name="description"
-			content="I build and run data platforms for companies that run physical things, then leave AI agents in your cloud account that watch them — and I review every change they propose."
+			content="I write down how a mine, a plant or an energy network actually runs, build the data under it, and leave agents that run it on the systems you already have."
 		/>
-		<link rel="stylesheet" href="/styles.css?v=5" />
-		<script src="/theme.js"></script>
+		<link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+		<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=switzer@400,500&display=swap" />
+		<link rel="stylesheet" href="/styles.css?v=8" />
 	</head>
-	<body class="landing">
-		<header class="lp-topbar">
-			<a href="/" class="lp-brand">
-				<img
-					src="/images/logo-black.png"
-					alt=""
-					class="light-logo"
-				/>
-				<img
-					src="/images/logo-white.png"
-					alt=""
-					class="dark-logo"
-				/>
-				MOTIS.GROUP
-			</a>
-			<a href="mailto:hello@motis.group" class="lp-pill">Get in touch</a>
+	<body>
+		<header class="nav">
+			<div class="wrap nav-in">
+				<a href="/" class="brand"><img src="/images/logo-black.png" alt="" />motis.group</a>
+				<nav class="nav-links">
+					<a href="#how">How it works</a>
+					<a href="#agents">Agents</a>
+					<a href="#work">Work</a>
+					<a href="#faq">FAQ</a>
+				</nav>
+				<a href="#contact" class="btn btn-blue nav-cta">Book a call</a>
+				<details class="menu">
+					<summary aria-label="Menu"><span></span><span></span></summary>
+					<nav>
+						<a href="#how">How it works</a>
+						<a href="#agents">Agents</a>
+						<a href="#work">Work</a>
+						<a href="#faq">FAQ</a>
+						<a href="#contact">Book a call</a>
+					</nav>
+				</details>
+			</div>
 		</header>
 
 		<main>
-			<section class="lp-hero">
-				<img src="/images/dither-tower.png" alt="" class="lp-orb lp-dither" />
-				<h1>Data infrastructure that catches its own mistakes</h1>
-				<p class="lp-sub">
-					I build data platforms for companies that run physical things:
-					pipelines, warehouses, reporting. Then I leave checks in your cloud
-					account that fire when something drifts, an agent that works out
-					why and drafts the fix, and I review every change before it merges.
-				</p>
-				<a href="/start" class="lp-pill">Start here &rarr;</a>
-				<p class="lp-trustline">
-					Data engineering &middot; Business intelligence &middot; Analytics,
-					for operators of physical assets
-				</p>
-			</section>
-
-			<section class="lp-stats">
-				<div class="lp-stat">
-					<strong>+842&thinsp;h</strong>
-					<span>Compute added in one week</span>
-				</div>
-				<div class="lp-stat">
-					<strong>81%</strong>
-					<span>Scheduled rebuilds</span>
-				</div>
-				<div class="lp-stat">
-					<strong>0</strong>
-					<span>Capacity upgrades recommended</span>
-				</div>
-			</section>
-
-			<div class="lp-statnote">
-				<p>
-					An ERP go-live pushed a warehouse&rsquo;s development compute up 842
-					hours in a week. The query history said 81% of it was scheduled
-					model rebuilds colliding with everything else. The fix was lanes
-					and schedules.
-				</p>
-			</div>
-
-			<section class="lp-section">
-				<p class="lp-kicker">What I deliver</p>
-				<h2>Build the platform. Leave the thing that watches it.</h2>
-				<p class="lp-intro">
-					Most data teams drown in maintenance, and most consultants price by
-					the month and stay. I do neither. The build is fixed price, quoted
-					before anything starts. What stays behind is software that checks
-					the work. I leave.
-				</p>
-				<div class="lp-cards">
-					<div class="lp-card">
-						<h3>01 &mdash; Autonomous operations</h3>
-						<p>
-							A pipeline fails at 3am: the agent in your account diagnoses
-							the root cause, writes the fix, runs the tests, and opens a
-							pull request. The warehouse bill spikes: it finds the queries
-							responsible and proposes the fix. Nothing merges on a model's
-							say-so.
-						</p>
-						<p class="lp-deliverable">
-							&#8627; A platform that fixes itself, in your account, on your
-							stack.
-						</p>
-					</div>
-					<div class="lp-card">
-						<h3>02 &mdash; Data engineering</h3>
-						<p>
-							Pipelines, modelling, and infrastructure on dbt, Snowflake,
-							Airflow, Terraform, or whatever you already run. Deterministic
-							at the edges, judgment in the middle, lineage and tests from
-							day one.
-						</p>
-						<p class="lp-deliverable">
-							&#8627; A warehouse you can hand over, with no one person
-							holding it up.
-						</p>
-					</div>
-					<div class="lp-card">
-						<h3>03 &mdash; Business intelligence &amp; analytics</h3>
-						<p>
-							Semantic layers, dashboards, and metrics that trace to source
-							systems, not to another spreadsheet. Numbers you can put in
-							front of a regulator or a board.
-						</p>
-						<p class="lp-deliverable">
-							&#8627; Every figure defensible from dashboard back to source.
-						</p>
-					</div>
-				</div>
-			</section>
-
-			<section class="lp-method">
-				<img src="/images/dither-racks.png" alt="" class="lp-field lp-dither" />
-				<div class="lp-method-inner">
-					<p class="lp-kicker">The method</p>
-					<h2>Code senses. Agents judge. Code acts.</h2>
-					<p class="lp-intro">
-						Everything on a schedule or a trigger is deterministic code. The
-						model sits in the middle, where judgment lives, diagnosing and
-						drafting. And nothing material merges without my
-						sign-off. Speed from the machine, accountability from a person
-						you can name.
+			<section class="hero">
+				<canvas class="hero-wave" aria-hidden="true"></canvas>
+				<div class="wrap hero-in">
+					<h1 data-split>Agents for the pit,<br />the plant and the grid</h1>
+					<p class="lede" data-split>
+						I write down how your operation actually runs, build the data under
+						it, and leave agents that run it on the systems you already have.
+						Nothing reaches a system of record without a person signing it.
 					</p>
-					<div class="lp-cards">
-						<div class="lp-card">
-							<h3>Autonomous</h3>
-							<p>
-								Agents diagnose, fix, verify, and open the PR before you
-								wake.
-							</p>
-						</div>
-						<div class="lp-card">
-							<h3>Reviewed</h3>
-							<p>
-								I sign off every material change. Nothing merges
-								itself.
-							</p>
-						</div>
-						<div class="lp-card">
-							<h3>Accountable</h3>
-							<p>
-								Measured on your systems: incidents that never paged
-								anyone, spend that came down, checks that fired.
-							</p>
-						</div>
+					<div class="hero-ctas">
+						<a class="block block-blue" href="#contact">Book a call</a>
+						<a class="block block-navy" href="#work">Selected work</a>
 					</div>
 				</div>
 			</section>
 
-			<section class="lp-section">
-				<p class="lp-kicker">Industries</p>
-				<h2>Built for operators of physical things.</h2>
-				<p class="lp-intro">
-					The flagship practice is electricity distribution. The same
-					discipline travels to any operation where the assets outlive the
-					systems that describe them.
-				</p>
-				<div class="lp-industries">
-					<div class="lp-card lp-flagship">
-						<p class="lp-role">Flagship &mdash; Electricity distribution</p>
-						<p>
-							Operational data verified from SCADA historian to AER
-							submission: availability the historian will back,
-							derating signatures explained, capex justification the
-							regulator will fund.
-						</p>
-						<p class="lp-deliverable">
-							&#8627; <a href="/about">How I work &rarr;</a>
-						</p>
-					</div>
-					<ul class="lp-vert-list">
-						<li>Energy networks</li>
-						<li>Data centres</li>
-						<li>Industrial plant</li>
-						<li>Mines</li>
-						<li>Water</li>
-					</ul>
-				</div>
+			<section class="strip">
+				<p>Delivery record across asset-heavy operations</p>
+				<ul>
+					<li>Mining</li>
+					<li>Vehicle distribution</li>
+					<li>Manufacturing</li>
+					<li>National retail supply</li>
+					<li>Energy networks, next</li>
+				</ul>
 			</section>
 
-			<section class="lp-section">
-				<p class="lp-kicker">Who calls me</p>
-				<h2>Always at a moment. Never in steady state.</h2>
-				<div class="lp-cards lp-cards-4">
-					<div class="lp-card">
-						<p class="lp-role">Someone left, or is leaving</p>
-						<p>
-							The person who catches the mistakes is walking out the door,
-							and what they know never reached the asset register.
-						</p>
-						<p class="lp-deliverable">
-							&#8627; <a href="/start">Start here &rarr;</a>
-						</p>
-					</div>
-					<div class="lp-card">
-						<p class="lp-role">You got caught out</p>
-						<p>
-							A number was wrong and somebody outside saw it first: a
-							customer, an auditor, a regulator.
-						</p>
-						<p class="lp-deliverable">
-							&#8627; <a href="/start">Start here &rarr;</a>
-						</p>
-					</div>
-					<div class="lp-card">
-						<p class="lp-role">It is slowing you down</p>
-						<p>
-							You are the last check on your own reporting, and it costs you
-							a week every month.
-						</p>
-						<p class="lp-deliverable">
-							&#8627; <a href="/start">Start here &rarr;</a>
-						</p>
-					</div>
-					<div class="lp-card">
-						<p class="lp-role">The bills keep growing</p>
-						<p>
-							The warehouse spend doubled and nobody can say which queries
-							did it.
-						</p>
-						<p class="lp-deliverable">
-							&#8627; <a href="/start">Start here &rarr;</a>
-						</p>
-					</div>
-				</div>
-			</section>
-
-			<section class="lp-contact">
-				<img src="/images/dither-wires.png" alt="" class="lp-fade lp-dither" />
-				<h2>If the problem is real, let's talk about it.</h2>
+			<section class="wrap thesis">
+				<h2 data-split>The bottleneck was never the model.<br />It's the rules nobody wrote down.</h2>
 				<p>
-					I don't do capability presentations. Describe the pipeline that
-					keeps failing, the bill that keeps growing, or the check that lives
-					in one person's head, and I'll tell you whether I can help.
+					A model can read every manual on site and still not know which conveyor
+					trips in the wet, which feeder runs hot in a heatwave, or which of four
+					spreadsheets holds the real tonnes. None of that reached a schema. It
+					lives in a planner, a metallurgist or a network engineer, and it leaves
+					when they do.
 				</p>
-				<a href="mailto:hello@motis.group" class="lp-pill">Get in touch &rarr;</a>
-				<p class="lp-location">
-					William Marzella, Melbourne &mdash;
-					<a href="mailto:hello@motis.group">hello@motis.group</a>
+				<p data-split>
+					So I write it down first, in a form software can check. Deterministic
+					rails for the stable core, and a model only where judgment is genuinely
+					required.
 				</p>
+			</section>
+
+			<section class="wrap steps" id="how">
+				<article class="step step-wide img-tower">
+					<span class="tag">Step 1</span>
+					<h3>A read of the operation</h3>
+					<p>
+						For something small, read-only access and a short look. For anything
+						larger or regulated, a fixed-price discovery against a named system.
+					</p>
+					<p>
+						What comes back names the systems, the tables and the people holding
+						the exceptions. If the finding is that you don't need me, that's what
+						it says.
+					</p>
+					<a class="btn btn-white" href="#contact">Book a read</a>
+				</article>
+				<article class="step img-racks">
+					<span class="tag">Step 2</span>
+					<h3>Write the operation down</h3>
+					<p>
+						Every asset, event and state gets one definition that the historian,
+						the ERP and the maintenance system have to reconcile against. In
+						energy that's CIM, IEC 61968 and 61970. In mining it starts from the
+						asset hierarchy your maintenance system already carries.
+					</p>
+					<div class="mock">
+						<div class="mock-bar"><i></i><i></i><i></i><span>assets/primary_crusher_01.yml</span></div>
+						<pre>asset:      primary_crusher_01
+kind:       crusher
+historian:  PI    CR01.FEED_TPH
+cmms:       SAP   FL-CR-01
+rule:       state == RUNNING when feed_tph &gt; 0
+on_break:   fail the build, name the owner</pre>
+					</div>
+				</article>
+				<article class="step img-wires">
+					<span class="tag">Step 3</span>
+					<h3>Rails first, then agents</h3>
+					<p>
+						Pipelines, tests and lineage, so every figure walks back to the sensor
+						or record that produced it. Then agents in your cloud account, on your
+						permissions. No migration: each system keeps its own records.
+					</p>
+					<p>
+						A pipeline fails at 3am and the agent finds the cause, writes the fix
+						on a branch, runs the tests and opens a pull request for a person to
+						sign.
+					</p>
+				</article>
+				<article class="step step-wide step-split img-tower">
+					<div>
+						<span class="tag">Handover</span>
+						<h3>Your team runs it</h3>
+						<p>
+							Every engagement ends with your people operating it without me. There
+							is no retainer: work priced by the month has to stay manual to stay
+							billable, and the job is to delete the manual work.
+						</p>
+						<a class="btn btn-white" href="#contact">Book a call</a>
+					</div>
+					<ul class="mock-list">
+						<li><span>tests</span><b>stay</b></li>
+						<li><span>runbook</span><b>stays</b></li>
+						<li><span>recordings</span><b>stay</b></li>
+						<li><span>retainer</span><b>none</b></li>
+					</ul>
+				</article>
+			</section>
+
+			<section class="method">
+				<div class="wrap method-in">
+					<div>
+						<h2 data-split>Code senses.<br />Models judge.<br />Code acts.</h2>
+						<p>
+							Anything on a schedule or a trigger is deterministic code. The model
+							sits in the middle, where judgment lives, and never touches either
+							edge.
+						</p>
+						<svg class="fan" viewBox="0 0 560 440" aria-hidden="true">
+							<defs>
+								<linearGradient id="fan" x1="0" x2="560" y1="0" y2="0" gradientUnits="userSpaceOnUse">
+									<stop offset="0.2" stop-color="#0a3eff" />
+									<stop offset="0.45" stop-color="#b6c3ff" />
+								</linearGradient>
+							</defs>
+							<g fill="none" stroke="url(#fan)" stroke-width="1.5">
+								<path d="M0 220H110Q330 220 560 0" />
+								<path d="M0 220H110Q330 220 560 31" />
+								<path d="M0 220H110Q330 220 560 63" />
+								<path d="M0 220H110Q330 220 560 94" />
+								<path d="M0 220H110Q330 220 560 126" />
+								<path d="M0 220H110Q330 220 560 157" />
+								<path d="M0 220H110Q330 220 560 189" />
+								<path d="M0 220H110Q330 220 560 220" />
+								<path d="M0 220H110Q330 220 560 251" />
+								<path d="M0 220H110Q330 220 560 283" />
+								<path d="M0 220H110Q330 220 560 314" />
+								<path d="M0 220H110Q330 220 560 346" />
+								<path d="M0 220H110Q330 220 560 377" />
+								<path d="M0 220H110Q330 220 560 409" />
+								<path d="M0 220H110Q330 220 560 440" />
+							</g>
+						</svg>
+					</div>
+					<div>
+						<ol class="points">
+							<li>
+								<b>.01</b>
+								<h3>Deterministic edges</h3>
+								<p>If a thing can be asserted in code, it is never inferred by a model.</p>
+							</li>
+							<li>
+								<b>.02</b>
+								<h3>Judgment in the middle</h3>
+								<p>The model reads condensed extracts, not raw tags at volume, and drafts rather than acts.</p>
+							</li>
+							<li>
+								<b>.03</b>
+								<h3>A person signs</h3>
+								<p>I review every material change. Speed from the machine, accountability from someone you can name.</p>
+							</li>
+						</ol>
+						<a class="btn btn-blue" href="#contact">Book a call</a>
+					</div>
+				</div>
+			</section>
+
+			<section class="strip">
+				<p>On the stack you already run</p>
+				<ul>
+					<li>dbt</li>
+					<li>Snowflake</li>
+					<li>Databricks</li>
+					<li>Microsoft Fabric</li>
+					<li>Airflow</li>
+					<li>Terraform</li>
+				</ul>
+			</section>
+
+			<section class="apply">
+				<div class="wrap">
+					<h2 data-split>Mines, plants and networks</h2>
+					<p class="sub">
+						Decades of asset life, a software estate with five years of memory, and
+						one person in between who holds the difference in their head.
+					</p>
+					<div class="apply-grid">
+						<div>
+							<i class="ico"></i>
+							<h3>Maintenance and reliability</h3>
+							<p>
+								Work orders, condition monitoring and shutdown scopes described once,
+								so an agent chases recurring failures and stale PMs instead of a
+								planner doing it by hand.
+							</p>
+						</div>
+						<div>
+							<i class="ico ico-round"></i>
+							<h3>Production and reconciliation</h3>
+							<p>
+								Mine-to-mill figures from the fleet system, the historian and the lab
+								checked against written rules every day, not assembled by hand at
+								month end.
+							</p>
+						</div>
+						<div>
+							<i class="ico"></i>
+							<h3>Network and asset data</h3>
+							<p>
+								Asset registers, GIS and the network model held to one definition, so
+								outage, reliability and regulatory figures agree before a regulator
+								asks.
+							</p>
+						</div>
+						<div>
+							<i class="ico ico-round"></i>
+							<h3>Emissions and compliance</h3>
+							<p>
+								Energy, emissions and safety figures that walk back to the meter, so
+								the number you sign is one you can defend. Sign-off points at a test
+								run, not a spreadsheet.
+							</p>
+						</div>
+					</div>
+					<p class="tag tag-light">And whatever check only one person runs</p>
+				</div>
+			</section>
+
+			<section class="integr">
+				<div class="wrap integr-in">
+					<div>
+						<span class="tag tag-dark">No migration</span>
+						<h2 data-split>Nothing moves.<br />The schema joins it.</h2>
+						<p>
+							Each system keeps its own records. Your data stays in your account and
+							your region, access stays read-only until there's a written reason for
+							it not to be, and the model writes to a branch, never to a system of
+							record.
+						</p>
+						<a class="btn btn-blue" href="#contact">Book a call</a>
+					</div>
+					<div class="chips" aria-label="Systems the schema joins">
+						<span>Historian</span><span>SCADA</span><span>ERP</span><span>CMMS</span>
+						<span>GIS</span><span>ADMS</span><span>Fleet</span><span>LIMS</span>
+						<span>Outage</span><span>Market</span><span>Warehouse</span><span>Git</span>
+					</div>
+				</div>
+			</section>
+
+			<section class="wrap agents" id="agents">
+				<div class="agents-head">
+					<h2 data-split>Three agents, one method</h2>
+					<p>
+						Each runs in your cloud account, on your permissions. Sensing and acting
+						are code; the model judges in between and drafts for a person to sign.
+					</p>
+				</div>
+				<article class="agent agent-grey">
+					<div>
+						<i class="dots"></i>
+						<span class="agent-n">Agent 01</span>
+						<h3>Data platform agent</h3>
+						<p>
+							Keeps the pipelines under the operation honest. When a run fails or
+							compute jumps, it finds the cause and drafts the fix before anyone is
+							awake to be paged.
+						</p>
+					</div>
+					<div>
+						<span class="caps">Capabilities</span>
+						<ul>
+							<li>Failed runs traced to root cause</li>
+							<li>Fix drafted on a branch, never on main</li>
+							<li>Tests run before the pull request opens</li>
+							<li>Compute spikes attributed to a workload and owner</li>
+							<li>Lineage from dashboard back to sensor</li>
+						</ul>
+					</div>
+					<div class="agent-ctas">
+						<a class="btn btn-blue" href="#contact">Book a call</a>
+						<a class="btn btn-navy" href="#work">Selected work</a>
+					</div>
+				</article>
+				<article class="agent agent-navy">
+					<div>
+						<i class="dots"></i>
+						<span class="agent-n">Agent 02</span>
+						<h3>Reconciliation agent</h3>
+						<p>
+							The fleet system, the plant historian and the lab rarely agree on
+							tonnes and grade. It reconciles them daily against the written rules
+							and explains every variance it can.
+						</p>
+					</div>
+					<div>
+						<span class="caps">Capabilities</span>
+						<ul>
+							<li>Mine-to-mill reconciled every day</li>
+							<li>Variances explained against written rules</li>
+							<li>Unexplained gaps raised, never smoothed</li>
+							<li>Month-end figures that walk back to source</li>
+							<li>Exceptions routed to a named owner</li>
+						</ul>
+					</div>
+					<div class="agent-ctas">
+						<a class="btn btn-white" href="#contact">Book a call</a>
+						<a class="btn btn-blue" href="#how">How it works</a>
+					</div>
+				</article>
+				<article class="agent agent-blue">
+					<div>
+						<i class="dots"></i>
+						<span class="agent-n">Agent 03</span>
+						<h3>Regulatory agent</h3>
+						<p>
+							Every hand check behind a regulatory figure becomes an assertion that
+							runs against the data and fails loudly when the two disagree, weeks
+							before the submission date.
+						</p>
+					</div>
+					<div>
+						<span class="caps">Capabilities</span>
+						<ul>
+							<li>Asset register checked against GIS and the network model</li>
+							<li>Outage and reliability records tested against the rules</li>
+							<li>Submission packs generated from one run</li>
+							<li>Evidence trail an auditor can rerun</li>
+							<li>Sign-off that points at a run</li>
+						</ul>
+					</div>
+					<div class="agent-ctas">
+						<a class="btn btn-navy" href="#contact">Book a call</a>
+						<a class="btn btn-white" href="#faq">Questions</a>
+					</div>
+				</article>
+			</section>
+
+			<section class="wrap work" id="work">
+				<h2 data-split>Selected work</h2>
+				<p class="sub">Three engagements, and what stayed behind.</p>
+				<div class="work-grid">
+					<article>
+						<span class="tag tag-dark">01</span>
+						<h3>An ERP go-live pushed development compute up 842 hours in a week.</h3>
+						<p>
+							The question on the table was how much capacity to buy. I attributed
+							every hour to a workload and an owner: 81% was scheduled model
+							rebuilds colliding in one lane. The fix was lanes and schedules.
+						</p>
+						<p class="left">↳ The attribution queries stayed, as a playbook anyone on the team can rerun.</p>
+					</article>
+					<article>
+						<span class="tag tag-dark">02</span>
+						<h3>A new emissions standard put a penalty balance on every vehicle sold.</h3>
+						<p>
+							The only check lived in one analyst's spreadsheet. I wrote it down as
+							a specification, then as a test suite: every rule applied by hand
+							became an assertion that fails loudly when the warehouse disagrees.
+						</p>
+						<p class="left">↳ The test register, the daily status and sign-off all generate from one run.</p>
+					</article>
+					<article>
+						<span class="tag tag-dark">03</span>
+						<h3>A platform team had good models and no end-to-end test.</h3>
+						<p>
+							Testing meant dropping and recreating schemas, and one engineer held
+							that access, so every pull request queued behind his calendar. I
+							refactored seeds and snapshots so a build runs from committed
+							fixtures, on anyone's branch.
+						</p>
+						<p class="left">↳ The test that lived in one person's permissions became a step in the pipeline.</p>
+					</article>
+				</div>
+			</section>
+
+			<section class="quote img-wires">
+				<div class="wrap">
+					<span class="qmark" aria-hidden="true">“</span>
+					<blockquote data-split>Intelligence got cheap.<br />The world it acts on did not.</blockquote>
+					<p>— motis.group</p>
+				</div>
+			</section>
+
+			<section class="wrap contact" id="contact">
+				<h2 data-split>Tell me what only<br />one person can check</h2>
+				<p class="sub" data-split>
+					No capability presentation. Describe the operation only one person can
+					run, the number you can't defend, or where you want a model in the loop,
+					and I'll tell you whether I can help.
+				</p>
+				<form class="form" id="enquiry">
+					<div class="form-head">
+						<b>motis.group | Start a conversation</b>
+						<span>Continue opens an email to hello@motis.group with this filled in. Nothing is stored here.</span>
+					</div>
+					<div class="form-body">
+						<label>Your name<input name="name" autocomplete="name" required /></label>
+						<label>Work email<input name="email" type="email" autocomplete="email" required /></label>
+						<label>Your role<input name="role" autocomplete="organization-title" /></label>
+						<label>Company<input name="company" autocomplete="organization" /></label>
+						<label
+							>Operation<select name="operation">
+								<option>Mining</option>
+								<option>Minerals processing</option>
+								<option>Energy network</option>
+								<option>Generation or renewables</option>
+								<option>Other asset-heavy operation</option>
+							</select></label
+						>
+						<label>What's the check?<textarea name="check" rows="3"></textarea></label>
+					</div>
+					<div class="form-foot"><button type="submit">Continue</button></div>
+				</form>
+			</section>
+
+			<section class="wrap faq" id="faq">
+				<h2 data-split>Before the first read.</h2>
+				<p class="sub">What to know before you book a call.</p>
+				<div class="faq-grid">
+					<div>
+						<details>
+							<summary>What happens on the first call?</summary>
+							<p>
+								You describe the operation, the number or the check. I ask which
+								systems it touches and who holds the exceptions, then tell you
+								whether it's a read-only look, a fixed-price discovery, or not a
+								job for me.
+							</p>
+						</details>
+						<details>
+							<summary>Do we have to migrate anything?</summary>
+							<p>
+								No. The historian, the ERP, the maintenance system and GIS keep
+								their own records. The schema is what joins them, and nothing moves
+								to make it work.
+							</p>
+						</details>
+						<details>
+							<summary>What does the model actually touch?</summary>
+							<p>
+								Condensed extracts, never raw records at volume. It drafts on a
+								branch and never writes to a system of record. Sensing and acting
+								are code.
+							</p>
+						</details>
+						<details>
+							<summary>How much of my team's time does it take?</summary>
+							<p>
+								Mostly an afternoon with the person who holds the exceptions, while
+								they are still here, then short reviews as the rules get written
+								down.
+							</p>
+						</details>
+					</div>
+					<div>
+						<details>
+							<summary>How do you handle access and security?</summary>
+							<p>
+								Least privilege, read-only until there's a written reason for it
+								not to be, and scoped to the systems named in the contract. Your
+								data stays in your account and your region. If you have counsel, a
+								CISO or an IT lead, I'd rather meet them in week one than hear from
+								them in month three.
+							</p>
+						</details>
+						<details>
+							<summary>What happens when you leave?</summary>
+							<p>
+								Somebody on your team runs it without me. The tests, the runbook
+								and the recordings stay. If your people can't operate it after I
+								go, I built the wrong thing.
+							</p>
+						</details>
+						<details>
+							<summary>Have you done this inside an energy network?</summary>
+							<p>
+								Not yet as a delivery. My record is in mining and adjacent
+								asset-heavy operations: vehicle distribution under a new federal
+								standard, manufacturing, national retail supply. Energy networks
+								are where the practice is heading, and the domain work is underway.
+							</p>
+						</details>
+						<details>
+							<summary>How does pricing work?</summary>
+							<p>
+								Fixed price, quoted before the build starts, and no retainer. If it
+								runs harder than I estimated, I wear that. A discovery fee never
+								comes back as credit against a build.
+							</p>
+						</details>
+					</div>
+				</div>
+				<a class="btn btn-blue" href="#contact">Book a call</a>
 			</section>
 		</main>
 
-		<footer class="footer">
-			<div class="footer-logos">
-				<a href="/"><img src="/images/logo-black.png" alt="MOTIS.GROUP" class="footer-logo light-logo" /></a>
-				<a href="/"><img src="/images/logo-white.png" alt="MOTIS.GROUP" class="footer-logo dark-logo" /></a>
+		<footer class="foot">
+			<div class="wrap">
+				<div class="ctas">
+					<div class="cta-card cta-blue img-wires">
+						<span class="label">Start with a read</span>
+						<h3>Name the check<br />only one person runs</h3>
+						<a class="btn btn-navy" href="#contact">Book a call</a>
+					</div>
+					<div class="cta-card cta-navy img-tower">
+						<span class="label">Selected work</span>
+						<h3>See what<br />stayed behind</h3>
+						<a class="btn btn-white" href="#work">Read the work</a>
+					</div>
+				</div>
+				<div class="foot-card">
+					<div class="foot-brand">
+						<a href="/" class="brand"><img src="/images/logo-white.png" alt="" />motis.group</a>
+						<p>
+							AI engineering for mining and energy: the operation written down, the
+							data under it, and agents that run it.
+						</p>
+					</div>
+					<nav class="foot-nav">
+						<ol>
+							<li><a href="/"><b>1.1</b>Home</a></li>
+							<li><a href="#how"><b>1.2</b>How it works</a></li>
+							<li><a href="#agents"><b>1.3</b>Agents</a></li>
+							<li><a href="#work"><b>1.4</b>Work</a></li>
+							<li><a href="#faq"><b>1.5</b>FAQ</a></li>
+						</ol>
+						<ol>
+							<li><a href="https://blog.motis.group"><b>2.1</b>Articles</a></li>
+							<li><a href="https://github.com/motis-group"><b>2.2</b>GitHub</a></li>
+							<li><a href="mailto:hello@motis.group"><b>2.3</b>Email</a></li>
+						</ol>
+					</nav>
+					<p class="foot-legal">
+						© 2026 William Marzella, Melbourne. Product names belong to their owners.
+					</p>
+				</div>
 			</div>
-			<div class="footer-menu">
-				<a href="/start"><span>START</span></a>
-				<a href="/projects"><span>PROJECTS</span></a>
-				<a href="/about"><span>ABOUT</span></a>
-				<a href="https://blog.motis.group" target="_blank"><span>ARTICLES</span></a>
-				<a href="https://github.com/motis-group" target="_blank"><span>GITHUB</span></a>
-			</div>
-			<button id="theme-toggle" class="theme-toggle">☾</button>
 		</footer>
+
+		<script>
+			// Headings fade in word by word as they scroll into view. Without JS they render as plain text.
+			document.querySelectorAll('[data-split]').forEach((el) => {
+				el.innerHTML = el.innerHTML.replace(/(^|>)([^<]+)/g, (m, tag, text) =>
+					tag + text.replace(/\S+/g, (w) => `<span class="w">${w}</span>`)
+				);
+				el.querySelectorAll('.w').forEach((w, i) => (w.style.transitionDelay = i * 45 + 'ms'));
+			});
+			const seen = new IntersectionObserver(
+				(entries) =>
+					entries.forEach((e) => {
+						if (e.isIntersecting) {
+							e.target.classList.add('in');
+							seen.unobserve(e.target);
+						}
+					}),
+				{ threshold: 0.2 }
+			);
+			document.querySelectorAll('[data-split]').forEach((el) => seen.observe(el));
+
+			// Hero: a dot terrain rolling toward the viewer, drawn in perspective.
+			const wave = document.querySelector('.hero-wave');
+			const ctx = wave.getContext('2d');
+			const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+			let w, h, t = 0, raf = 0;
+			const fit = () => {
+				w = wave.width = wave.offsetWidth * devicePixelRatio;
+				h = wave.height = wave.offsetHeight * devicePixelRatio;
+			};
+			// World grid seen from camera height 1.2: far rows pack into a ribbon, near rows spread out.
+			const draw = () => {
+				ctx.clearRect(0, 0, w, h);
+				const f = h * 0.9, zmax = 16, xmax = (w / 2 / f) * zmax;
+				for (let z = zmax; z > 0.9; z -= 0.35) {
+					ctx.fillStyle = `rgba(110,110,110,${Math.min(0.85, 2 / z)})`;
+					const s = Math.max(1, 2.4 / z) * devicePixelRatio;
+					for (let x = -xmax; x <= xmax; x += 0.12) {
+						const sx = w / 2 + (x / z) * f;
+						if (sx < 0 || sx > w) continue;
+						const y = 0.35 * Math.sin(x * 0.35 + t) * Math.sin(z * 0.4 - t * 0.6) + 0.2 * Math.sin(x * 0.15 - z * 0.3 + t * 0.8);
+						ctx.fillRect(sx, h * 0.1 + ((1.2 - y) / z) * f, s, s);
+					}
+				}
+			};
+			const loop = () => {
+				draw();
+				t += 0.01;
+				raf = requestAnimationFrame(loop);
+			};
+			new IntersectionObserver(([e]) => {
+				cancelAnimationFrame(raf);
+				e.isIntersecting && !still ? loop() : draw();
+			}).observe(wave);
+			addEventListener('resize', () => (fit(), draw()));
+			fit();
+
+			document.querySelectorAll('.menu a').forEach((a) => (a.onclick = () => (a.closest('details').open = false)));
+
+			// No backend: the form opens a pre-filled email.
+			document.getElementById('enquiry').addEventListener('submit', (e) => {
+				e.preventDefault();
+				const f = new FormData(e.target);
+				const body = [...f].map(([k, v]) => `${k}: ${v}`).join('\n');
+				const subject = `Enquiry: ${f.get('company') || f.get('name')}`;
+				location.href = `mailto:hello@motis.group?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+			});
+		</script>
 	</body>
 </html>

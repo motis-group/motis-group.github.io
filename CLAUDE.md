@@ -1,38 +1,40 @@
-motis.group: an AI-powered agency for data engineering, business intelligence,
-and analytics. Agents deployed in the client's cloud account do the
-maintenance — diagnose, fix, verify, open a PR — and a senior engineer reviews
-every material change. Asset-heavy operators are the focus; electricity
-distribution is the flagship vertical.
+motis.group: AI engineering for mining and energy. The work is writing an
+operation down in a form software can check, building the data under it, and
+leaving agents that run it on the client's own systems. Deterministic at the
+edges, judgment in the middle, a named person signing every material change.
 
-Pages: `index.html` is the landing page (Geminus-style: full-bleed hero, stat
-band, service cards, inverted method band, industries). `start/` is a
-three-question quiz that routes visitors to ten destination pages.
-`projects/` is three anonymised engagement write-ups, each a `.lp-section`
-with prose and a closing `.lp-deliverable` line. `about/` is the long-form
-first-person pitch. `rows.js` pads the ruled tables on the quiz's redirect
-stubs down to the fixed footer.
+One page. `index.html` is the whole site, laid out on the varickagents.com
+pattern: sticky nav, a hero with a canvas dot terrain and two CTA blocks, a
+name strip, the thesis, four step cards, the method band, a second name strip,
+the navy sectors band, the no-migration band, three sticky agent cards,
+selected work, the quote band, the enquiry form, the FAQ, and a footer that
+opens with two CTA cards. The layout follows that site; the copy is original
+and must stay so. There are no subpages; an inbound link to `/start`,
+`/projects` or `/about` 404s.
 
-Static site, no build step. Berkeley Mono is the only typeface. Light and dark
-themes via `data-theme` on `<html>` (`theme.js`); every colour goes through the
-CSS variables at the top of `styles.css`. The landing page's `.lp-*` layer
-sits on the shared base styles the other pages use.
+Static, no build step. Switzer from the Fontshare CDN for text, Berkeley Mono
+for mono labels. Light only. Every colour goes through the CSS variables at the
+top of `styles.css`.
 
-Landing imagery is dithered — single-colour dots on transparency, rendered
-with `image-rendering: pixelated`. The three full-bleed backgrounds are
-Unsplash photos (Unsplash License) run through
+The enquiry form has no backend: Continue opens a pre-filled `mailto:` to
+hello@motis.group. Headings marked `data-split` fade in word by word; without
+JS they render as plain text.
+
+Imagery is dithered: dots on transparency, used as CSS masks so one PNG takes
+any tint (`.img-tower`, `.img-racks`, `.img-wires`; set `--tint` and
+`--tint-opacity` on the block). The three sources are Unsplash photos
+(Unsplash License) run through
 `scripts/dither.sh input output [hex] [ordered|fs]` (ImageMagick, local-only:
 `scripts/` is gitignored), after
-`magick -resize 720x -colorspace Gray -normalize -level 12%,88%`. Sources:
+`magick -resize 720x -colorspace Gray -normalize -level 12%,88%`:
 
 - `dither-tower.png` — images.unsplash.com/photo-1761458679955-248cbcb87745
 - `dither-racks.png` — images.unsplash.com/photo-1695668548342-c0c1ad479aee
 - `dither-wires.png` — images.unsplash.com/photo-1780766824485-b43c751ae6b4
 
-All copy speaks in the first person singular. Every page is built from the
-same design system: `.lp-topbar`, a `.lp-pagehero` (kicker, display headline,
-lede), `.lp-section` blocks with prose or `.lp-card` grids, an inverted
-`.lp-method` band where a page needs one, and a `.lp-contact` CTA band with a
-dithered background. The only tables left are the quiz redirect stubs. The quiz's
-routing script hangs off `a.opt[data-q][data-v]` and `#go`; the leaf pages'
-personalisation scripts insert paragraphs into `#prose` before the paragraph
-containing "read-only access" — keep those hooks when editing.
+All copy speaks in the first person singular. Claims stay inside the delivery
+record: mining and adjacent asset-heavy operations are delivered work; energy
+networks are the direction, and the FAQ says so.
+
+Preview with the `stygian-site` config in `.claude/launch.json`. The page uses
+absolute paths, so `file://` will not resolve the stylesheet.
