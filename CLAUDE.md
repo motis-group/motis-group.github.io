@@ -1,13 +1,15 @@
 motis.group: an AI-powered agency for data engineering, business intelligence,
 and analytics. Agents deployed in the client's cloud account do the
 maintenance — diagnose, fix, verify, open a PR — and a senior engineer reviews
-every material change. Asset-heavy operators are the focus; electricity
-distribution is the flagship vertical.
+every material change. Asset-heavy operators are the focus. Electricity
+distribution is the target vertical, with no delivered engagement yet, so the
+copy calls it where I'm concentrating and lets mining and automotive carry
+proof. Every sector the site lists needs a case on `projects/`.
 
 Pages: `index.html` is the landing page (Geminus-style: full-bleed hero, stat
 band, service cards, inverted method band, industries). `start/` is a
 three-question quiz that routes visitors to ten destination pages.
-`projects/` is three anonymised engagement write-ups, each a `.lp-section`
+`projects/` is four anonymised engagement write-ups, each a `.lp-section`
 with prose and a closing `.lp-deliverable` line. `about/` is the long-form
 first-person pitch. `rows.js` pads the ruled tables on the quiz's redirect
 stubs down to the fixed footer.
