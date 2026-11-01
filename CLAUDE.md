@@ -7,7 +7,8 @@ copy calls it where I'm concentrating and lets mining and automotive carry
 proof. Every sector the site lists needs a case on `projects/`.
 
 Pages: `index.html` is the landing page (Geminus-style: full-bleed hero, stat
-band, service cards, inverted method band, industries). `start/` is a
+band, service cards, inverted method band, industries, the four buying moments,
+and a contact band that names the trading entity). `start/` is a
 three-question quiz that routes visitors to ten destination pages.
 `projects/` is four anonymised engagement write-ups, each a `.lp-section`
 with prose and a closing `.lp-deliverable` line. `about/` is the long-form
