@@ -1,21 +1,37 @@
 motis.group: an AI-powered agency for data engineering, business intelligence,
 and analytics. Agents deployed in the client's cloud account do the
 maintenance — diagnose, fix, verify, open a PR — and a senior engineer reviews
-every material change. Asset-heavy operators are the focus; electricity
-distribution is the flagship vertical.
+every material change. Asset-heavy operators are the focus. Electricity
+distribution is the target vertical, with no delivered engagement yet, so the
+copy calls it where I'm concentrating and lets mining and automotive carry
+proof. Every sector the site lists needs a case on `projects/`.
 
-Pages: `index.html` is the landing page (Geminus-style: full-bleed hero, stat
-band, service cards, inverted method band, industries). `start/` is a
-three-question quiz that routes visitors to ten destination pages.
-`projects/` is three anonymised engagement write-ups, each a `.lp-section`
-with prose and a closing `.lp-deliverable` line. `about/` is the long-form
-first-person pitch. `rows.js` pads the ruled tables on the quiz's redirect
-stubs down to the fixed footer.
+Pages: `app/page.tsx` is the landing page (full-bleed hero, stat band,
+service cards, inverted method band, industries, the four buying moments, and
+a contact band that names the trading entity). `app/start/` is a
+three-question quiz that routes visitors to ten destination pages; the leaf
+copy lives in `site/leaves.ts`, rendered by `app/start/[trigger]/[sub]/`, and
+each `/start/<trigger>/` is a stub that redirects to `/start/`.
+`app/projects/` is four anonymised engagement write-ups. `app/about/` is the
+long-form first-person pitch.
 
-Static site, no build step. Berkeley Mono is the only typeface. Light and dark
-themes via `data-theme` on `<html>` (`theme.js`); every colour goes through the
-CSS variables at the top of `styles.css`. The landing page's `.lp-*` layer
-sits on the shared base styles the other pages use.
+Next.js static export: `npm ci && npm run build` writes `out/`, and
+`.github/workflows/pages.yml` deploys `out/` to GitHub Pages on a push to
+`main`. `trailingSlash` keeps every route at `/about/`-style paths. `public/`
+holds what is served as-is: favicon, `images/`, `CNAME`, `.nojekyll`, and the
+Berkeley Mono font file.
+
+Every page is built from SRCL components (sacred.computer, MIT,
+`SRCL-LICENSE.md`), vendored unchanged into `components/`, `common/` and
+`global.css`. Vendor a new component with its transitive imports; never edit
+a vendored file. The site's own layer is `site/` (shared page sections in
+`Chrome.tsx`, client components for the quiz, leaf personalisation and theme
+toggle) and `site.css`, which sets the palette and Berkeley Mono through SRCL's
+`--theme-*` and `--font-family-mono` tokens for `body.theme-light` and
+`body.theme-dark`, and lays sections out by `data-layout` attribute. The only
+non-SRCL elements are `<img>` (logos and dithered backgrounds), inline links
+inside copy, and the quiz's own anchors. The built output requests nothing
+from another host: no remote fonts, scripts or analytics.
 
 Landing imagery is dithered — single-colour dots on transparency, rendered
 with `image-rendering: pixelated`. The three full-bleed backgrounds are
@@ -28,11 +44,7 @@ Unsplash photos (Unsplash License) run through
 - `dither-racks.png` — images.unsplash.com/photo-1695668548342-c0c1ad479aee
 - `dither-wires.png` — images.unsplash.com/photo-1780766824485-b43c751ae6b4
 
-All copy speaks in the first person singular. Every page is built from the
-same design system: `.lp-topbar`, a `.lp-pagehero` (kicker, display headline,
-lede), `.lp-section` blocks with prose or `.lp-card` grids, an inverted
-`.lp-method` band where a page needs one, and a `.lp-contact` CTA band with a
-dithered background. The only tables left are the quiz redirect stubs. The quiz's
-routing script hangs off `a.opt[data-q][data-v]` and `#go`; the leaf pages'
-personalisation scripts insert paragraphs into `#prose` before the paragraph
-containing "read-only access" — keep those hooks when editing.
+All copy speaks in the first person singular. The quiz routes off
+`a.opt[data-q][data-v]` and `#go` (`site/Quiz.tsx`); the leaf pages'
+personalisation (`site/LeafProse.tsx`) inserts paragraphs into `#prose` before
+the paragraph containing "read-only access" — keep those hooks when editing.
