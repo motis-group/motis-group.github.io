@@ -11,7 +11,7 @@
 		<title>motis.group | Data infrastructure that catches its own mistakes</title>
 		<meta
 			name="description"
-			content="I build and run data platforms for companies that run physical things, then leave AI agents in your cloud account that watch them — and I review every change they propose."
+			content="I build data platforms for companies that run physical things, and hand them over so they keep working after I've gone. Tests, drift alerts, and an agent that drafts fixes for a human to approve."
 		/>
 		<link rel="stylesheet" href="/styles.css?v=5" />
 		<script src="/theme.js"></script>
@@ -39,10 +39,11 @@
 				<img src="/images/dither-tower.png" alt="" class="lp-orb lp-dither" />
 				<h1>Data infrastructure that catches its own mistakes</h1>
 				<p class="lp-sub">
-					I build data platforms for companies that run physical things:
-					pipelines, warehouses, reporting. Then I leave checks in your cloud
-					account that fire when something drifts, an agent that works out
-					why and drafts the fix, and I review every change before it merges.
+					I build data platforms for companies that run physical things, and
+					hand them over so they keep working after I&rsquo;ve gone. What
+					stays behind is software that checks the work: tests, drift alerts,
+					and an agent that diagnoses failures and drafts the fix for a human
+					to approve.
 				</p>
 				<a href="/start" class="lp-pill">Start here &rarr;</a>
 				<p class="lp-trustline">
@@ -53,36 +54,35 @@
 
 			<section class="lp-stats">
 				<div class="lp-stat">
-					<strong>+842&thinsp;h</strong>
-					<span>Compute added in one week</span>
+					<strong>842&thinsp;h</strong>
+					<span>Before: dev compute jump in one week</span>
 				</div>
 				<div class="lp-stat">
 					<strong>81%</strong>
-					<span>Scheduled rebuilds</span>
+					<span>Cause: scheduled rebuilds colliding</span>
 				</div>
 				<div class="lp-stat">
 					<strong>0</strong>
-					<span>Capacity upgrades recommended</span>
+					<span>After: capacity upgrades needed</span>
 				</div>
 			</section>
 
 			<div class="lp-statnote">
 				<p>
-					An ERP go-live pushed a warehouse&rsquo;s development compute up 842
-					hours in a week. The query history said 81% of it was scheduled
-					model rebuilds colliding with everything else. The fix was lanes
-					and schedules.
+					A warehouse&rsquo;s dev compute jumped 842 hours in a week after an
+					ERP go-live. 81% was scheduled rebuilds colliding. Fix: lanes and
+					schedules. Capacity upgrades needed: zero.
 				</p>
 			</div>
 
 			<section class="lp-section">
 				<p class="lp-kicker">What I deliver</p>
-				<h2>Build the platform. Leave the thing that watches it.</h2>
+				<h2>Build the platform, then I hand it over.</h2>
 				<p class="lp-intro">
 					Most data teams drown in maintenance, and most consultants price by
 					the month and stay. I do neither. The build is fixed price, quoted
 					before anything starts. What stays behind is software that checks
-					the work. I leave.
+					the work, and a runbook for whoever runs it next.
 				</p>
 				<div class="lp-cards">
 					<div class="lp-card">
@@ -94,6 +94,12 @@
 							responsible and proposes the fix. Nothing merges on a model's
 							say-so.
 						</p>
+						<p>
+							How the agent is constrained: it runs in your cloud account,
+							under a role you create. It is read-only by default. Every
+							change it proposes is a pull request that a person approves.
+							No credentials or data leave your account.
+						</p>
 						<p class="lp-deliverable">
 							&#8627; A platform that fixes itself, in your account, on your
 							stack.
@@ -103,9 +109,8 @@
 						<h3>02 &mdash; Data engineering</h3>
 						<p>
 							Pipelines, modelling, and infrastructure on dbt, Snowflake,
-							Airflow, Terraform, or whatever you already run. Deterministic
-							at the edges, judgment in the middle, lineage and tests from
-							day one.
+							Airflow, Terraform, or whatever you already run, with lineage
+							and tests from day one.
 						</p>
 						<p class="lp-deliverable">
 							&#8627; A warehouse you can hand over, with no one person
@@ -130,11 +135,11 @@
 				<img src="/images/dither-racks.png" alt="" class="lp-field lp-dither" />
 				<div class="lp-method-inner">
 					<p class="lp-kicker">The method</p>
-					<h2>Code senses. Agents judge. Code acts.</h2>
+					<h2>Deterministic at the edges, judgment in the middle.</h2>
 					<p class="lp-intro">
-						Everything on a schedule or a trigger is deterministic code. The
-						model sits in the middle, where judgment lives, diagnosing and
-						drafting. And nothing material merges without my
+						Code senses. Agents judge. Code acts. Everything on a schedule or
+						a trigger is deterministic code. The model sits in the middle,
+						diagnosing and drafting. Nothing material merges without my
 						sign-off. Speed from the machine, accountability from a person
 						you can name.
 					</p>
@@ -156,8 +161,9 @@
 						<div class="lp-card">
 							<h3>Accountable</h3>
 							<p>
-								Measured on your systems: incidents that never paged
-								anyone, spend that came down, checks that fired.
+								Measured on your systems: pipeline failures resolved
+								before the morning standup, warehouse spend month over
+								month, and the checks that fired and what they caught.
 							</p>
 						</div>
 					</div>
@@ -168,13 +174,15 @@
 				<p class="lp-kicker">Industries</p>
 				<h2>Built for operators of physical things.</h2>
 				<p class="lp-intro">
-					The flagship practice is electricity distribution. The same
-					discipline travels to any operation where the assets outlive the
-					systems that describe them.
+					I trained as a mechanical engineer before data, which is why the
+					work starts from the asset, not the dashboard. Electricity
+					distribution is what this method is built for, and where I&rsquo;m
+					concentrating. The delivered work so far is in mining, automotive
+					and retail.
 				</p>
 				<div class="lp-industries">
 					<div class="lp-card lp-flagship">
-						<p class="lp-role">Flagship &mdash; Electricity distribution</p>
+						<p class="lp-role">Concentrating on &mdash; Electricity distribution</p>
 						<p>
 							Operational data verified from SCADA historian to AER
 							submission: availability the historian will back,
@@ -182,22 +190,24 @@
 							regulator will fund.
 						</p>
 						<p class="lp-deliverable">
-							&#8627; <a href="/about">How I work &rarr;</a>
+							&#8627; <a href="/projects">Delivered work &rarr;</a>
 						</p>
 					</div>
 					<ul class="lp-vert-list">
-						<li>Energy networks</li>
-						<li>Data centres</li>
-						<li>Industrial plant</li>
-						<li>Mines</li>
-						<li>Water</li>
+						<li>Electricity distribution</li>
+						<li>Mining</li>
+						<li>Automotive</li>
+						<li>Retail</li>
 					</ul>
 				</div>
 			</section>
 
 			<section class="lp-section">
 				<p class="lp-kicker">Who calls me</p>
-				<h2>Always at a moment. Never in steady state.</h2>
+				<h2>Four moments people call me.</h2>
+				<p class="lp-intro">
+					It is always at a moment like one of these, not in steady state.
+				</p>
 				<div class="lp-cards lp-cards-4">
 					<div class="lp-card">
 						<p class="lp-role">Someone left, or is leaving</p>
@@ -254,6 +264,10 @@
 				<p class="lp-location">
 					William Marzella, Melbourne &mdash;
 					<a href="mailto:hello@motis.group">hello@motis.group</a>
+				</p>
+				<p class="lp-location">
+					Motis is how I trade as Stygian Consulting, a registered business
+					name of Tenebrae Holdings Pty Ltd, ABN 44&nbsp;690&nbsp;270&nbsp;645.
 				</p>
 			</section>
 		</main>

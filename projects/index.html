@@ -25,11 +25,41 @@
 		<main>
 			<section class="lp-pagehero">
 				<p class="lp-kicker">Projects</p>
-				<h1>Three engagements, and what stayed behind.</h1>
+				<h1>Four engagements, and what stayed behind.</h1>
 				<p class="lp-lede">
 					Clients are not named. What is here is the shape of the problem
-					and the thing that kept working after I left.
+					and the thing that kept working after I handed it over.
 				</p>
+			</section>
+
+			<section class="lp-section">
+				<p class="lp-kicker">A check caught it first &middot; Australian miner, production accounting on dbt and Snowflake</p>
+				<h2>The test failed in UAT, where it was supposed to.</h2>
+				<div class="lp-prose">
+					<p>
+						A production accounting model was gaining quarterly figures
+						beside its monthly ones. Downstream, a weekly performance board
+						read the same tables, and one of its tests listed the time grains
+						it expected to see.
+					</p>
+					<p>
+						When the accounting release reached the test environment, the
+						board&rsquo;s run failed that test. Nothing had reached
+						production. The new grains were correct, so the fix was to widen
+						the board&rsquo;s list on the sources it reads and ship both
+						changes in one release.
+					</p>
+					<p>
+						Every release runs the same way: deployed to test, validated
+						there, and only then raised as a production change, copied from
+						the last one that went through clean.
+					</p>
+					<p class="lp-deliverable">
+						&#8627; Ongoing. What stays behind: the release steps written
+						down, and tests on the readers downstream of a model, not only on
+						the model that changed.
+					</p>
+				</div>
 			</section>
 
 			<section class="lp-section">
@@ -66,7 +96,7 @@
 			</section>
 
 			<section class="lp-section">
-				<p class="lp-kicker">A regulator would find out &middot; automotive distributor, new emissions standard</p>
+				<p class="lp-kicker">A regulator would find out &middot; Australian automotive distributor, regulatory reporting for a new federal efficiency standard</p>
 				<h2>The calculator lived in one analyst&rsquo;s spreadsheet.</h2>
 				<div class="lp-prose">
 					<p>
@@ -136,6 +166,10 @@
 				<p class="lp-location">
 					William Marzella, Melbourne &mdash;
 					<a href="mailto:hello@motis.group">hello@motis.group</a>
+				</p>
+				<p class="lp-location">
+					Motis is how I trade as Stygian Consulting, a registered business
+					name of Tenebrae Holdings Pty Ltd, ABN 44&nbsp;690&nbsp;270&nbsp;645.
 				</p>
 			</section>
 		</main>
