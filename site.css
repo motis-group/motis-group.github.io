@@ -1,0 +1,12 @@
+@font-face {
+  font-family: 'Berkeley Mono';
+  src: url('/BerkeleyMonoVariable.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+html,
+body {
+  --font-family-mono: 'Berkeley Mono', ui-monospace, monospace;
+}
