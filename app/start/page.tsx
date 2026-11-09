@@ -1,5 +1,5 @@
 import Quiz from '@root/site/Quiz';
-import { Page, PageHero, Section } from '@root/site/Chrome';
+import { Page, PageHero, Section } from '@root/site/Site';
 
 export const metadata = { title: 'start | MOTIS.GROUP' };
 

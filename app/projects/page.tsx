@@ -1,5 +1,5 @@
 import Text from '@components/Text';
-import { Contact, Location, Page, PageHero, Pill, Section } from '@root/site/Chrome';
+import { Contact, Location, Page, PageHero, Pill, Section } from '@root/site/Site';
 
 export const metadata = { title: 'projects | MOTIS.GROUP' };
 

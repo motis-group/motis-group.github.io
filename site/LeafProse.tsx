@@ -37,7 +37,7 @@ export default function LeafProse({ trigger, paragraphs }: { trigger: string; pa
   const all = [...paragraphs.slice(0, at), ...lines, ...paragraphs.slice(at)];
 
   return (
-    <Row id="prose" data-layout="prose">
+    <Row id="prose">
       {all.map((t, i) => (
         <Text key={i}>{t}</Text>
       ))}

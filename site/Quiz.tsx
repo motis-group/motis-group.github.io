@@ -1,12 +1,12 @@
 'use client';
 
-import itemStyles from '@components/ActionListItem.module.css';
-import buttonStyles from '@components/Button.module.css';
-
 import * as React from 'react';
-import * as Utilities from '@common/utilities';
 
+import Button from '@components/Button';
 import Card from '@components/Card';
+import RadioButton from '@components/RadioButton';
+import Text from '@components/Text';
+import { Stack } from '@root/site/Site';
 
 const QUESTIONS: { q: string; num: string; text: string; options: [string, string][] }[] = [
   {
@@ -59,47 +59,21 @@ function destination(picked: Record<string, string>): string | null {
 
 export default function Quiz() {
   const [picked, setPicked] = React.useState<Record<string, string>>({});
-  const go = React.useRef<HTMLAnchorElement>(null);
   const href = destination(picked);
-  const ready = href !== null;
-
-  React.useEffect(() => {
-    if (ready) go.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }, [ready]);
 
   return (
-    <>
+    <Stack>
       {QUESTIONS.map(({ q, num, text, options }) => (
-        <Card key={q} title={`${num} ${text}`}>
-          {options.map(([v, label]) => {
-            const chosen = picked[q] === v;
-            return (
-              <a
-                key={v}
-                href="#"
-                className={Utilities.classNames('opt', itemStyles.item, chosen ? 'chosen' : null)}
-                data-q={q}
-                data-v={v}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setPicked((prev) => ({ ...prev, [q]: v }));
-                }}
-              >
-                <figure className={itemStyles.icon}>{chosen ? '✓' : '⊹'}</figure>
-                <span className={itemStyles.text}>{label}</span>
-              </a>
-            );
-          })}
+        <Card key={q} title={num}>
+          <Text>{text}</Text>
+          {options.map(([v, label]) => (
+            <RadioButton key={v} name={q} value={v} selected={picked[q] === v} onSelect={(value) => setPicked((prev) => ({ ...prev, [q]: value }))}>
+              {label}
+            </RadioButton>
+          ))}
         </Card>
       ))}
-      <a
-        id="go"
-        ref={go}
-        href={href ?? '#'}
-        className={ready ? Utilities.classNames(buttonStyles.root, buttonStyles.primary) : Utilities.classNames(buttonStyles.root, buttonStyles.disabled, 'disabled-link')}
-      >
-        {ready ? 'continue ⊹' : 'answer all three to continue'}
-      </a>
-    </>
+      {href ? <Button onClick={() => window.location.assign(href)}>continue ⊹</Button> : <Button isDisabled>answer all three to continue</Button>}
+    </Stack>
   );
 }

@@ -1,7 +1,7 @@
 import Table from '@components/Table';
 import TableColumn from '@components/TableColumn';
 import TableRow from '@components/TableRow';
-import { Footer } from '@root/site/Chrome';
+import { Page, Stack } from '@root/site/Site';
 import { LEAVES } from '@root/site/leaves';
 
 export const metadata = { title: 'start | MOTIS.GROUP' };
@@ -14,17 +14,18 @@ export function generateStaticParams() {
 
 export default function Redirect() {
   return (
-    <>
+    <Page active="START" minimal>
       <meta httpEquiv="refresh" content="0; url=/start/" />
       <link rel="canonical" href="/start/" />
-      <Table>
+      <Stack>
+        <Table>
         <TableRow>
           <TableColumn>
             Three questions first, so you land on the right page. <a href="/start/">Start here</a>.
           </TableColumn>
         </TableRow>
-      </Table>
-      <Footer active="START" />
-    </>
+        </Table>
+      </Stack>
+    </Page>
   );
 }

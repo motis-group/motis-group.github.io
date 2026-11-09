@@ -1,5 +1,5 @@
 import LeafProse from '@root/site/LeafProse';
-import { Contact, MAIL, Page, PageHero, Pill, Section } from '@root/site/Chrome';
+import { Contact, MAIL, Page, PageHero, Pill, Section } from '@root/site/Site';
 import { LEAVES } from '@root/site/leaves';
 
 type Params = Promise<{ trigger: string; sub: string }>;
