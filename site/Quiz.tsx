@@ -6,7 +6,8 @@ import Button from '@components/Button';
 import Card from '@components/Card';
 import RadioButton from '@components/RadioButton';
 import Text from '@components/Text';
-import { Stack } from '@root/site/Site';
+import Grid from '@components/Grid';
+import Go from '@root/site/Go';
 
 const QUESTIONS: { q: string; num: string; text: string; options: [string, string][] }[] = [
   {
@@ -62,7 +63,7 @@ export default function Quiz() {
   const href = destination(picked);
 
   return (
-    <Stack>
+    <Grid>
       {QUESTIONS.map(({ q, num, text, options }) => (
         <Card key={q} title={num}>
           <Text>{text}</Text>
@@ -73,7 +74,7 @@ export default function Quiz() {
           ))}
         </Card>
       ))}
-      {href ? <Button onClick={() => window.location.assign(href)}>continue ⊹</Button> : <Button isDisabled>answer all three to continue</Button>}
-    </Stack>
+      {href ? <Go href={href}>continue ⊹</Go> : <Button isDisabled>answer all three to continue</Button>}
+    </Grid>
   );
 }

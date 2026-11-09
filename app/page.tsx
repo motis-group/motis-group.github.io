@@ -5,7 +5,9 @@ import Table from '@components/Table';
 import TableColumn from '@components/TableColumn';
 import TableRow from '@components/TableRow';
 import Text from '@components/Text';
-import { Contact, Location, MAIL, Page, PageHero, Pill, Section, Stack } from '@root/site/Site';
+import Grid from '@components/Grid';
+import Go from '@root/site/Go';
+import { Contact, Location, MAIL, Page, PageHero, Section } from '@root/site/Site';
 
 export const metadata = {
   title: 'motis.group | Data infrastructure that catches its own mistakes',
@@ -33,12 +35,12 @@ export default function Home() {
         heading="Data infrastructure that catches its own mistakes"
         lede="I build data platforms for companies that run physical things, and hand them over so they keep working after I’ve gone. What stays behind is software that checks the work: tests, drift alerts, and an agent that diagnoses failures and drafts the fix for a human to approve."
       />
-      <Stack>
-        <Pill href="/start/">Start here →</Pill>
+      <Grid>
+        <Go href="/start/">Start here →</Go>
         <Text>Data engineering · Business intelligence · Analytics, for operators of physical assets</Text>
-      </Stack>
+      </Grid>
 
-      <Stack>
+      <Grid>
         <Table>
           {STATS.map(([value, label]) => (
             <TableRow key={label}>
@@ -48,7 +50,7 @@ export default function Home() {
           ))}
         </Table>
         <Text>A warehouse’s dev compute jumped 842 hours in a week after an ERP go-live. 81% was scheduled rebuilds colliding. Fix: lanes and schedules. Capacity upgrades needed: zero.</Text>
-      </Stack>
+      </Grid>
 
       <Section
         kicker="What I deliver"
@@ -77,7 +79,7 @@ export default function Home() {
         heading="Deterministic at the edges, judgment in the middle."
         intro="Code watches and code acts; the model only judges in between. Everything on a schedule or a trigger is deterministic code. The model sits in the middle, diagnosing and drafting. Nothing material merges without my sign-off. Speed from the machine, accountability from a person you can name."
       >
-        <Stack>
+        <Grid>
           <Card title="Autonomous">
             <Text>Agents diagnose, fix, verify, and open the PR before you wake.</Text>
           </Card>
@@ -87,7 +89,7 @@ export default function Home() {
           <Card title="Accountable">
             <Text>Measured on your systems: pipeline failures fixed before standup, warehouse spend month on month, every check that fired and what it caught.</Text>
           </Card>
-        </Stack>
+        </Grid>
       </Section>
 
       <Section
@@ -121,7 +123,7 @@ export default function Home() {
 
       <Contact heading="If the problem is real, let's talk about it.">
         <Text>I don't do capability presentations. Describe the pipeline that keeps failing, the bill that keeps growing, or the check that lives in one person's head, and I'll tell you whether I can help.</Text>
-        <Pill href={MAIL}>Get in touch →</Pill>
+        <Go href={MAIL}>Get in touch →</Go>
         <Location />
         <Text>I trade as Stygian Consulting, a business name of Tenebrae Holdings Pty Ltd, ABN 44 690 270 645.</Text>
       </Contact>

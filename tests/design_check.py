@@ -1,17 +1,20 @@
+import os
 import pathlib
 import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / 'out'
-SRCL = pathlib.Path('/Users/marzella/Documents/projects/ventures/cortex/next-ui/vendor/www-sacred/components')
+SRCL = pathlib.Path(os.environ.get('SRCL_DIR', '/Users/marzella/Documents/projects/ventures/cortex/next-ui/vendor/www-sacred/components'))
 TITLE_FITS_375 = 26
-SITE_FILES = ['site/Site.tsx', 'site/Go.tsx', 'site/ThemeToggle.tsx', 'site/Quiz.tsx', 'site/LeafProse.tsx', 'app/layout.tsx', 'app/page.tsx']
+SITE_FILES = ['site/Site.tsx', 'site/Go.tsx', 'site/ThemeToggle.tsx', 'site/Quiz.tsx', 'site/LeafProse.tsx']
 REMOTE_ASSET = re.compile(r'''(?:src|href)=["']https?://(?!blog\.motis\.group|github\.com/motis-group)|url\(["']?https?://|@import\s+["']?https?://''')
 
 
 def failures():
     found = []
+    if not SRCL.is_dir():
+        return [f'SRCL source not found at {SRCL}: set SRCL_DIR to the www-sacred components folder']
     css = (ROOT / 'site.css').read_text()
     rules = re.sub(r'@font-face\s*{[^}]*}', '', css)
     rules = re.sub(r'html,\s*body\s*{\s*--font-family-mono:[^;]+;\s*}', '', rules)
@@ -23,6 +26,12 @@ def failures():
             found.append(f'{rel} missing')
         if 'data-layout' in text or 'data-dither' in text or '<img' in text:
             found.append(f'{rel} uses a custom layout hook or image')
+    for rel in SITE_FILES:
+        if 'window.location.assign' in ((ROOT / rel).read_text() if (ROOT / rel).exists() else ''):
+            found.append(f'{rel} navigates by script instead of a link')
+    home = (OUT / 'index.html').read_text() if (OUT / 'index.html').exists() else ''
+    if not re.search(r'<a href="/start/"[^>]*>\s*<button', home):
+        found.append('index.html "Start here" is not a link')
     quiz = (ROOT / 'site/Quiz.tsx').read_text()
     if 'RadioButton' not in quiz or "className={Utilities" in quiz or 'id="go"' in quiz:
         found.append('site/Quiz.tsx is not built from RadioButton and Button')

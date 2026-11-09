@@ -1,7 +1,8 @@
 import Table from '@components/Table';
 import TableColumn from '@components/TableColumn';
 import TableRow from '@components/TableRow';
-import { Page, Stack } from '@root/site/Site';
+import Grid from '@components/Grid';
+import { Page } from '@root/site/Site';
 import { LEAVES } from '@root/site/leaves';
 
 export const metadata = { title: 'start | MOTIS.GROUP' };
@@ -17,7 +18,7 @@ export default function Redirect() {
     <Page active="START" minimal>
       <meta httpEquiv="refresh" content="0; url=/start/" />
       <link rel="canonical" href="/start/" />
-      <Stack>
+      <Grid>
         <Table>
         <TableRow>
           <TableColumn>
@@ -25,7 +26,7 @@ export default function Redirect() {
           </TableColumn>
         </TableRow>
         </Table>
-      </Stack>
+      </Grid>
     </Page>
   );
 }

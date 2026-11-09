@@ -1,6 +1,8 @@
 import Card from '@components/Card';
 import Text from '@components/Text';
-import { Contact, Location, Page, PageHero, Panel, Pill, Section, Stack } from '@root/site/Site';
+import Grid from '@components/Grid';
+import Go from '@root/site/Go';
+import { Contact, Location, Page, PageHero, Panel, Section } from '@root/site/Site';
 
 export const metadata = { title: 'about | MOTIS.GROUP' };
 
@@ -31,7 +33,7 @@ export default function About() {
       </Section>
 
       <Section kicker="What I do" heading="Build the thing that catches it instead.">
-        <Stack>
+        <Grid>
           <Card title="Read it cold">
             <Text>Read a system cold and find where the documented process and the operating process came apart.</Text>
           </Card>
@@ -44,18 +46,18 @@ export default function About() {
           <Card title="Hand it over">
             <Text>The recordings and the runbook go to whoever runs it next, so they do not start from zero.</Text>
           </Card>
-        </Stack>
+        </Grid>
       </Section>
 
       <Section kicker="Engagement" heading="Two ways in, depending on size.">
-        <Stack>
+        <Grid>
           <Panel title="Small enough to look at directly">
             <Text>Read-only access for twenty minutes, and I tell you what I found whether or not there is a job in it.</Text>
           </Panel>
           <Card title="Larger, or regulated">
             <Text>A paid discovery against a named system, fixed price and fixed length, ending in a written finding you can put in front of somebody else.</Text>
           </Card>
-        </Stack>
+        </Grid>
         <Text>
           Either way the build is fixed price, scoped from what the read turned up and quoted before anything starts. If it runs harder than I estimated, that is mine to wear. Anything I find outside the scope I stop and quote separately, so nothing happens that you have not agreed to.
         </Text>
@@ -69,7 +71,7 @@ export default function About() {
 
       <Contact heading="Not sure which of these you are?">
         <Text>Start with three questions, or describe the problem directly.</Text>
-        <Pill href="/start/">Start here →</Pill>
+        <Go href="/start/">Start here →</Go>
         <Location />
       </Contact>
     </Page>

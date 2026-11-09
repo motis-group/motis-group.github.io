@@ -1,5 +1,6 @@
 import LeafProse from '@root/site/LeafProse';
-import { Contact, MAIL, Page, PageHero, Pill, Section } from '@root/site/Site';
+import Go from '@root/site/Go';
+import { Contact, MAIL, Page, PageHero, Section } from '@root/site/Site';
 import { LEAVES } from '@root/site/leaves';
 
 type Params = Promise<{ trigger: string; sub: string }>;
@@ -28,7 +29,7 @@ export default async function Leaf({ params }: { params: Params }) {
         <LeafProse trigger={trigger} paragraphs={paragraphs} />
       </Section>
       <Contact heading="If this is where you are, write to me.">
-        <Pill href={MAIL}>hello@motis.group →</Pill>
+        <Go href={MAIL}>hello@motis.group →</Go>
       </Contact>
     </Page>
   );

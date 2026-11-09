@@ -1,5 +1,6 @@
 import Text from '@components/Text';
-import { Contact, Location, Page, PageHero, Pill, Section } from '@root/site/Site';
+import Go from '@root/site/Go';
+import { Contact, Location, Page, PageHero, Section } from '@root/site/Site';
 
 export const metadata = { title: 'projects | MOTIS.GROUP' };
 
@@ -56,7 +57,7 @@ export default function Projects() {
 
       <Contact heading="Recognise one of these?">
         <Text>Start with three questions, or describe the problem directly.</Text>
-        <Pill href="/start/">Start here →</Pill>
+        <Go href="/start/">Start here →</Go>
         <Location />
       </Contact>
     </Page>

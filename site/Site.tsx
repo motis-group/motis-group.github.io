@@ -8,7 +8,6 @@ import ListItem from '@components/ListItem';
 import Navigation from '@components/Navigation';
 import DefaultLayout from '@components/page/DefaultLayout';
 import Text from '@components/Text';
-import Go from '@root/site/Go';
 import ThemeToggle from '@root/site/ThemeToggle';
 
 export const MAIL = 'mailto:hello@motis.group';
@@ -29,10 +28,6 @@ export function Heading({ level, children }: { level: 1 | 2 | 3; children: React
       {children}
     </Text>
   );
-}
-
-export function Stack({ children }: { children: React.ReactNode }) {
-  return <Grid>{children}</Grid>;
 }
 
 export function Panel({ title, children }: { title?: string; children: React.ReactNode }) {
@@ -66,10 +61,6 @@ export function PageHero({ kicker, heading, lede }: { kicker?: string; heading: 
       </Panel>
     </Grid>
   );
-}
-
-export function Pill({ href, children }: { href: string; children: React.ReactNode }) {
-  return <Go href={href}>{children}</Go>;
 }
 
 export function Contact({ heading, children }: { heading: React.ReactNode; children?: React.ReactNode }) {
