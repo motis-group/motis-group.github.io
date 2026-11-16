@@ -10,7 +10,7 @@ export default function Projects() {
       <PageHero
         kicker="Projects"
         heading="Four engagements, and what stayed behind."
-        lede="Clients are not named. What is here is the shape of the problem and the thing that kept working after I handed it over."
+        lede="Clients are not named. Each is the same job at a different size: a rule that lived in one person, written where software can check it. What is here is the shape of the problem and the thing that kept working after I handed it over."
       />
 
       <Section kicker="A check caught it first · Australian miner, production accounting on dbt and Snowflake" heading="The test failed in UAT, where it was supposed to.">

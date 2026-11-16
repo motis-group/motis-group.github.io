@@ -9,6 +9,34 @@ export interface Leaf {
 
 export const LEAVES: Leaf[] = [
   {
+    "trigger": "agent",
+    "sub": "exposed",
+    "title": "an agent is answering, and the answers leave the building",
+    "kicker": "an agent is answering now",
+    "headline": "An agent is answering questions about your numbers, and some of those answers leave the building.",
+    "paragraphs": [
+      "The agent writes working SQL, and the SQL was never where the risk sat. It does not know which of five similar tables is the real one, what you leave out of a figure and why, or that two teams use one word for different things. So some of its answers are clean, confident and wrong, and they look exactly like the right ones.",
+      "A wrong dashboard is wrong the same way every day until somebody notices. An agent writes a fresh query for each question, so its mistakes never sit in one place long enough for a careful person to catch them.",
+      "With a customer or a regulator at the other end, you will be asked how you know the answer is right. What answers that is a set of questions with known answers, taken from figures somebody has already signed, run on every change, with a pass rate you can show.",
+      "The numbers that leave the building come first. Each gets one definition written where the agent reads it, an owner, and a signed figure to test against. Everything else can wait.",
+      "Twenty minutes with read-only access is usually enough. If there is already a date on this, say so and I will work to it. If your access has to go through a process, that is fine, I have done it before."
+    ]
+  },
+  {
+    "trigger": "agent",
+    "sub": "quiet",
+    "title": "an agent is answering, and nobody has tested it",
+    "kicker": "an agent is answering now",
+    "headline": "An agent is answering questions about your numbers, and nobody can say how often it is right.",
+    "paragraphs": [
+      "People like it because the queue went away. They ask, they get an answer in a minute, and they ask the follow-up while the context is still in their head. That part is worth keeping.",
+      "What nobody has is a pass rate. The agent has never been marked against answers you already know, so each person decides alone whether a number looks right, and the people furthest from the data are the least able to tell.",
+      "The fix is small. Pick the handful of numbers the business runs on. For each one, write the definition where the agent reads it, including how it adds up across days and sites, and take one figure its owner has signed for a closed month. Those figures become the questions the agent is tested on every time something changes.",
+      "You can start this afternoon without me. Ask the agent for last month’s figure for your most argued-about number, three different ways, and hold what comes back against the report finance signed.",
+      "Twenty minutes with read-only access is usually enough. Nothing is on fire, so there is no rush at this end either. I’ll tell you what I found whether or not there’s a job in it."
+    ]
+  },
+  {
     "trigger": "costs",
     "sub": "exposed",
     "title": "the bill keeps growing, and somebody is asking about it",

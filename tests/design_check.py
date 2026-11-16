@@ -48,8 +48,8 @@ def failures():
     if (ROOT / 'public/images').exists():
         found.append('public/images still exists')
     pages = sorted(p for p in OUT.rglob('index.html') if p.parts[len(OUT.parts)] not in {'404', '_not-found'})
-    if len(pages) != 19:
-        found.append(f'{len(pages)} built routes, want 19')
+    if len(pages) != 22:
+        found.append(f'{len(pages)} built routes, want 22')
     for page in pages:
         html = page.read_text()
         name = page.relative_to(OUT)
@@ -65,8 +65,8 @@ def failures():
             if len(title) > TITLE_FITS_375:
                 found.append(f'{name} card title {title!r} is wider than a 375px screen allows')
     start = (OUT / 'start/index.html').read_text() if (OUT / 'start/index.html').exists() else ''
-    if len(re.findall(r'type="radio"', start)) != 13 or 'answer all three to continue' not in start:
-        found.append('start/ does not render 13 radio options and the disabled continue button')
+    if len(re.findall(r'type="radio"', start)) != 14 or 'answer all three to continue' not in start:
+        found.append('start/ does not render 14 radio options and the disabled continue button')
     return found
 
 
