@@ -30,6 +30,7 @@ const QUESTIONS: { q: string; num: string; text: string; options: [string, strin
       ['it-broke', 'we got caught out'],
       ['its-you', 'it is slowing us down'],
       ['costs', 'the bills keep growing'],
+      ['agent', 'an AI agent is answering our questions now'],
       ['not-sure', 'just having a look'],
     ],
   },
@@ -46,8 +47,8 @@ const QUESTIONS: { q: string; num: string; text: string; options: [string, strin
   },
 ];
 
-const EXPOSED: Record<string, string> = { 'someone-left': 'exposed', 'its-you': 'exposed', 'it-broke': 'outside', 'not-sure': 'exposed', costs: 'exposed' };
-const QUIET: Record<string, string> = { 'someone-left': 'quiet', 'its-you': 'quiet', 'it-broke': 'caught', 'not-sure': 'quiet', costs: 'quiet' };
+const EXPOSED: Record<string, string> = { 'someone-left': 'exposed', 'its-you': 'exposed', 'it-broke': 'outside', 'not-sure': 'exposed', costs: 'exposed', agent: 'exposed' };
+const QUIET: Record<string, string> = { 'someone-left': 'quiet', 'its-you': 'quiet', 'it-broke': 'caught', 'not-sure': 'quiet', costs: 'quiet', agent: 'quiet' };
 
 function destination(picked: Record<string, string>): string | null {
   if (!picked.q1 || !picked.q2 || !picked.q3) return null;

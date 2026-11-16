@@ -1,15 +1,22 @@
-motis.group: an AI-powered agency for data engineering, business intelligence,
-and analytics. Agents deployed in the client's cloud account do the
-maintenance — diagnose, fix, verify, open a PR — and a senior engineer reviews
-every material change. Asset-heavy operators are the focus. Electricity
-distribution is the target vertical, with no delivered engagement yet, so the
-copy calls it where I'm concentrating and lets mining and automotive carry
-proof. Every sector the site lists needs a case on `projects/`.
+motis.group: a one-person data intelligence engineering practice. The argument
+the copy makes: agents write the queries, so the scarce work is writing down
+what the business means by its numbers where software and agents read it,
+proving answers against figures somebody has signed, and answering for the
+numbers the operation runs on. The offer is unchanged underneath: a read, then
+a fixed-price build handed over, with an agent in the client's account that
+drafts fixes for a person to approve. Use "data intelligence engineering" as a
+label at most once a page; the body speaks the buyer's words. Asset-heavy
+operators are the focus. Electricity distribution is the target vertical, with
+no delivered engagement yet, so the copy calls it where I'm concentrating and
+lets mining and automotive carry proof. Every sector the site lists needs a
+case on `projects/`. Agent evaluation is offered, with no delivered case yet,
+so no page claims one.
 
-Pages: `app/page.tsx` is the landing page (hero, stats table, services,
-method, industries, the four buying moments, and a contact card that names the
+Pages: `app/page.tsx` is the landing page (hero, stats table, what changed, the six
+problems a model leaves unsolved, services, method, the three rings of care,
+industries, the five buying moments, and a contact card that names the
 trading entity). `app/start/` is a three-question quiz that routes visitors to
-ten destination pages; the leaf copy lives in `site/leaves.ts`, rendered by
+twelve destination pages; the leaf copy lives in `site/leaves.ts`, rendered by
 `app/start/[trigger]/[sub]/`, and each `/start/<trigger>/` is a stub that
 redirects to `/start/`. `app/projects/` is four anonymised engagement
 write-ups. `app/about/` is the long-form first-person pitch.
@@ -38,7 +45,6 @@ builds `/start/<trigger>/<sub>/?catches=…&notices=…` from three radio groups
 the leaf pages' personalisation (`site/LeafProse.tsx`) inserts paragraphs into
 `#prose` before the paragraph containing "read-only access".
 
-Two checks guard the site, both run against `out/` after a build:
-`tests/copy_check.py` compares every route's title and words with the
-pre-port HTML at commit c562eac, and `tests/design_check.py` enforces the rules
-above.
+`tests/design_check.py` guards the site and enforces the rules above. Run it
+against `out/` after a build, with `SRCL_DIR` set to the www-sacred components
+folder.
