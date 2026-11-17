@@ -1,4 +1,5 @@
 import { CAPABILITIES, RINGS, STACK, UNSOLVED } from '@root/site/capabilities';
+import Plate from '@root/site/Plate';
 import { Band, Close, Label, Page, PageHead } from '@root/site/ui';
 import { casesFor } from '@root/site/work';
 
@@ -19,6 +20,7 @@ export default function Capabilities() {
               <div>
                 <Label n={`0${i + 1}`}>{c.id}</Label>
                 <h2 className="title">{c.name}</h2>
+                <Plate name={`capability-${c.id}`} shape="tile" />
               </div>
               <div className="stack">
                 <p className="lede">{c.solves}</p>

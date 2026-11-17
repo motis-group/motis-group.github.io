@@ -1,3 +1,4 @@
+import Plate from '@root/site/Plate';
 import { Band, Close, Label, Page, PageHead } from '@root/site/ui';
 import { CASES } from '@root/site/work';
 
@@ -14,6 +15,7 @@ export default function Work() {
         <div className="cells">
           {CASES.map((c, i) => (
             <a key={c.slug} className="cell" href={`/work/${c.slug}/`}>
+              <Plate name={`work-${c.slug}`} />
               <Label n={`0${i + 1}`}>
                 {c.sector} · {c.client}
               </Label>

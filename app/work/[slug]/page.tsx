@@ -1,4 +1,5 @@
 import Flow from '@root/site/Flow';
+import Plate from '@root/site/Plate';
 import { Band, Close, Label, Page } from '@root/site/ui';
 import { CASES } from '@root/site/work';
 
@@ -48,6 +49,7 @@ export default async function CaseStudy({ params }: { params: Params }) {
             {item.title}
           </h1>
           <p className="lede">{item.summary}</p>
+          <Plate name={`work-${item.slug}`} eager />
           <dl className="meta">
             <div>
               <dt className="label">Client</dt>

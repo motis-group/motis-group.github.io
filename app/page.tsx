@@ -1,4 +1,5 @@
 import Field from '@root/site/Field';
+import Plate, { plate } from '@root/site/Plate';
 import { CAPABILITIES } from '@root/site/capabilities';
 import { Band, Close, Go, Label, Page } from '@root/site/ui';
 import { CASES } from '@root/site/work';
@@ -23,7 +24,7 @@ export default function Home() {
   return (
     <Page>
       <section className="hero">
-        <Field />
+        {plate('hero') ? <Plate name="hero" shape="hero" eager /> : <Field />}
         <div className="wrap">
           <Label n="01">Independent systems studio · Melbourne, Australia</Label>
           <h1 className="display" style={{ marginTop: 24 }}>
@@ -88,6 +89,7 @@ export default function Home() {
           <div className="cells">
             {FEATURED.map((slug) => CASES.find((c) => c.slug === slug)!).map((c) => (
               <a key={c.slug} className="cell" href={`/work/${c.slug}/`}>
+                <Plate name={`work-${c.slug}`} />
                 <Label>
                   {c.sector} · {c.client}
                 </Label>

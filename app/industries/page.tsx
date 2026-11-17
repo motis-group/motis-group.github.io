@@ -1,3 +1,4 @@
+import Plate from '@root/site/Plate';
 import { Band, Close, Label, Page, PageHead } from '@root/site/ui';
 import { CASES, SECTORS } from '@root/site/work';
 
@@ -37,6 +38,7 @@ export default function Industries() {
               <div>
                 <Label n={`0${i + 1}`}>Sector</Label>
                 <h2 className="title">{sector}</h2>
+                <Plate name={`sector-${sector.toLowerCase()}`} shape="tile" />
               </div>
               <div className="stack">
                 <div className="prose">
@@ -59,7 +61,10 @@ export default function Industries() {
 
       <Band n="02" label="Focus">
         <div className="split">
-          <h2 className="headline">Electricity distribution is where I’m concentrating.</h2>
+          <div className="stack">
+            <h2 className="headline">Electricity distribution is where I’m concentrating.</h2>
+            <Plate name="sector-electricity" shape="tile" />
+          </div>
           <div className="prose">
             <p>The assets outlive the systems that describe them, often by decades. The engineer who knows which feeder trips in summer knows it because he was there in summer, and none of that reached the asset register. When a regulator asks a network to justify its spend, the register is what it has to answer with.</p>
             <p>The work the method is built for: operational data verified from SCADA historian to regulatory submission, availability the historian will back, and capital justification the regulator will fund.</p>

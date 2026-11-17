@@ -19,8 +19,9 @@ def failures():
         name = page.relative_to(OUT)
         if REMOTE_ASSET.search(html):
             found.append(f'{name} loads a remote asset')
-        if '<img' in html:
-            found.append(f'{name} has an image: the site draws its figures in markup')
+        for src in re.findall(r'<img[^>]*src="([^"]*)"', html):
+            if not src.startswith('/images/') or not (OUT / src.lstrip('/')).exists():
+                found.append(f'{name} shows {src}: images are files in public/images/')
         if len(re.findall(r'<h1', html)) > 1:
             found.append(f'{name} has more than one h1')
     for css in OUT.rglob('*.css'):

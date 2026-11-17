@@ -1,3 +1,4 @@
+import Plate from '@root/site/Plate';
 import { Band, Close, Label, Page, PageHead } from '@root/site/ui';
 
 export const metadata = {
@@ -41,6 +42,8 @@ export default function Studio() {
         heading="A studio of one principal engineer."
         lede="Motis is an independent systems engineering studio in Melbourne. I’m William Marzella, its founder and principal engineer. The person who diagnoses your system is the person who designs and builds the fix."
       />
+
+      <Plate name="studio" />
 
       <Band n="01" label="Principal">
         <div className="split">

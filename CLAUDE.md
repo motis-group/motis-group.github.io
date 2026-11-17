@@ -39,10 +39,18 @@ are drawn in markup: `site/Field.tsx` is the hero's isometric column field and
 `site/Flow.tsx` is the case-study process diagram, which stacks vertically on a
 phone. The early-2000s console interface influence stays in the details: the
 glowing diamond on the selected menu item and quiz option, the column field,
-the notched button, and the page transition. Do not add stock photography or
-any image a client did not supply. The built output requests nothing from
-another host: no remote fonts, scripts, images or analytics.
+the notched button, and the page transition. The built output requests nothing
+from another host: no remote fonts, scripts, images or analytics.
+
+Images are optional and live in `public/images/`. `site/Plate.tsx` shows a file
+when one with the slot's name exists (`.avif`, `.webp`, `.jpg` or `.png`) and
+renders nothing when it does not, so a slot is filled by adding a file and
+needs no code change. Slots: `hero` (replaces the column field),
+`work-<slug>`, `capability-<id>`, `sector-<name>` (including
+`sector-electricity`), and `studio`. Images are illustration: charcoal, bone
+and olive, no text, and never presented as a photograph of a client's site.
 
 `tests/design_check.py` runs against `out/` after a build and enforces the
-route count, the no-remote-assets rule, the quiz, the redirect stubs, and that
+route count, the no-remote-assets rule, that every image is a file in
+`public/images/`, the quiz, the redirect stubs, and that
 every listed sector has a case.
