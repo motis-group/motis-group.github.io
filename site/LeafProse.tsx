@@ -2,8 +2,6 @@
 
 import * as React from 'react';
 
-import Row from '@components/Row';
-import Text from '@components/Text';
 
 function personalise(search: string, trigger: string): React.ReactNode[] {
   const p = new URLSearchParams(search);
@@ -37,10 +35,10 @@ export default function LeafProse({ trigger, paragraphs }: { trigger: string; pa
   const all = [...paragraphs.slice(0, at), ...lines, ...paragraphs.slice(at)];
 
   return (
-    <Row id="prose">
+    <div id="prose" className="prose">
       {all.map((t, i) => (
-        <Text key={i}>{t}</Text>
+        <p key={i}>{t}</p>
       ))}
-    </Row>
+    </div>
   );
 }
