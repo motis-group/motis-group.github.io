@@ -1,50 +1,56 @@
-motis.group: a one-person data intelligence engineering practice. The argument
-the copy makes: agents write the queries, so the scarce work is writing down
-what the business means by its numbers where software and agents read it,
-proving answers against figures somebody has signed, and answering for the
-numbers the operation runs on. The offer is unchanged underneath: a read, then
-a fixed-price build handed over, with an agent in the client's account that
-drafts fixes for a person to approve. Use "data intelligence engineering" as a
-label at most once a page; the body speaks the buyer's words. Asset-heavy
-operators are the focus. Electricity distribution is the target vertical, with
-no delivered engagement yet, so the copy calls it where I'm concentrating and
-lets mining and automotive carry proof. Every sector the site lists needs a
-case on `projects/`. Agent evaluation is offered, with no delivered case yet,
-so no page claims one.
+motis.group: the commercial site of Motis, an independent systems engineering
+studio in Melbourne. William Marzella is its founder and principal engineer,
+and the only person in it. The site sells competence and delivery: what Motis
+builds, the case studies that show it, and how to start. Personal writing and
+worldview belong on a separate personal site.
 
-Pages: `app/page.tsx` is the landing page (hero, stats table, what changed, the six
-problems a model leaves unsolved, services, method, the three rings of care,
-industries, the five buying moments, and a contact card that names the
-trading entity). `app/start/` is a three-question quiz that routes visitors to
-twelve destination pages; the leaf copy lives in `site/leaves.ts`, rendered by
-`app/start/[trigger]/[sub]/`, and each `/start/<trigger>/` is a stub that
-redirects to `/start/`. `app/projects/` is four anonymised engagement
-write-ups. `app/about/` is the long-form first-person pitch.
+Voice: "Motis" names the studio and "I" does the work. Never "we", because
+there is one person. The headline claim is systems for operations where a
+wrong number costs something. The offer underneath: a read, then a fixed-price
+build handed over, no retainer.
+
+Claims need proof. `site/work.ts` holds the case studies, all anonymised, and a
+figure appears only where it was measured. `SECTORS` lists a sector only when a
+case carries it, and the design check enforces that. Electricity distribution
+is the focus with no delivered engagement, and `/industries/` says so. Agent
+evaluation is offered with no client case, and `/capabilities/` says so.
+
+Pages: `/` (hero, one case's figures, capabilities, three cases, the approach,
+why now), `/capabilities/` (six capabilities from `site/capabilities.ts`, what
+a model does not solve, delivery terms, stack), `/work/` and `/work/<slug>/`
+(context, problem, architecture, a before-and-after flow, implementation,
+outcome, technical details), `/industries/`, `/studio/` (principal, philosophy,
+the ten-stage method, principles), and `/contact/`. `/start/` is a
+three-question quiz that routes to twelve destination pages; the leaf copy
+lives in `site/leaves.ts`, and `site/LeafProse.tsx` inserts personalised
+paragraphs before the paragraph containing "read-only access". `/about/`,
+`/projects/` and each `/start/<trigger>/` are redirect stubs.
 
 Next.js static export: `npm ci && npm run build` writes `out/`, and
 `.github/workflows/pages.yml` deploys `out/` to GitHub Pages on a push to
-`main`. The repository's Pages source is GitHub Actions, so nothing deploys
-without that workflow. `trailingSlash` keeps every route at `/about/`-style
-paths. `public/` holds what is served as-is: favicon, `CNAME`, `.nojekyll`, and
-the Berkeley Mono font file.
+`main`. `trailingSlash` keeps every route at `/work/`-style paths. `public/`
+holds what is served as-is: favicon, `CNAME`, `.nojekyll`, and the Berkeley
+Mono font file.
 
-The design is SRCL's own (sacred.computer, MIT, `SRCL-LICENSE.md`): its stock
-`theme-light` and `theme-dark`, its page frame (`page/DefaultLayout`,
-`Navigation`), and content as `Grid` and `Card`, with `Table`, `Accordion`,
-`ListItem`, `RadioButton` and `Button` inside. Components are vendored
-unchanged into `components/`, `common/` and `global.css`; vendor a new one with
-its transitive imports and never edit a vendored file. Do not restyle SRCL to
-look like something else: `site.css` holds only the Berkeley Mono font rule,
-and a page that needs a new look uses a different SRCL component. `site/Site.tsx`
-composes the shared sections; a card title longer than 26 characters overflows
-a 375px screen, so `Panel` renders it as a `Badge` instead. The built output
-requests nothing from another host: no remote fonts, scripts or analytics.
+Design: one dark theme in `site.css`. Charcoal ground, bone text, olive as the
+only accent, hairline rules. Archivo (self-hosted through `@fontsource-variable`)
+sets headings and body; Berkeley Mono sets labels, tags and navigation. Figures
+are drawn in markup: `site/Field.tsx` is the hero's isometric column field and
+`site/Flow.tsx` is the case-study process diagram, which stacks vertically on a
+phone. The early-2000s console interface influence stays in the details: the
+glowing diamond on the selected menu item and quiz option, the column field,
+the notched button, and the page transition. The built output requests nothing
+from another host: no remote fonts, scripts, images or analytics.
 
-All copy speaks in the first person singular. The quiz (`site/Quiz.tsx`)
-builds `/start/<trigger>/<sub>/?catches=…&notices=…` from three radio groups;
-the leaf pages' personalisation (`site/LeafProse.tsx`) inserts paragraphs into
-`#prose` before the paragraph containing "read-only access".
+Images are optional and live in `public/images/`. `site/Plate.tsx` shows a file
+when one with the slot's name exists (`.avif`, `.webp`, `.jpg` or `.png`) and
+renders nothing when it does not, so a slot is filled by adding a file and
+needs no code change. Slots: `hero` (replaces the column field),
+`work-<slug>`, `capability-<id>`, `sector-<name>` (including
+`sector-electricity`), and `studio`. Images are illustration: charcoal, bone
+and olive, no text, and never presented as a photograph of a client's site.
 
-`tests/design_check.py` guards the site and enforces the rules above. Run it
-against `out/` after a build, with `SRCL_DIR` set to the www-sacred components
-folder.
+`tests/design_check.py` runs against `out/` after a build and enforces the
+route count, the no-remote-assets rule, that every image is a file in
+`public/images/`, the quiz, the redirect stubs, and that
+every listed sector has a case.

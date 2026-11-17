@@ -2,13 +2,6 @@
 
 import * as React from 'react';
 
-import Button from '@components/Button';
-import Card from '@components/Card';
-import RadioButton from '@components/RadioButton';
-import Text from '@components/Text';
-import Grid from '@components/Grid';
-import Go from '@root/site/Go';
-
 const QUESTIONS: { q: string; num: string; text: string; options: [string, string][] }[] = [
   {
     q: 'q1',
@@ -64,18 +57,34 @@ export default function Quiz() {
   const href = destination(picked);
 
   return (
-    <Grid>
+    <form className="quiz" onSubmit={(e) => e.preventDefault()}>
       {QUESTIONS.map(({ q, num, text, options }) => (
-        <Card key={q} title={num}>
-          <Text>{text}</Text>
+        <fieldset key={q}>
+          <legend>
+            <span className="label">
+              <b>{num}</b>
+            </span>
+            <span className="title">{text}</span>
+          </legend>
           {options.map(([v, label]) => (
-            <RadioButton key={v} name={q} value={v} selected={picked[q] === v} onSelect={(value) => setPicked((prev) => ({ ...prev, [q]: value }))}>
+            <label key={v} className="opt">
+              <input type="radio" name={q} value={v} checked={picked[q] === v} onChange={() => setPicked((prev) => ({ ...prev, [q]: v }))} />
               {label}
-            </RadioButton>
+            </label>
           ))}
-        </Card>
+        </fieldset>
       ))}
-      {href ? <Go href={href}>continue ⊹</Go> : <Button isDisabled>answer all three to continue</Button>}
-    </Grid>
+      <div className="actions">
+        {href ? (
+          <a className="btn" href={href}>
+            Continue <span className="arr">↗</span>
+          </a>
+        ) : (
+          <span className="btn" aria-disabled="true">
+            Answer all three to continue
+          </span>
+        )}
+      </div>
+    </form>
   );
 }

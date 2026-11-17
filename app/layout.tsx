@@ -1,4 +1,4 @@
-import '@root/global.css';
+import '@fontsource-variable/archivo/wdth.css';
 import '@root/site.css';
 
 import type { Metadata, Viewport } from 'next';
@@ -13,19 +13,13 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  themeColor: '#111210',
 };
-
-const THEME = `try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.body.className='theme-'+t}catch(e){}`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="theme-light" suppressHydrationWarning>
-        <script dangerouslySetInnerHTML={{ __html: THEME }} />
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

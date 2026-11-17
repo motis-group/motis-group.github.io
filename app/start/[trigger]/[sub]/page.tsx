@@ -1,6 +1,5 @@
 import LeafProse from '@root/site/LeafProse';
-import Go from '@root/site/Go';
-import { Contact, MAIL, Page, PageHero, Section } from '@root/site/Site';
+import { Band, Go, Label, MAIL, Page } from '@root/site/ui';
 import { LEAVES } from '@root/site/leaves';
 
 type Params = Promise<{ trigger: string; sub: string }>;
@@ -17,20 +16,34 @@ async function leaf(params: Params) {
 }
 
 export async function generateMetadata({ params }: { params: Params }) {
-  return { title: `${(await leaf(params)).title} | MOTIS.GROUP` };
+  return { title: `${(await leaf(params)).title} | Motis` };
 }
 
 export default async function Leaf({ params }: { params: Params }) {
   const { trigger, kicker, headline, paragraphs } = await leaf(params);
   return (
-    <Page active="START">
-      <PageHero kicker={`Start — ${kicker}`} heading={headline} />
-      <Section>
+    <Page active="Contact">
+      <section className="band">
+        <div className="wrap stack">
+          <Label>
+            <a href="/start/">Start</a> · {kicker}
+          </Label>
+          <h1 className="headline" style={{ maxWidth: '24ch' }}>
+            {headline}
+          </h1>
+        </div>
+      </section>
+      <Band>
         <LeafProse trigger={trigger} paragraphs={paragraphs} />
-      </Section>
-      <Contact heading="If this is where you are, write to me.">
-        <Go href={MAIL}>hello@motis.group →</Go>
-      </Contact>
+      </Band>
+      <section className="band">
+        <div className="wrap stack">
+          <h2 className="headline">If this is where you are, write to me.</h2>
+          <div className="actions">
+            <Go href={MAIL}>hello@motis.group</Go>
+          </div>
+        </div>
+      </section>
     </Page>
   );
 }
