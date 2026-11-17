@@ -41,7 +41,8 @@ glowing diamond on the selected menu item and quiz option, the notched button,
 and the page transition.
 
 The hero figure is a looping three.js scene of how operational data is
-collected in one industry: sources on the ground, the collection path, the
+collected in one industry, on a stage of its own under the hero text that
+spans the content column at every width: sources on the ground, the collection path, the
 systems of record, one failure and its recovery. Each scene is a data file in
 `site/scenes/` (zones, nodes with low-poly models built from boxes and
 cylinders, links) listed in `site/scenes/index.ts`; mining and electricity
@@ -50,7 +51,9 @@ field source, square for an edge device, hexagon for a system of record,
 triangle for the reconciled output. A scene depicts an industry and names no
 client, site, vendor or figure. `site/meshScene.ts` renders any scene as a pure
 function of the scene and the time in seconds, and `site/Mesh.tsx` loads it and
-three.js only in the browser. `?scene=<id>&t=<seconds>` pins one frame.
+three.js only in the browser. `?scene=<id>&t=<seconds>` pins one frame. On a stage too narrow for the labels
+to read, the renderer enlarges link tags and zone labels, staggers the zone
+labels, and hides node labels.
 Reduced motion gets one still frame, and no WebGL gets nothing. The built output requests nothing
 from another host: no remote fonts, scripts, images or analytics.
 
@@ -68,6 +71,8 @@ route count, the no-remote-assets rule, that every image is a file in
 every listed sector has a case. `node tests/mesh_check.mjs` also runs against
 `out/`, in Chrome through `playwright-core`: it captures both hero scenes at
 six times into `tests/out/mesh/`, and checks that they draw, that olive appears
-only after the fault, that the scenes differ, the phone layout, reduced motion,
-and the console. With `MESH_REF` set to a reference video it also writes one
+only after the fault, that the scenes differ, that the stage spans the content column
+on a desktop, that no scene pixel falls inside the headline, lede, tags or
+actions at desktop, tablet and phone widths, that no width scrolls sideways,
+reduced motion, and the console. With `MESH_REF` set to a reference video it also writes one
 comparison image per scene.

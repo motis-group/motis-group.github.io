@@ -12,6 +12,15 @@ const TIMES = [1, 4, 7, 10, 13, 17];
 const SCENES = ['mining', 'electricity'];
 const BEFORE_FAULT = 10;
 const AFTER_FAULT = 13;
+const FIGURE_FLOOR = 0.85;
+const STAGE_FLOOR = 0.9;
+const COPY = ['h1', '.lede', '.tags', '.actions'];
+const VIEWS = [
+  { name: 'hero-desktop-mining', scene: 'mining', width: 1440 },
+  { name: 'hero-desktop-electricity', scene: 'electricity', width: 1440 },
+  { name: 'hero-1100', scene: 'mining', width: 1100 },
+  { name: 'hero-phone', scene: 'electricity', width: 390, height: 844, deviceScaleFactor: 2 },
+];
 const REFERENCE = process.env.MESH_REF;
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.ttf': 'font/ttf', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.png': 'image/png' };
 
@@ -40,18 +49,24 @@ function count(page, png, other = png) {
         c.height = img.height;
         const g = c.getContext('2d');
         g.drawImage(img, 0, 0);
-        return g.getImageData(0, 0, c.width, c.height).data;
+        return Object.assign(g.getImageData(0, 0, c.width, c.height).data, { columns: c.width });
       })
     );
+    let left = px.columns;
+    let right = -1;
     let drawn = 0;
     let accent = 0;
     let differing = 0;
     for (let i = 0; i < px.length; i += 4) {
-      if (Math.max(px[i], px[i + 1], px[i + 2]) > 48) drawn++;
+      if (Math.max(px[i], px[i + 1], px[i + 2]) > 48) {
+        drawn++;
+        left = Math.min(left, (i / 4) % px.columns);
+        right = Math.max(right, (i / 4) % px.columns);
+      }
       if (px[i + 1] - px[i + 2] > 22 && px[i + 1] >= px[i] - 2 && px[i + 1] > 60) accent++;
       if (Math.abs(px[i] - py[i]) > 24) differing++;
     }
-    return { drawn, accent, differing };
+    return { drawn, accent, differing, span: Math.max(0, right - left + 1) / px.columns };
   }, [png.toString('base64'), other.toString('base64')]);
 }
 
@@ -93,9 +108,12 @@ for (const scene of SCENES) {
   frames[scene] = [];
   for (const t of TIMES) {
     const { context, page, errors } = await open(browser, base, `?scene=${scene}&t=${t}`);
-    await page.addStyleTag({ content: '.hero .wrap { display: none } .hero { height: 680px } .mesh { width: 100%; -webkit-mask-image: none; mask-image: none }' });
+    await page.addStyleTag({ content: '.hero .wrap { display: none }' });
     const file = path.join(ART, `${scene}-${String(t).padStart(2, '0')}.png`);
-    await page.waitForFunction(() => document.querySelector('.mesh canvas').width === 1440);
+    await page.waitForFunction(() => {
+      const c = document.querySelector('.mesh canvas');
+      return c.width === c.clientWidth;
+    });
     const png = await page.locator('.mesh').screenshot({ path: file });
     frames[scene].push(file);
     if (t === 7) built[scene] = png;
@@ -109,22 +127,43 @@ for (const scene of SCENES) {
   }
 }
 
-{
-  const { context, page, errors } = await open(browser, base, '?scene=mining&t=17');
-  const { differing } = await count(page, built.mining, built.electricity);
-  console.log(`scenes differ at t=7 by ${differing} pixels`);
-  if (differing < 2000) failures.push(`the two scenes look the same at t=7 (${differing} differing pixels)`);
-  await page.screenshot({ path: path.join(ART, 'hero-desktop.png') });
-  for (const e of errors) failures.push(`desktop: console error: ${e}`);
+for (const { name, scene, width, height = 900, deviceScaleFactor = 1 } of VIEWS) {
+  const { context, page, errors } = await open(browser, base, `?scene=${scene}&t=${AFTER_FAULT}`, { viewport: { width, height }, deviceScaleFactor });
+  const file = path.join(ART, `${name}.png`);
+  await page.locator('.hero').screenshot({ path: file });
+  console.log(`frame ${file}`);
+  await page.addStyleTag({ content: '.hero .wrap { visibility: hidden }' });
+  const region = async (selector) => {
+    const clip = await page.locator(selector).boundingBox();
+    return count(page, await page.screenshot({ clip, fullPage: true }));
+  };
+  for (const part of COPY) {
+    const { drawn } = await region(`.hero .wrap ${part}`);
+    if (drawn > 0) failures.push(`${name}: ${drawn} drawn scene pixels inside the ${part} box`);
+  }
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  if (overflow > 0) failures.push(`${name}: page scrolls sideways by ${overflow}px`);
+  if (width === 1440) {
+    const stage = await page.evaluate(() => {
+      const wrap = document.querySelector('.hero .wrap');
+      const pad = getComputedStyle(wrap);
+      const column = wrap.clientWidth - parseFloat(pad.paddingLeft) - parseFloat(pad.paddingRight);
+      return document.querySelector('.mesh canvas').getBoundingClientRect().width / column;
+    });
+    const figure = await region('.mesh canvas');
+    console.log(`${name}: stage spans ${stage.toFixed(3)} of the content column, figure spans ${figure.span.toFixed(3)} of the stage`);
+    if (stage < STAGE_FLOOR) failures.push(`${name}: the stage spans ${stage.toFixed(3)} of the content column, under ${STAGE_FLOOR}`);
+    if (figure.span < FIGURE_FLOOR) failures.push(`${name}: the scene spans ${figure.span.toFixed(3)} of its stage width, under ${FIGURE_FLOOR}`);
+  }
+  for (const e of errors) failures.push(`${name}: console error: ${e}`);
   await context.close();
 }
 
 {
-  const { context, page, errors } = await open(browser, base, '?scene=electricity&t=17', { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
-  await page.screenshot({ path: path.join(ART, 'hero-phone.png'), fullPage: true });
-  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-  if (overflow > 0) failures.push(`phone: page scrolls sideways by ${overflow}px`);
-  for (const e of errors) failures.push(`phone: console error: ${e}`);
+  const { context, page } = await open(browser, base, '?scene=mining&t=17');
+  const { differing } = await count(page, built.mining, built.electricity);
+  console.log(`scenes differ at t=7 by ${differing} pixels`);
+  if (differing < 2000) failures.push(`the two scenes look the same at t=7 (${differing} differing pixels)`);
   await context.close();
 }
 

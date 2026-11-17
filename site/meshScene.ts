@@ -10,6 +10,12 @@ const SEGMENTS = 48;
 const RADIUS: Record<Role, number> = { source: 1.4, edge: 0.45, system: 0.8, output: 0.9 };
 const OUTLINE: Record<Role, [number, number]> = { source: [56, 0], edge: [4, Math.PI / 4], system: [6, 0], output: [3, Math.PI / 2] };
 const FLAT = -Math.PI / 2;
+const HEADROOM = 2.4;
+const MARGIN = 1.2;
+const TEXT = { zone: 0.9, node: 0.8, tag: 0.9 };
+const LEGIBLE = 24;
+const GROWN = 1.8;
+const STAGGER = 2.4;
 
 type Step = (t: number, live: number) => void;
 type Ink = { bone: THREE.Color; olive: THREE.Color; anisotropy: number };
@@ -50,6 +56,9 @@ function shape(parts: Part[]) {
 function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
   const group = new THREE.Group();
   const steps: Step[] = [];
+  const words: THREE.Mesh[] = [];
+  const names: THREE.Mesh[] = [];
+  const rows: { row: THREE.Mesh; z: number }[] = [];
 
   const flat = (geometry: THREE.BufferGeometry, x: number, z: number) => {
     const mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: bone, transparent: true, depthWrite: false }));
@@ -81,6 +90,7 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
     mesh.rotation.x = FLAT;
     mesh.position.set(x, 0.03, z);
     group.add(mesh);
+    words.push(mesh);
     return mesh;
   };
 
@@ -88,6 +98,7 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
     const material = new THREE.LineBasicMaterial({ color: bone, transparent: true, opacity, depthWrite: false });
     group.add(segments ? new THREE.LineSegments(geometry, material) : new THREE.Line(geometry, material));
+    return material;
   };
 
   const [x0, z0, x1, z1] = PLANE;
@@ -107,8 +118,15 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
   );
   for (const zone of scene.zones) {
     const [a, b, c, d] = zone.rect;
-    stroke([[a, b], [c, b], [c, d], [a, d], [a, b]].map(([x, z]) => new THREE.Vector3(x, 0, z)), 0.28);
-    text(zone.label, 0.5, a + 0.4, d + 0.7).material.opacity = 0.5;
+    const edge = stroke([[a, b], [c, b], [c, d], [a, d], [a, b]].map(([x, z]) => new THREE.Vector3(x, 0, z)), 0);
+    const row = text(zone.label, TEXT.zone, a + 0.4, d + TEXT.zone * 1.4);
+    const name = row.material;
+    rows.push({ row, z: row.position.z });
+    steps.push((t, live) => {
+      const shown = ramp(t, 0, 0.8) * live;
+      edge.opacity = 0.28 * shown;
+      name.opacity = 0.5 * shown;
+    });
   }
 
   const modelled = scene.nodes.filter((n) => n.model).length;
@@ -122,9 +140,10 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
     const ring = flat(new THREE.RingGeometry(r - (node.role === 'source' ? 0.06 : 0.09), r, sides, 1, spin), x, z);
     const fill = flat(new THREE.CircleGeometry(r, sides, spin), x, z);
     const dot = flat(new THREE.CircleGeometry(0.09, 12), x, z);
-    const label = node.label ? text(node.label, 0.42, x - r * 0.7, z + r + 0.75) : null;
-    const alarm = node.faultTag ? text(node.faultTag, 0.55, x - r * 0.5, z + r + 0.15) : null;
+    const label = node.label ? text(node.label, TEXT.node, x - r * 0.7, z + r + TEXT.node * 1.1) : null;
+    const alarm = node.faultTag ? text(node.faultTag, TEXT.tag, x - r * 0.7, z + r + TEXT.node * 1.1) : null;
     alarm?.material.color.copy(olive);
+    if (label) names.push(label);
     steps.push((t, live) => {
       const grown = ramp(t, born + 0.3, 0.7);
       const hit = ramp(t, fault, 0.4);
@@ -134,8 +153,9 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
       fill.material.opacity = grown * (0.05 + 0.12 * hit) * live;
       dot.material.opacity = ramp(t, born, 0.3) * live;
       for (const mark of [ring, fill, dot]) mark.material.color.lerpColors(bone, olive, hit);
-      if (label) label.material.opacity = grown * 0.6 * live;
-      if (alarm) alarm.material.opacity = ramp(t, fault + 0.3, 0.4) * live;
+      const raised = alarm ? ramp(t, fault + 0.3, 0.4) : 0;
+      if (label) label.material.opacity = grown * 0.75 * (1 - raised) * live;
+      if (alarm) alarm.material.opacity = raised * live;
     });
 
     if (!node.model) return;
@@ -145,6 +165,7 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
     const lines = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: bone, transparent: true }));
     const mirror = new THREE.Mesh(solid, new THREE.MeshBasicMaterial({ color: bone, transparent: true, side: THREE.BackSide, depthWrite: false }));
     mirror.scale.y = -1;
+    body.renderOrder = lines.renderOrder = 1;
     group.add(mirror, body, lines);
     steps.push((t, live) => {
       const down = ramp(t, lands, 0.8);
@@ -190,8 +211,8 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
       return { ...d, mesh };
     });
     const middle = curve.getPoint(0.5);
-    const tag = link.tag ? text(link.tag, 0.5, middle.x + 0.15, middle.z + 0.45) : null;
-    const late = link.lateTag ? text(link.lateTag, 0.5, middle.x + 0.15, middle.z + 0.45) : null;
+    const tag = link.tag ? text(link.tag, TEXT.tag, middle.x + 0.15, middle.z + TEXT.tag * 0.8) : null;
+    const late = link.lateTag ? text(link.lateTag, TEXT.tag, middle.x + 0.15, middle.z + TEXT.tag * 0.8) : null;
     late?.material.color.copy(olive);
     const strength = link.reroute ? 0.95 : link.silent ? 0.75 : 0.4;
     steps.push((t, live) => {
@@ -216,7 +237,13 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
     });
   }
 
-  return { group, update: (t: number) => steps.forEach((step) => step(t, 1 - ramp(t, BEATS.fade, 0.7))) };
+  const size = (grow: number) => {
+    words.forEach((word) => word.scale.setScalar(grow));
+    names.forEach((name) => (name.visible = grow === 1));
+    rows.forEach(({ row, z }, i) => (row.position.z = z + (i % 2) * (grow - 1) * STAGGER));
+  };
+
+  return { group, size, update: (t: number) => steps.forEach((step) => step(t, 1 - ramp(t, BEATS.fade, 0.7))) };
 }
 
 export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, scenes: Scene[]) {
@@ -249,6 +276,11 @@ export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, scenes: S
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 200);
   camera.position.set(50, 41, 50);
   camera.lookAt(0, 0, 0);
+  camera.updateMatrixWorld();
+  const [x0, z0, x1, z1] = PLANE;
+  const bounds = new THREE.Box3();
+  for (const x of [x0, x1]) for (const z of [z0, z1]) for (const y of [0, HEADROOM]) bounds.expandByPoint(new THREE.Vector3(x, y, z).applyMatrix4(camera.matrixWorldInverse));
+  bounds.expandByVector(new THREE.Vector3(MARGIN, MARGIN, 0));
 
   let elapsed = 0;
   let last = 0;
@@ -272,13 +304,13 @@ export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, scenes: S
     const height = canvas.clientHeight;
     if (!width || !height) return;
     renderer.setSize(width, height, false);
-    const tall = Math.max(9.5, 15 / (width / height));
-    const rise = 0.8 + (tall - 9.5) * 0.6;
-    camera.top = tall + rise;
-    camera.bottom = -tall + rise;
-    camera.left = (-tall * width) / height;
-    camera.right = (tall * width) / height;
+    const scale = Math.max((bounds.max.x - bounds.min.x) / width, (bounds.max.y - bounds.min.y) / height);
+    camera.right = bounds.max.x;
+    camera.left = bounds.max.x - width * scale;
+    camera.bottom = bounds.min.y;
+    camera.top = bounds.min.y + height * scale;
     camera.updateProjectionMatrix();
+    built.forEach((b) => b.size(Math.min(GROWN, Math.max(1, LEGIBLE * scale))));
     draw();
   };
 
