@@ -310,31 +310,30 @@ section {
   margin-top: clamp(22px, 3vw, 36px);
 }
 
-.field {
+.mesh {
   position: absolute;
-  right: -6%;
-  bottom: -8%;
-  width: min(62%, 900px);
-  height: auto;
-  opacity: 0.9;
-  -webkit-mask-image: radial-gradient(ellipse at 62% 62%, #000 30%, transparent 72%);
-  mask-image: radial-gradient(ellipse at 62% 62%, #000 30%, transparent 72%);
+  inset: 0 0 0 auto;
+  width: 58%;
   pointer-events: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 30%);
+  mask-image: linear-gradient(90deg, transparent, #000 30%);
 }
 
-.field .col {
-  animation: breathe 7s ease-in-out infinite;
-  animation-delay: calc(var(--i) * -0.37s);
+.mesh canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
-@keyframes breathe {
-  0%,
-  100% {
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 1;
-  }
+.mesh-cap {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 18px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--faint);
 }
 
 .tags {
@@ -919,13 +918,26 @@ main > .plate {
     mask-image: linear-gradient(180deg, transparent, #000 40%);
   }
 
-  .field {
+  .mesh {
     position: relative;
     order: 2;
-    right: auto;
-    bottom: auto;
-    width: 130%;
-    margin: -6% -15% -20%;
+    inset: auto;
+    width: 100%;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .mesh canvas {
+    height: auto;
+    aspect-ratio: 3 / 2;
+  }
+
+  .mesh-cap {
+    position: static;
+    display: block;
+    min-height: 2.8em;
+    padding: 0 var(--gutter);
+    line-height: 1.4;
   }
 
   .node {

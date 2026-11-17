@@ -34,18 +34,30 @@ Mono font file.
 
 Design: one dark theme in `site.css`. Charcoal ground, bone text, olive as the
 only accent, hairline rules. Archivo (self-hosted through `@fontsource-variable`)
-sets headings and body; Berkeley Mono sets labels, tags and navigation. Figures
-are drawn in markup: `site/Field.tsx` is the hero's isometric column field and
-`site/Flow.tsx` is the case-study process diagram, which stacks vertically on a
-phone. The early-2000s console interface influence stays in the details: the
-glowing diamond on the selected menu item and quiz option, the column field,
-the notched button, and the page transition. The built output requests nothing
+sets headings and body; Berkeley Mono sets labels, tags and navigation. `site/Flow.tsx`
+is the case-study process diagram, drawn in markup, which stacks vertically on
+a phone. The early-2000s console interface influence stays in the details: the
+glowing diamond on the selected menu item and quiz option, the notched button,
+and the page transition.
+
+The hero figure is a looping three.js scene of how operational data is
+collected in one industry: sources on the ground, the collection path, the
+systems of record, one failure and its recovery. Each scene is a data file in
+`site/scenes/` (zones, nodes with low-poly models built from boxes and
+cylinders, links) listed in `site/scenes/index.ts`; mining and electricity
+distribution alternate, one per loop. Marker shape encodes role: circle for a
+field source, square for an edge device, hexagon for a system of record,
+triangle for the reconciled output. A scene depicts an industry and names no
+client, site, vendor or figure. `site/meshScene.ts` renders any scene as a pure
+function of the scene and the time in seconds, and `site/Mesh.tsx` loads it and
+three.js only in the browser. `?scene=<id>&t=<seconds>` pins one frame.
+Reduced motion gets one still frame, and no WebGL gets nothing. The built output requests nothing
 from another host: no remote fonts, scripts, images or analytics.
 
 Images are optional and live in `public/images/`. `site/Plate.tsx` shows a file
 when one with the slot's name exists (`.avif`, `.webp`, `.jpg` or `.png`) and
 renders nothing when it does not, so a slot is filled by adding a file and
-needs no code change. Slots: `hero` (replaces the column field),
+needs no code change. Slots: `hero` (replaces the hero scene),
 `work-<slug>`, `capability-<id>`, `sector-<name>` (including
 `sector-electricity`), and `studio`. Images are illustration: charcoal, bone
 and olive, no text, and never presented as a photograph of a client's site.
@@ -53,4 +65,9 @@ and olive, no text, and never presented as a photograph of a client's site.
 `tests/design_check.py` runs against `out/` after a build and enforces the
 route count, the no-remote-assets rule, that every image is a file in
 `public/images/`, the quiz, the redirect stubs, and that
-every listed sector has a case.
+every listed sector has a case. `node tests/mesh_check.mjs` also runs against
+`out/`, in Chrome through `playwright-core`: it captures both hero scenes at
+six times into `tests/out/mesh/`, and checks that they draw, that olive appears
+only after the fault, that the scenes differ, the phone layout, reduced motion,
+and the console. With `MESH_REF` set to a reference video it also writes one
+comparison image per scene.
