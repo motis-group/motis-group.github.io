@@ -33,7 +33,14 @@ holds what is served as-is: favicon, `CNAME`, `.nojekyll`, the Berkeley
 Mono font file, and the hero scene models in `public/models/`.
 
 Design: one dark theme in `site.css`. Charcoal ground, bone text, olive as the
-only accent, hairline rules. Archivo (self-hosted through `@fontsource-variable`)
+only accent, hairline rules. The hero scene colours each signal by its class,
+and the legend under the stage names them: bone for machine telemetry (PLC,
+SCADA, RTU and historian tags), steel blue `--steel` for events and
+transactions (fleet payloads and haul cycles, meter interval reads, last gasp,
+switch status), sand `--sand` for human-entered records (assay grades, shift
+reports, survey, as-built), and pale teal `--teal` for the AI agent's reads,
+trace pulse and card accent. Power lines carry no data and stay bone. Olive
+appears in the scene only at the fault, and no colour is red. Archivo (self-hosted through `@fontsource-variable`)
 sets headings and body; Berkeley Mono sets labels, tags and navigation. `site/Flow.tsx`
 is the case-study process diagram, drawn in markup, which stacks vertically on
 a phone. The early-2000s console interface influence stays in the details: the
@@ -43,22 +50,33 @@ and the page transition.
 The hero figure is a looping three.js scene of how operational data is
 collected in one industry, on a stage of its own under the hero text that
 spans the content column at every width: sources on the ground, the collection path, the
-systems of record, one failure and its recovery. Each scene is a data file in
+systems of record, one failure and its recovery. A loop runs 45 seconds: the
+build, about twelve seconds of normal operation, the fault, the agent's beats,
+the act and its audit line, and the fade. In normal operation a link's `chip`
+rides its packets as a value chip with a figure and unit, such as PAYLOAD 226 t
+or FEEDER 11 kV; packets of telemetry run more often than events, and events
+more often than records. Each scene is a data file in
 `site/scenes/` (zones, nodes, links) listed in `site/scenes/index.ts`; mining and electricity
 distribution alternate, one per loop. Marker shape encodes role: circle for a
 field source, square for an edge device, hexagon for a system of record,
-triangle for the reconciled output, double diamond for the agent. A scene
-depicts an industry and names no client, site, vendor or measured figure.
+triangle for the reconciled output, double diamond for the agent. Each scene
+has an `AI LAYER` zone on the systems side of the grid that holds the agent
+and no other node, and that no other node's label reaches into; the agent's read lines and sign edge cross into it from the
+systems of record. A scene depicts an industry and names no client, site, vendor or measured figure; its chip values are typical, not measured.
 
-After the fault, each scene's `agent` runs five beats, as a depiction and not a
-live model. Detect: the agent node appears and its read lines to the systems of
-record light up. Trace: a bone pulse runs back along the existing edges from
-the output to the faulted source. Explain: the agent's card types out as DOM
-text, over the stage's top-right corner on a desktop and below the stage on a
-phone. Sign: the named person (`signer`) appears, an edge runs to them from the
-agent, and SIGNED shows under their label. Act: the held and paused flows
-release and the reroutes draw, never before SIGNED. The agent layer is bone
-and charcoal only; olive stays on the fault.
+The agent sits in its zone from the build and reads the systems of record:
+teal packets run up its read lines. After the fault, each scene's `agent` runs
+eight beats, as a depiction and not a live model. The agent's card lists the
+eight steps, lights the current one in teal and types its caption from
+`agent.say` as DOM text, over the stage's top-right corner on a desktop and
+below the stage on a phone. Detect: the read lines light up. Correlate: the
+lines to two independent sources (`correlate`) stay lit while the others dim.
+Trace: a teal pulse runs back along the existing edges from the output to the
+faulted source. Explain: the card types the plain-language finding (`card`).
+Recommend: the proposed action. Sign: the named person (`signer`) appears, an
+edge runs to them from the agent, and SIGNED shows under their label. Act: the
+held and paused flows release, the reroutes draw and the output ring turns
+teal, never before SIGNED. Audit: one line records who signed and the result.
 
 The equipment on a node is a sourced open-licence model, not drawn in code. A
 node's `glb` lists the files in `public/models/` it places, each with a size,
@@ -85,10 +103,12 @@ clipboard in `operator`) and michu (`solar-panel`).
 function of the scene and the time in seconds, and `site/Mesh.tsx` loads it and
 three.js only in the browser. `?scene=<id>&t=<seconds>` pins one frame, and
 the canvas then publishes the projected outline of every label and ring in
-`data-layout`. Once every model has loaded or fallen back, the canvas
-publishes `data-models`: the files on each node and the nodes that fell back. A node label sits in front of its own marker. A link tag sits
-beside its link, at the midpoint or at `tagAt`. The camera rises until the
-plane fills the aspect ratio of the stage, so the taller stage on a phone is
+`data-layout` and of every zone in `data-zones`. Once every model has loaded or fallen back, the canvas
+publishes `data-models`: the files on each node and the nodes that fell back. A node label sits in front of its own marker and runs right from it, or left with `labelSide: 'left'`, which keeps a label beside the `AI LAYER` out of that zone. A link tag sits
+beside its link, at the midpoint or at `tagAt`. A value chip is a DOM element
+over the canvas that rides its packet only along the longest stretch of its
+link where it clears every label and ring, at most four at once. The camera rises until the
+scene's grid, the base plane plus every zone, fills the aspect ratio of the stage, so the taller stage on a phone is
 seen from higher up. On a stage too narrow for the labels to read, the
 renderer enlarges every label and staggers the zone labels.
 Reduced motion gets one still frame, and no WebGL gets nothing. The built output requests nothing
@@ -107,19 +127,27 @@ route count, the no-remote-assets rule, that every image is a file in
 `public/images/`, the quiz, the redirect stubs, and that
 every listed sector has a case. `node tests/mesh_check.mjs` also runs against
 `out/`, in Chrome through `playwright-core`: it captures both hero scenes at
-six times into `tests/out/mesh/`, and checks that they draw, that olive appears
-only after the fault, that the scenes differ, that the stage spans the content column
+eight times into `tests/out/mesh/`, and checks that they draw, that olive appears
+only after the fault, that a frame at t=41 still draws and one at t=44.9 has
+faded, that in normal operation each signal colour renders and olive does not,
+that the legend names the four signal classes, that value chips with units ride
+before the fault (at least three at once at 1440, never more than four, clear of
+labels, rings and each other at 1440, 1280 and phone widths) and none after it,
+saving `normal-<scene>.png`, that the scenes differ, that the stage spans the content column
 on a desktop, that no scene pixel falls inside the headline, lede, tags or
 actions at desktop, tablet and phone widths, that no width scrolls sideways,
 that no label overlaps a ring or another label at 1440, 1280 and phone widths
-after the fault and at t=19, that a phone shows every node label, that each named flow
+after the fault and at t=41, with mining's labels, tags, rings and chips held
+`CLEAR` (0.14 world units) apart, that each scene's AGENT marker sits inside its
+`AI LAYER` zone, in no other zone and with no other marker or other node's label, that a phone shows every node label, that each named flow
 shows its tag on the edge between its two labelled nodes (`FLOWS`), with the
 meters' LAST GASP only after the fault, that every model file loads with no fallback,
 that no request leaves the local server, reduced motion, and the console. It
 checks each agent beat on pinned frames: no card or SIGNED before the fault,
-traced edges brighter than a frame earlier, the card text inside the stage (or
-below it on a phone) clear of labels and rings, SIGNED only from the sign beat,
-and the act only after it, saving `ai-<scene>-<beat>.png`. It saves a close-up
-of every model at t=19 in `models-<scene>.png`. It also saves
+the eight steps lit in order each with its own caption, traced edges brighter
+than a frame earlier, the card text inside the stage (or below it on a phone)
+clear of labels and rings, SIGNED only from the sign beat, the act only after
+it, and the audit line only after the act, saving `ai-<scene>-<beat>.png`. It
+saves a close-up of every model at t=41 in `models-<scene>.png`. It also saves
 the first screen of each scene at 1440 by 900. With `MESH_REF` set to a reference video it also writes one
 comparison image per scene.

@@ -8,10 +8,13 @@ import { chromium } from 'playwright-core';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'out');
 const ART = path.join(ROOT, 'tests', 'out', 'mesh');
-const TIMES = [1, 4, 7, 10, 13, 17];
+const TIMES = [1, 4, 7, 16, 21, 24, 30, 41];
 const SCENES = ['mining', 'electricity'];
-const BEFORE_FAULT = 10;
-const AFTER_FAULT = 13;
+const BEFORE_FAULT = 21;
+const AFTER_FAULT = 24;
+const NORMAL = 16;
+const RIDING = [14, 16, 18, 20];
+const FADED = 44.9;
 const FIGURE_FLOOR = 0.85;
 const STAGE_FLOOR = 0.9;
 const COPY = ['h1', '.lede', '.tags', '.actions'];
@@ -23,13 +26,22 @@ const VIEWS = [
   { name: 'hero-phone', scene: 'electricity', width: 390, height: 844, deviceScaleFactor: 2 },
 ];
 const LAYOUTS = [{ width: 1440 }, { width: 1280, height: 800 }, { width: 390, height: 844, deviceScaleFactor: 2 }];
-const STILL = 19;
+const STILL = 41;
+const LAYER = 'AI LAYER';
 const AI = {
-  mining: { signer: 'METALLURGIST', card: 'Balance 4% short of the belt scale. 3 trucks buffering on the haul road. Hold the close until they upload.', act: ['LATE', 'RECONCILE'] },
-  electricity: { signer: 'DISPATCHER', card: 'Fault below the recloser. 412 meters dark. Close the tie switch to restore.', act: ['STATUS'] },
+  mining: { signer: 'METALLURGIST', card: 'Balance 4% short of the belt scale. 3 trucks buffering on the haul road. Hold the close until they upload.', act: ['LATE', 'RECONCILE'], audit: 'Signed by metallurgist · balance closed at 100.0%' },
+  electricity: { signer: 'DISPATCHER', card: 'Fault below the recloser. 412 meters dark. Close the tie switch to restore.', act: ['STATUS'], audit: 'Signed by dispatcher · 412 meters restored' },
 };
-const BEAT = { before: BEFORE_FAULT, detect: 11.7, trace: 12.9, explain: 14.5, unsigned: 14.6, sign: 14.9, act: STILL };
+const BEAT = { before: BEFORE_FAULT, detect: 23.8, correlate: 26.3, trace: 29.5, explain: 31.8, recommend: 34, unsigned: 34.4, sign: 34.8, act: 39, audit: STILL };
+const STEPS = ['detect', 'correlate', 'trace', 'explain', 'recommend', 'sign', 'act', 'audit'];
+const SIGNALS = { telemetry: /telemetry/i, event: /event/i, record: /record/i, agent: /agent/i };
+const UNIT = /\d[\d.,]*\s?(t\/h|kt|t|MW|%|min|h|kV|A|kWh)(?![\w])/;
+const CHIPS = { least: 3, most: 4 };
 const LIT = 0.5;
+const REACH = 4;
+const GROW = 1.6;
+const APART = 10;
+const CLEAR = { mining: 0.14 };
 const FLOWS = [
   { scene: 'mining', t: STILL, from: 'HAUL TRUCK', to: 'MINE NETWORK', tag: 'PAYLOADS' },
   { scene: 'mining', t: STILL, from: 'OPERATOR', to: 'PROD. REPORTING', tag: 'SHIFT REPORT' },
@@ -55,8 +67,8 @@ function serve() {
   return new Promise((resolve) => server.listen(0, '127.0.0.1', () => resolve(server)));
 }
 
-function count(page, png, other = png) {
-  return page.evaluate(async (pair) => {
+function count(page, png, other = png, owners = []) {
+  return page.evaluate(async ({ pair, owners, reach }) => {
     const [px, py] = await Promise.all(
       pair.map(async (data) => {
         const img = new Image();
@@ -75,17 +87,61 @@ function count(page, png, other = png) {
     let drawn = 0;
     let accent = 0;
     let differing = 0;
+    const ink = { telemetry: 0, event: 0, record: 0, agent: 0 };
+    const owned = Object.fromEntries(Object.keys(ink).map((k) => [k, { ...ink }]));
+    const owner = new Map();
+    for (const [x, y, signal] of owners)
+      for (let dx = -reach; dx <= reach; dx++)
+        for (let dy = -reach; dy <= reach; dy++) {
+          const at = (Math.round(y) + dy) * px.columns + Math.round(x) + dx;
+          owner.set(at, owner.has(at) && owner.get(at) !== signal ? null : signal);
+        }
+    const tally = (i, kind) => {
+      ink[kind]++;
+      const by = owner.get(i / 4);
+      if (by) owned[by][kind]++;
+    };
     for (let i = 0; i < px.length; i += 4) {
       if (Math.max(px[i], px[i + 1], px[i + 2]) > 48) {
         drawn++;
         left = Math.min(left, (i / 4) % px.columns);
         right = Math.max(right, (i / 4) % px.columns);
       }
-      if (px[i + 1] - px[i + 2] > 22 && px[i + 1] >= px[i] - 2 && px[i + 1] > 60) accent++;
+      const [r, g, b] = [px[i], px[i + 1], px[i + 2]];
+      if (g - b > 22 && g >= r - 2 && g > 60) accent++;
+      else if (Math.max(r, g, b) > 70) {
+        if (b - r > 30 && b >= g) tally(i, 'event');
+        else if (g - r > 30 && g > b && g - b < 22) tally(i, 'agent');
+        else if (r - b > 40 && r > g && g > b && r - g > 12) tally(i, 'record');
+        else if (Math.max(r, g, b) - Math.min(r, g, b) < 26 && Math.max(r, g, b) > 140) tally(i, 'telemetry');
+      }
       if (Math.abs(px[i] - py[i]) > 24) differing++;
     }
-    return { drawn, accent, differing, span: Math.max(0, right - left + 1) / px.columns };
-  }, [png.toString('base64'), other.toString('base64')]);
+    return { drawn, accent, differing, ink, owned, span: Math.max(0, right - left + 1) / px.columns };
+  }, { pair: [png.toString('base64'), other.toString('base64')], owners, reach: REACH });
+}
+
+function along(links, marks) {
+  const shown = links.filter((l) => l.alpha > 0.1);
+  const dense = shown.map(({ signal, points }) => ({
+    signal,
+    points: points.slice(1).flatMap(([x, y], i) => {
+      const [u, v] = points[i];
+      const steps = Math.max(1, Math.ceil(Math.hypot(x - u, y - v)));
+      return Array.from({ length: steps }, (_, k) => [u + ((x - u) * k) / steps, v + ((y - v) * k) / steps]);
+    }),
+  }));
+  const grown = (box) => {
+    const [cx, cy] = middle(box);
+    return box.map(([x, y]) => [cx + (x - cx) * GROW, cy + (y - cy) * GROW]);
+  };
+  const clear = marks.map((m) => (m.kind === 'ring' ? grown(m.box) : m.box));
+  return dense.flatMap(({ signal, points }) =>
+    points
+      .filter((p) => !clear.some((box) => inside(p, box)))
+      .filter(([x, y]) => !dense.some((o) => o.signal !== signal && o.points.some(([u, v]) => Math.hypot(x - u, y - v) < APART)))
+      .map(([x, y]) => [x, y, signal])
+  );
 }
 
 function brightness(page, png, points) {
@@ -120,18 +176,28 @@ async function stageAt(browser, base, scene, t, options) {
   const state = await opened.page.evaluate(() => {
     const canvas = document.querySelector('.mesh canvas');
     const card = document.querySelector('.mesh-card');
-    const shown = !!card && getComputedStyle(card).visibility !== 'hidden' && card.textContent.trim() !== '';
+    const say = card?.querySelector('.mesh-say');
+    const shown = !!say && getComputedStyle(card).visibility !== 'hidden' && say.textContent.trim() !== '';
     let lines = 0;
     if (shown) {
       const range = document.createRange();
-      range.selectNodeContents(card);
+      range.selectNodeContents(say);
       lines = new Set([...range.getClientRects()].map((r) => Math.round(r.top))).size;
     }
+    const step = shown ? card.querySelector('.mesh-steps .on')?.textContent ?? null : null;
+    const chips = [...document.querySelectorAll('.mesh-chip')]
+      .filter((c) => getComputedStyle(c).visibility !== 'hidden' && Number(getComputedStyle(c).opacity) > 0.05)
+      .map((c) => ({ text: c.textContent, box: c.getBoundingClientRect().toJSON() }));
+    const key = [...document.querySelectorAll('.mesh-key li')].map((li) => li.textContent);
     return {
       marks: JSON.parse(canvas.dataset.layout ?? '[]'),
+      links: JSON.parse(canvas.dataset.links ?? '[]'),
+      zones: JSON.parse(canvas.dataset.zones ?? '[]'),
       trace: JSON.parse(canvas.dataset.trace ?? '[]'),
       stage: canvas.getBoundingClientRect().toJSON(),
-      card: shown ? { text: card.textContent, box: card.getBoundingClientRect().toJSON(), lines } : null,
+      card: shown ? { text: say.textContent, step, box: card.getBoundingClientRect().toJSON(), lines } : null,
+      chips,
+      key,
       copy: ['h1', '.lede', '.tags', '.actions'].map((s) => [s, document.querySelector(`.hero .wrap ${s}`).getBoundingClientRect().toJSON()]),
     };
   });
@@ -187,15 +253,31 @@ async function sheet(page, file, tiles) {
   fs.writeFileSync(file, Buffer.from(png, 'base64'));
 }
 
-function overlap(a, b) {
+function overlap(a, b, pad = 0) {
   return [a, b].every((shape) =>
     shape.every(([x, y], i) => {
       const [u, v] = shape[(i + 1) % shape.length];
       const along = (points) => points.map(([px, py]) => px * (y - v) + py * (u - x));
       const [p, q] = [along(a), along(b)];
-      return Math.max(...p) > Math.min(...q) && Math.max(...q) > Math.min(...p);
+      const reach = pad * Math.hypot(y - v, u - x);
+      return Math.max(...p) + reach > Math.min(...q) && Math.max(...q) + reach > Math.min(...p);
     })
   );
+}
+
+function clearance(scene, zones) {
+  if (!zones.length) throw new Error(`${scene}: the canvas published no data-zones, so overlap padding cannot be measured`);
+  return (CLEAR[scene] ?? 0) * Math.min(...zones.flatMap(({ rect: [a, b, c, d], box: [p, q, , s] }) => [Math.hypot(q[0] - p[0], q[1] - p[1]) / (c - a), Math.hypot(s[0] - p[0], s[1] - p[1]) / (d - b)]));
+}
+
+const middle = (box) => [0, 1].map((k) => box.reduce((sum, p) => sum + p[k], 0) / box.length);
+
+function inside([x, y], polygon) {
+  const turns = polygon.map(([ax, ay], i) => {
+    const [bx, by] = polygon[(i + 1) % polygon.length];
+    return Math.sign((bx - ax) * (y - ay) - (by - ay) * (x - ax));
+  });
+  return turns.every((s) => s >= 0) || turns.every((s) => s <= 0);
 }
 
 function compare(scene, frames) {
@@ -242,6 +324,56 @@ for (const scene of SCENES) {
     for (const e of errors) failures.push(`${scene} t=${t}: console error: ${e}`);
     await context.close();
   }
+}
+
+for (const scene of SCENES) {
+  const faded = await stageAt(browser, base, scene, FADED);
+  const { drawn: left } = await count(faded.page, await faded.page.locator('.mesh canvas').screenshot());
+  console.log(`${scene} t=${FADED}: ${left} drawn pixels after the fade`);
+  if (left > 2000) failures.push(`${scene} t=${FADED}: the scene has not faded before the loop ends`);
+  await faded.context.close();
+  const normal = await stageAt(browser, base, scene, NORMAL);
+  await normal.page.addStyleTag({ content: '.mesh-chips, .mesh-chips * { visibility: hidden !important }' });
+  const owners = along(normal.links, normal.marks);
+  const { owned, accent } = await count(normal.page, await normal.page.locator('.mesh canvas').screenshot(), undefined, owners);
+  for (const [signal, inks] of Object.entries(owned)) {
+    const own = inks[signal];
+    const [rival, most] = Object.entries(inks).filter(([k]) => k !== signal).sort((a, b) => b[1] - a[1])[0];
+    console.log(`${scene} normal t=${NORMAL}: near ${signal} links ${Object.entries(inks).map(([k, v]) => `${k}=${v}`).join(' ')}`);
+    if (own < 40) failures.push(`${scene} normal t=${NORMAL}: the ${signal} links and packets do not render in the ${signal} colour (${own} pixels)`);
+    else if (own < 2 * most) failures.push(`${scene} normal t=${NORMAL}: the ${signal} links render as much in the ${rival} colour (${most}) as in their own (${own})`);
+  }
+  console.log(`${scene} normal t=${NORMAL}: olive=${accent}`);
+  if (accent > 20) failures.push(`${scene} normal t=${NORMAL}: olive renders before the fault (${accent} pixels)`);
+  for (const [signal, pattern] of Object.entries(SIGNALS)) if (!normal.key.some((k) => pattern.test(k))) failures.push(`${scene}: the legend does not name the ${signal} signals (${normal.key.join(' | ') || 'no legend'})`);
+  await normal.context.close();
+}
+
+for (const scene of SCENES) {
+  let most = 0;
+  for (const { width, height = 900, deviceScaleFactor = 1, t } of LAYOUTS.flatMap((l) => RIDING.map((t) => ({ ...l, t })))) {
+    const shot = await stageAt(browser, base, scene, t, { viewport: { width, height }, deviceScaleFactor });
+    const at = `${scene} chips at ${width} t=${t}`;
+    const { chips, marks, stage, zones } = shot;
+    const pad = clearance(scene, zones);
+    const valued = chips.filter((c) => UNIT.test(c.text));
+    console.log(`${at}: ${chips.map((c) => c.text).join(' | ') || 'none'}`);
+    if (width === 1440 && valued.length > most) {
+      most = valued.length;
+      await shot.page.locator('.mesh').screenshot({ path: path.join(ART, `normal-${scene}.png`) });
+    }
+    if (chips.length > CHIPS.most) failures.push(`${at}: ${chips.length} chips at once, want at most ${CHIPS.most}`);
+    chips.forEach((chip, i) => {
+      const shape = corners(chip.box, stage.left, stage.top);
+      for (const m of marks) if (overlap(shape, m.box, pad)) failures.push(`${at}: the ${chip.text} chip overlaps the ${m.text ?? m.of} ${m.kind === 'ring' ? 'ring' : 'label'}`);
+      for (const other of chips.slice(i + 1)) if (overlap(corners(chip.box), corners(other.box), pad)) failures.push(`${at}: the ${chip.text} chip overlaps the ${other.text} chip`);
+    });
+    await shot.context.close();
+  }
+  if (most < CHIPS.least) failures.push(`${scene} at 1440: at most ${most} value chips with units at t=${RIDING.join(', ')}, want ${CHIPS.least}`);
+  const after = await stageAt(browser, base, scene, AFTER_FAULT);
+  if (after.chips.length) failures.push(`${scene} t=${AFTER_FAULT}: value chips ride after the fault (${after.chips.map((c) => c.text).join(', ')})`);
+  await after.context.close();
 }
 
 for (const { name, scene, width, height = 900, deviceScaleFactor = 1, fold, floor } of VIEWS) {
@@ -335,6 +467,7 @@ for (const scene of SCENES) {
     const at = `${scene} at ${width} t=${t}`;
     const { context, page } = await open(browser, base, `?scene=${scene}&t=${t}`, { viewport: { width, height }, deviceScaleFactor });
     const marks = JSON.parse((await page.locator('.mesh canvas').getAttribute('data-layout')) ?? '[]');
+    const pad = clearance(scene, JSON.parse((await page.locator('.mesh canvas').getAttribute('data-zones')) ?? '[]'));
     const labels = marks.filter((m) => m.kind !== 'ring');
     const nodes = labels.filter((m) => m.kind === 'node').map((m) => m.text);
     named.push(nodes);
@@ -344,7 +477,7 @@ for (const scene of SCENES) {
     if (hidden.length) failures.push(`${at}: node labels hidden: ${hidden.join(', ')}`);
     labels.forEach((label, i) => {
       for (const other of [...marks.filter((m) => m.kind === 'ring'), ...labels.slice(i + 1).filter((m) => m.of !== label.of)]) {
-        if (overlap(label.box, other.box)) failures.push(`${at}: the ${label.text} label overlaps the ${other.text ?? other.of} ${other.kind === 'ring' ? 'ring' : 'label'}`);
+        if (overlap(label.box, other.box, pad)) failures.push(`${at}: the ${label.text} label overlaps the ${other.text ?? other.of} ${other.kind === 'ring' ? 'ring' : 'label'}`);
       }
     });
     await context.close();
@@ -380,7 +513,7 @@ for (const scene of SCENES) {
     for (const e of shot.errors) failures.push(`${scene} ${beat}: console error: ${e}`);
     shots[beat] = shot;
   }
-  const { before, detect, trace, explain, unsigned, sign, act: done } = shots;
+  const { before, detect, trace, explain, unsigned, sign, act: done, audit } = shots;
   const at = (beat) => `${scene} ${beat} t=${BEAT[beat]}`;
   if (before.card) failures.push(`${at('before')}: the agent card shows before the fault`);
   if (signed(before.marks)) failures.push(`${at('before')}: SIGNED shows before the fault`);
@@ -394,8 +527,19 @@ for (const scene of SCENES) {
   if (!sign.marks.some((m) => m.kind === 'node' && m.text === signer)) failures.push(`${at('sign')}: no node is labelled ${signer}`);
   if (signed(unsigned.marks)) failures.push(`${at('unsigned')}: SIGNED shows before the sign beat`);
   if (!signed(sign.marks)) failures.push(`${at('sign')}: no SIGNED tag`);
+  for (const beat of STEPS) {
+    const step = shots[beat].card?.step?.trim().toLowerCase();
+    console.log(`${at(beat)}: step ${step ?? 'none'}: ${plain(shots[beat].card?.text ?? '')}`);
+    if (step !== beat) failures.push(`${at(beat)}: the agent shows step ${step ?? 'none'}, want ${beat.toUpperCase()}`);
+    if (!shots[beat].card?.text.trim()) failures.push(`${at(beat)}: the ${beat.toUpperCase()} step has no caption`);
+  }
+  if (new Set(STEPS.map((b) => plain(shots[b].card?.text ?? ''))).size !== STEPS.length) failures.push(`${scene}: two AI steps share a caption`);
+  const early = ['before', ...STEPS.slice(0, STEPS.indexOf('sign')), 'unsigned'];
+  for (const beat of early) if (signed(shots[beat].marks)) failures.push(`${at(beat)}: SIGNED shows before the sign beat`);
+  if (plain(done.card?.text ?? '').includes(plain(AI[scene].audit))) failures.push(`${at('act')}: the audit line shows during the act`);
+  if (plain(audit.card?.text ?? '') !== plain(AI[scene].audit)) failures.push(`${at('audit')}: the audit line reads "${plain(audit.card?.text ?? '')}"`);
   for (const text of act) {
-    for (const beat of ['unsigned', 'sign']) if (alpha(shots[beat].marks, text) > 0) failures.push(`${at(beat)}: ${text} acts before the person signs`);
+    for (const beat of [...early, 'sign']) if (alpha(shots[beat].marks, text) > 0) failures.push(`${at(beat)}: ${text} acts before the person signs`);
     if (!(alpha(done.marks, text) > 0)) failures.push(`${at('act')}: ${text} never acts after SIGNED`);
   }
   console.log(`${scene}: card ${explain.card ? `${explain.card.lines} lines` : 'missing'}, SIGNED at ${BEAT.sign}, act ${act.map((a) => `${a}=${alpha(done.marks, a)}`).join(' ')}`);
@@ -403,20 +547,37 @@ for (const scene of SCENES) {
 }
 
 for (const scene of SCENES) {
-  for (const { width, height = 900, deviceScaleFactor = 1, t } of LAYOUTS.flatMap((l) => [BEAT.explain, BEAT.act].map((t) => ({ ...l, t })))) {
+  for (const { width, height = 900, deviceScaleFactor = 1, t } of LAYOUTS.flatMap((l) => [BEAT.explain, BEAT.act, BEAT.audit].map((t) => ({ ...l, t })))) {
     const shot = await stageAt(browser, base, scene, t, { viewport: { width, height }, deviceScaleFactor });
     const at = `${scene} card at ${width} t=${t}`;
-    const { card, stage, marks, copy } = shot;
+    const { card, stage, marks, copy, zones } = shot;
     await shot.context.close();
+    if (t === BEAT.act) {
+      const where = `${scene} ${LAYER} at ${width}`;
+      const layer = zones.find((z) => z.label === LAYER);
+      const others = zones.filter((z) => z !== layer);
+      const rings = marks.filter((m) => m.kind === 'ring');
+      const agent = rings.find((m) => m.of === 'agent');
+      if (!marks.some((m) => m.kind === 'zone' && m.text === LAYER)) failures.push(`${where}: no zone is labelled ${LAYER}`);
+      if (!layer || !agent) failures.push(`${where}: ${layer ? 'no AGENT marker' : `no ${LAYER} zone area`}`);
+      else {
+        const spot = middle(agent.box);
+        console.log(`${where}: AGENT at ${spot.map((v) => v.toFixed(0)).join(',')}, ${rings.filter((m) => inside(middle(m.box), layer.box)).length} markers inside the zone`);
+        if (!inside(spot, layer.box)) failures.push(`${where}: the AGENT marker is outside the ${LAYER} zone`);
+        for (const zone of others) if (inside(spot, zone.box)) failures.push(`${where}: the AGENT marker is inside the ${zone.label} zone`);
+        for (const ring of rings) if (ring !== agent && inside(middle(ring.box), layer.box)) failures.push(`${where}: the ${ring.of} marker is inside the ${LAYER} zone`);
+        for (const label of marks.filter((m) => m.kind === 'node' && m.of !== 'agent')) if (overlap(label.box, layer.box)) failures.push(`${where}: the ${label.text} label reaches into the ${LAYER} zone`);
+      }
+    }
     if (!card) {
       failures.push(`${at}: no agent card`);
       continue;
     }
     const { box } = card;
-    const inside = box.left >= stage.left - 0.5 && box.right <= stage.right + 0.5 && box.top >= stage.top - 0.5 && box.bottom <= stage.bottom + 0.5;
+    const within = box.left >= stage.left - 0.5 && box.right <= stage.right + 0.5 && box.top >= stage.top - 0.5 && box.bottom <= stage.bottom + 0.5;
     const below = box.top >= stage.bottom - 0.5 && box.left >= 0 && box.right <= width;
-    console.log(`${at}: ${card.lines} lines, ${inside ? 'inside' : below ? 'below' : 'outside'} the stage`);
-    if (!(inside || (width < 820 && below))) failures.push(`${at}: the card is not inside the stage`);
+    console.log(`${at}: ${card.lines} lines, ${within ? 'inside' : below ? 'below' : 'outside'} the stage`);
+    if (!(within || (width < 820 && below))) failures.push(`${at}: the card is not inside the stage`);
     if (width >= 820 && card.lines > 3) failures.push(`${at}: the card runs to ${card.lines} lines`);
     const shape = corners(box, stage.left, stage.top);
     for (const m of marks) if (overlap(shape, m.box)) failures.push(`${at}: the card overlaps the ${m.text ?? m.of} ${m.kind === 'ring' ? 'ring' : 'label'}`);
