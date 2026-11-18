@@ -301,31 +301,46 @@ section {
   position: relative;
   z-index: 1;
   width: 100%;
-  padding-top: 48px;
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  column-gap: clamp(32px, 5vw, 80px);
-  align-items: start;
-}
-
-.hero .label {
-  grid-column: 2;
+  padding-top: clamp(64px, 11vw, 150px);
 }
 
 .hero .display {
-  grid-column: 1;
-  grid-row: 1 / span 2;
   max-width: 14ch;
+  margin-top: 24px;
 }
 
 .hero-copy {
-  grid-column: 2;
-  margin-top: 20px;
+  margin-top: clamp(22px, 3vw, 36px);
 }
 
-.hero .tags,
-.hero .actions {
-  margin-top: 20px;
+@media (min-width: 821px) {
+  .hero .wrap {
+    padding-top: 48px;
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    column-gap: clamp(32px, 5vw, 80px);
+    align-items: start;
+  }
+
+  .hero .label {
+    grid-column: 2;
+  }
+
+  .hero .display {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    margin-top: 0;
+  }
+
+  .hero-copy {
+    grid-column: 2;
+    margin-top: 20px;
+  }
+
+  .hero .tags,
+  .hero .actions {
+    margin-top: 20px;
+  }
 }
 
 .mesh {
@@ -915,24 +930,6 @@ main > .plate {
 
   .top {
     position: static;
-  }
-
-  .hero .wrap {
-    display: block;
-    padding-top: clamp(64px, 11vw, 150px);
-  }
-
-  .hero .display {
-    margin-top: 24px;
-  }
-
-  .hero-copy {
-    margin-top: clamp(22px, 3vw, 36px);
-  }
-
-  .hero .tags,
-  .hero .actions {
-    margin-top: clamp(28px, 4vw, 44px);
   }
 
   .mesh canvas {
