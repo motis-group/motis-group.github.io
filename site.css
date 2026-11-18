@@ -901,6 +901,10 @@ main > .plate {
     position: static;
   }
 
+  .mesh canvas {
+    aspect-ratio: 6 / 5;
+  }
+
   .plate.hero {
     position: relative;
     order: 2;

@@ -23,6 +23,7 @@ export type Link = {
   from: string;
   to: string;
   tag?: string;
+  tagAt?: number;
   bend?: number;
   silent?: true;
   reroute?: true;

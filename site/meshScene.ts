@@ -14,11 +14,13 @@ const HEADROOM = 2.4;
 const MARGIN = 1.2;
 const TEXT = { zone: 0.9, node: 0.8, tag: 0.9 };
 const LEGIBLE = 24;
-const GROWN = 1.8;
-const STAGGER = 2.4;
+const GROWN = 1.5;
+const STAGGER = 1.05;
+const GAP = 0.25;
 
 type Step = (t: number, live: number) => void;
 type Ink = { bone: THREE.Color; olive: THREE.Color; anisotropy: number };
+type Mark = { of: string; kind: 'zone' | 'node' | 'tag' | 'ring'; text?: string; mesh: THREE.Mesh; shape: [number, number][] };
 
 const ramp = (t: number, start: number, length: number) => {
   const u = Math.min(1, Math.max(0, (t - start) / length));
@@ -57,7 +59,8 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
   const group = new THREE.Group();
   const steps: Step[] = [];
   const words: THREE.Mesh[] = [];
-  const names: THREE.Mesh[] = [];
+  const marks: Mark[] = [];
+  const names: { name: THREE.Mesh; top: number; height: number }[] = [];
   const rows: { row: THREE.Mesh; z: number }[] = [];
 
   const flat = (geometry: THREE.BufferGeometry, x: number, z: number) => {
@@ -68,7 +71,7 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
     return mesh;
   };
 
-  const text = (value: string, height: number, x: number, z: number) => {
+  const text = (value: string, height: number, x: number, z: number, kind: Mark['kind'], of: string) => {
     const canvas = document.createElement('canvas');
     const pen = canvas.getContext('2d')!;
     const font = '500 44px "Berkeley Mono", ui-monospace, monospace';
@@ -91,6 +94,7 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
     mesh.position.set(x, 0.03, z);
     group.add(mesh);
     words.push(mesh);
+    marks.push({ of, kind, text: value, mesh, shape: [[0, -height / 2], [width, -height / 2], [width, height / 2], [0, height / 2]] });
     return mesh;
   };
 
@@ -116,10 +120,10 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
       new THREE.PointsMaterial({ color: bone, size: 1.6, sizeAttenuation: false, transparent: true, opacity: 0.3, depthWrite: false })
     )
   );
-  for (const zone of scene.zones) {
+  scene.zones.forEach((zone, i) => {
     const [a, b, c, d] = zone.rect;
     const edge = stroke([[a, b], [c, b], [c, d], [a, d], [a, b]].map(([x, z]) => new THREE.Vector3(x, 0, z)), 0);
-    const row = text(zone.label, TEXT.zone, a + 0.4, d + TEXT.zone * 1.4);
+    const row = text(zone.label, TEXT.zone, a + 0.4, d + TEXT.zone * 1.4, 'zone', `zone ${i}`);
     const name = row.material;
     rows.push({ row, z: row.position.z });
     steps.push((t, live) => {
@@ -127,7 +131,7 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
       edge.opacity = 0.28 * shown;
       name.opacity = 0.5 * shown;
     });
-  }
+  });
 
   const modelled = scene.nodes.filter((n) => n.model).length;
   let landed = 0;
@@ -140,10 +144,12 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
     const ring = flat(new THREE.RingGeometry(r - (node.role === 'source' ? 0.06 : 0.09), r, sides, 1, spin), x, z);
     const fill = flat(new THREE.CircleGeometry(r, sides, spin), x, z);
     const dot = flat(new THREE.CircleGeometry(0.09, 12), x, z);
-    const label = node.label ? text(node.label, TEXT.node, x - r * 0.7, z + r + TEXT.node * 1.1) : null;
-    const alarm = node.faultTag ? text(node.faultTag, TEXT.tag, x - r * 0.7, z + r + TEXT.node * 1.1) : null;
+    marks.push({ of: node.id, kind: 'ring', mesh: fill, shape: Array.from({ length: sides }, (_, k) => [r * Math.cos(spin + (k * 2 * Math.PI) / sides), r * Math.sin(spin + (k * 2 * Math.PI) / sides)]) });
+    const label = node.label ? text(node.label, TEXT.node, x - r * 0.7, z, 'node', node.id) : null;
+    const alarm = node.faultTag ? text(node.faultTag, TEXT.tag, x - r * 0.7, z, 'node', node.id) : null;
     alarm?.material.color.copy(olive);
-    if (label) names.push(label);
+    if (label) names.push({ name: label, top: z + r + GAP, height: TEXT.node });
+    if (alarm) names.push({ name: alarm, top: z + r + GAP, height: TEXT.tag });
     steps.push((t, live) => {
       const grown = ramp(t, born + 0.3, 0.7);
       const hit = ramp(t, fault, 0.4);
@@ -184,7 +190,7 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
   const bead = new THREE.SphereGeometry(0.12, 10, 8);
   let flowed = 0;
   let rerouted = 0;
-  for (const link of scene.links) {
+  scene.links.forEach((link, i) => {
     const [ax, az] = place.get(link.from)!;
     const [bx, bz] = place.get(link.to)!;
     const start = link.reroute ? BEATS.recover + rerouted++ * 0.8 : BEATS.links + (flowed++ / flowing) * 2.1;
@@ -210,9 +216,9 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
       group.add(mesh);
       return { ...d, mesh };
     });
-    const middle = curve.getPoint(0.5);
-    const tag = link.tag ? text(link.tag, TEXT.tag, middle.x + 0.15, middle.z + TEXT.tag * 0.8) : null;
-    const late = link.lateTag ? text(link.lateTag, TEXT.tag, middle.x + 0.15, middle.z + TEXT.tag * 0.8) : null;
+    const middle = curve.getPoint(link.tagAt ?? 0.5);
+    const tag = link.tag ? text(link.tag, TEXT.tag, middle.x + 0.15, middle.z + TEXT.tag * 0.8, 'tag', `link ${i}`) : null;
+    const late = link.lateTag ? text(link.lateTag, TEXT.tag, middle.x + 0.15, middle.z + TEXT.tag * 0.8, 'tag', `link ${i}`) : null;
     late?.material.color.copy(olive);
     const strength = link.reroute ? 0.95 : link.silent ? 0.75 : 0.4;
     steps.push((t, live) => {
@@ -235,15 +241,15 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
         else if (b.mesh.visible) b.mesh.position.copy(curve.getPoint(u)).setY(0.13);
       }
     });
-  }
+  });
 
   const size = (grow: number) => {
     words.forEach((word) => word.scale.setScalar(grow));
-    names.forEach((name) => (name.visible = grow === 1));
-    rows.forEach(({ row, z }, i) => (row.position.z = z + (i % 2) * (grow - 1) * STAGGER));
+    names.forEach(({ name, top, height }) => (name.position.z = top + (height * grow) / 2));
+    rows.forEach(({ row, z }, i) => (row.position.z = z + (grow > 1 ? (i % 2) * grow * STAGGER : 0)));
   };
 
-  return { group, size, update: (t: number) => steps.forEach((step) => step(t, 1 - ramp(t, BEATS.fade, 0.7))) };
+  return { group, marks, size, update: (t: number) => steps.forEach((step) => step(t, 1 - ramp(t, BEATS.fade, 0.7))) };
 }
 
 export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, scenes: Scene[]) {
@@ -274,13 +280,18 @@ export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, scenes: S
   built.forEach((b) => world.add(b.group));
 
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 200);
-  camera.position.set(50, 41, 50);
-  camera.lookAt(0, 0, 0);
-  camera.updateMatrixWorld();
   const [x0, z0, x1, z1] = PLANE;
+  const reach = (x1 - x0 + z1 - z0) / Math.SQRT2;
   const bounds = new THREE.Box3();
-  for (const x of [x0, x1]) for (const z of [z0, z1]) for (const y of [0, HEADROOM]) bounds.expandByPoint(new THREE.Vector3(x, y, z).applyMatrix4(camera.matrixWorldInverse));
-  bounds.expandByVector(new THREE.Vector3(MARGIN, MARGIN, 0));
+  const aim = (aspect: number) => {
+    const rise = Math.asin(Math.min(1, ((reach + 2 * MARGIN) / aspect - 2 * MARGIN) / Math.hypot(reach, HEADROOM))) - Math.atan2(HEADROOM, reach);
+    camera.position.set(50, 50 * Math.SQRT2 * Math.tan(rise), 50);
+    camera.lookAt(0, 0, 0);
+    camera.updateMatrixWorld();
+    bounds.makeEmpty();
+    for (const x of [x0, x1]) for (const z of [z0, z1]) for (const y of [0, HEADROOM]) bounds.expandByPoint(new THREE.Vector3(x, y, z).applyMatrix4(camera.matrixWorldInverse));
+    bounds.expandByVector(new THREE.Vector3(MARGIN, MARGIN, 0));
+  };
 
   let elapsed = 0;
   let last = 0;
@@ -296,7 +307,15 @@ export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, scenes: S
       caption.textContent = list[index].caption;
     }
     renderer.render(world, camera);
-    if (pinned !== null) canvas.dataset.t = String(pinned);
+    if (pinned === null) return;
+    const place = (mesh: THREE.Mesh, [x, y]: [number, number]) => {
+      const p = mesh.localToWorld(new THREE.Vector3(x, y, 0)).project(camera);
+      return [((p.x + 1) * canvas.clientWidth) / 2, ((1 - p.y) * canvas.clientHeight) / 2].map((v) => Math.round(v * 10) / 10);
+    };
+    canvas.dataset.layout = JSON.stringify(
+      built[index].marks.filter((m) => m.mesh.visible).map(({ mesh, shape, ...mark }) => ({ ...mark, box: shape.map((point) => place(mesh, point)) }))
+    );
+    canvas.dataset.t = String(pinned);
   };
 
   const fit = () => {
@@ -304,6 +323,7 @@ export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, scenes: S
     const height = canvas.clientHeight;
     if (!width || !height) return;
     renderer.setSize(width, height, false);
+    aim(width / height);
     const scale = Math.max((bounds.max.x - bounds.min.x) / width, (bounds.max.y - bounds.min.y) / height);
     camera.right = bounds.max.x;
     camera.left = bounds.max.x - width * scale;

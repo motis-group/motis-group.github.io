@@ -21,6 +21,8 @@ const VIEWS = [
   { name: 'hero-1100', scene: 'mining', width: 1100 },
   { name: 'hero-phone', scene: 'electricity', width: 390, height: 844, deviceScaleFactor: 2 },
 ];
+const LAYOUTS = [{ width: 1440 }, { width: 390, height: 844, deviceScaleFactor: 2 }];
+const STILL = 17;
 const REFERENCE = process.env.MESH_REF;
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.ttf': 'font/ttf', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.png': 'image/png' };
 
@@ -81,6 +83,17 @@ async function open(browser, base, query, options = {}) {
   return { context, page, errors };
 }
 
+function overlap(a, b) {
+  return [a, b].every((shape) =>
+    shape.every(([x, y], i) => {
+      const [u, v] = shape[(i + 1) % shape.length];
+      const along = (points) => points.map(([px, py]) => px * (y - v) + py * (u - x));
+      const [p, q] = [along(a), along(b)];
+      return Math.max(...p) > Math.min(...q) && Math.max(...q) > Math.min(...p);
+    })
+  );
+}
+
 function compare(scene, frames) {
   const refs = TIMES.map((t) => {
     const file = path.join(ART, `ref-${String(t).padStart(2, '0')}.png`);
@@ -132,6 +145,11 @@ for (const { name, scene, width, height = 900, deviceScaleFactor = 1 } of VIEWS)
   const file = path.join(ART, `${name}.png`);
   await page.locator('.hero').screenshot({ path: file });
   console.log(`frame ${file}`);
+  if (width === 1440) {
+    const fold = path.join(ART, `fold-${scene}.png`);
+    await page.screenshot({ path: fold });
+    console.log(`frame ${fold}`);
+  }
   await page.addStyleTag({ content: '.hero .wrap { visibility: hidden }' });
   const region = async (selector) => {
     const clip = await page.locator(selector).boundingBox();
@@ -157,6 +175,28 @@ for (const { name, scene, width, height = 900, deviceScaleFactor = 1 } of VIEWS)
   }
   for (const e of errors) failures.push(`${name}: console error: ${e}`);
   await context.close();
+}
+
+for (const scene of SCENES) {
+  const named = [];
+  for (const { width, height = 900, deviceScaleFactor = 1 } of LAYOUTS) {
+    const at = `${scene} at ${width}`;
+    const { context, page } = await open(browser, base, `?scene=${scene}&t=${STILL}`, { viewport: { width, height }, deviceScaleFactor });
+    const marks = JSON.parse((await page.locator('.mesh canvas').getAttribute('data-layout')) ?? '[]');
+    const labels = marks.filter((m) => m.kind !== 'ring');
+    const nodes = labels.filter((m) => m.kind === 'node').map((m) => m.text);
+    named.push(nodes);
+    console.log(`${at}: ${labels.length} labels, ${marks.length - labels.length} rings`);
+    if (!nodes.length) failures.push(`${at}: the stage shows no node labels`);
+    const hidden = named[0].filter((text) => !nodes.includes(text));
+    if (hidden.length) failures.push(`${at}: node labels hidden: ${hidden.join(', ')}`);
+    labels.forEach((label, i) => {
+      for (const other of [...marks.filter((m) => m.kind === 'ring'), ...labels.slice(i + 1).filter((m) => m.of !== label.of)]) {
+        if (overlap(label.box, other.box)) failures.push(`${at}: the ${label.text} label overlaps the ${other.text ?? other.of} ${other.kind === 'ring' ? 'ring' : 'label'}`);
+      }
+    });
+    await context.close();
+  }
 }
 
 {

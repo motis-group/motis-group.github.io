@@ -51,9 +51,13 @@ field source, square for an edge device, hexagon for a system of record,
 triangle for the reconciled output. A scene depicts an industry and names no
 client, site, vendor or figure. `site/meshScene.ts` renders any scene as a pure
 function of the scene and the time in seconds, and `site/Mesh.tsx` loads it and
-three.js only in the browser. `?scene=<id>&t=<seconds>` pins one frame. On a stage too narrow for the labels
-to read, the renderer enlarges link tags and zone labels, staggers the zone
-labels, and hides node labels.
+three.js only in the browser. `?scene=<id>&t=<seconds>` pins one frame, and
+the canvas then publishes the projected outline of every label and ring in
+`data-layout`. A node label sits in front of its own marker. A link tag sits
+beside its link, at the midpoint or at `tagAt`. The camera rises until the
+plane fills the aspect ratio of the stage, so the taller stage on a phone is
+seen from higher up. On a stage too narrow for the labels to read, the
+renderer enlarges every label and staggers the zone labels.
 Reduced motion gets one still frame, and no WebGL gets nothing. The built output requests nothing
 from another host: no remote fonts, scripts, images or analytics.
 
@@ -74,5 +78,7 @@ six times into `tests/out/mesh/`, and checks that they draw, that olive appears
 only after the fault, that the scenes differ, that the stage spans the content column
 on a desktop, that no scene pixel falls inside the headline, lede, tags or
 actions at desktop, tablet and phone widths, that no width scrolls sideways,
-reduced motion, and the console. With `MESH_REF` set to a reference video it also writes one
+that no label overlaps a ring or another label on a desktop or a phone, that a
+phone shows every node label, reduced motion, and the console. It also saves
+the first screen of each scene at 1440 by 900. With `MESH_REF` set to a reference video it also writes one
 comparison image per scene.
