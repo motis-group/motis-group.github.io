@@ -1,3 +1,4 @@
+import { operator } from './mining';
 import type { Part, Placement, Scene } from './types';
 
 const AXLE: [number, number, number] = [Math.PI / 2, 0, 0];
@@ -92,6 +93,8 @@ export const electricity: Scene = {
     { id: 'register', role: 'system', at: [6.5, -8], label: 'ASSET REGISTER' },
     { id: 'meterdata', role: 'system', at: [9.8, -4.8], label: 'METER DATA' },
     { id: 'model', role: 'output', at: [-2.4, -7.1], label: 'NETWORK MODEL' },
+    { id: 'agent', role: 'agent', at: [1, -8.3], label: 'AGENT' },
+    { id: 'dispatcher', role: 'source', at: [-10, -8.5], r: 0.6, label: 'DISPATCHER', model: operator, glb: [{ src: 'operator', size: 1.7 }] },
   ],
   links: [
     { from: 'substation', to: 'recloser', silent: true },
@@ -113,5 +116,12 @@ export const electricity: Scene = {
     { from: 'adjacent', to: 'tie', tag: 'REROUTING', silent: true, reroute: true, bend: 0.13, tagAt: 0.25 },
     { from: 'tie', to: 'transformer', silent: true, reroute: true },
     { from: 'tie', to: 'scada', tag: 'STATUS', reroute: true, bend: -0.25, tagAt: 0.25 },
+    ...['scada', 'historian', 'gis', 'register', 'meterdata'].map((to) => ({ from: 'agent', to, beat: 'detect' as const })),
+    { from: 'agent', to: 'dispatcher', beat: 'sign', bend: -0.04 },
   ],
+  agent: {
+    card: ['Fault below the recloser.', '412 meters dark.', 'Close the tie switch to restore.'],
+    trace: ['meterdata', 'collector', 'houses', 'transformer', 'recloser'],
+    signer: 'dispatcher',
+  },
 };

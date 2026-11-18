@@ -22,8 +22,14 @@ const VIEWS = [
   { name: 'hero-1100', scene: 'mining', width: 1100 },
   { name: 'hero-phone', scene: 'electricity', width: 390, height: 844, deviceScaleFactor: 2 },
 ];
-const LAYOUTS = [{ width: 1440 }, { width: 390, height: 844, deviceScaleFactor: 2 }];
-const STILL = 17;
+const LAYOUTS = [{ width: 1440 }, { width: 1280, height: 800 }, { width: 390, height: 844, deviceScaleFactor: 2 }];
+const STILL = 19;
+const AI = {
+  mining: { signer: 'METALLURGIST', card: 'Balance 4% short of the belt scale. 3 trucks buffering on the haul road. Hold the close until they upload.', act: ['LATE', 'RECONCILE'] },
+  electricity: { signer: 'DISPATCHER', card: 'Fault below the recloser. 412 meters dark. Close the tie switch to restore.', act: ['STATUS'] },
+};
+const BEAT = { before: BEFORE_FAULT, detect: 11.7, trace: 12.9, explain: 14.5, unsigned: 14.6, sign: 14.9, act: STILL };
+const LIT = 0.5;
 const FLOWS = [
   { scene: 'mining', t: STILL, from: 'HAUL TRUCK', to: 'MINE NETWORK', tag: 'PAYLOADS' },
   { scene: 'mining', t: STILL, from: 'OPERATOR', to: 'PROD. REPORTING', tag: 'SHIFT REPORT' },
@@ -81,6 +87,58 @@ function count(page, png, other = png) {
     return { drawn, accent, differing, span: Math.max(0, right - left + 1) / px.columns };
   }, [png.toString('base64'), other.toString('base64')]);
 }
+
+function brightness(page, png, points) {
+  return page.evaluate(async ({ data, points }) => {
+    const img = new Image();
+    img.src = `data:image/png;base64,${data}`;
+    await img.decode();
+    const c = document.createElement('canvas');
+    c.width = img.width;
+    c.height = img.height;
+    const g = c.getContext('2d');
+    g.drawImage(img, 0, 0);
+    const px = g.getImageData(0, 0, c.width, c.height).data;
+    return points.map(([x, y]) => {
+      let best = 0;
+      for (let dx = -1; dx <= 1; dx++)
+        for (let dy = -1; dy <= 1; dy++) {
+          const i = ((Math.round(y) + dy) * c.width + Math.round(x) + dx) * 4;
+          best = Math.max(best, px[i] ?? 0, px[i + 1] ?? 0, px[i + 2] ?? 0);
+        }
+      return best;
+    });
+  }, { data: png.toString('base64'), points });
+}
+
+async function stageAt(browser, base, scene, t, options) {
+  const opened = await open(browser, base, `?scene=${scene}&t=${t}`, options);
+  await opened.page.waitForFunction(() => {
+    const c = document.querySelector('.mesh canvas');
+    return c.width === Math.floor(c.clientWidth * Math.min(devicePixelRatio, 2));
+  });
+  const state = await opened.page.evaluate(() => {
+    const canvas = document.querySelector('.mesh canvas');
+    const card = document.querySelector('.mesh-card');
+    const shown = !!card && getComputedStyle(card).visibility !== 'hidden' && card.textContent.trim() !== '';
+    let lines = 0;
+    if (shown) {
+      const range = document.createRange();
+      range.selectNodeContents(card);
+      lines = new Set([...range.getClientRects()].map((r) => Math.round(r.top))).size;
+    }
+    return {
+      marks: JSON.parse(canvas.dataset.layout ?? '[]'),
+      trace: JSON.parse(canvas.dataset.trace ?? '[]'),
+      stage: canvas.getBoundingClientRect().toJSON(),
+      card: shown ? { text: card.textContent, box: card.getBoundingClientRect().toJSON(), lines } : null,
+      copy: ['h1', '.lede', '.tags', '.actions'].map((s) => [s, document.querySelector(`.hero .wrap ${s}`).getBoundingClientRect().toJSON()]),
+    };
+  });
+  return { ...opened, ...state };
+}
+
+const corners = ({ left, top, right, bottom }, dx = 0, dy = 0) => [[left - dx, top - dy], [right - dx, top - dy], [right - dx, bottom - dy], [left - dx, bottom - dy]];
 
 function watch(page, base, errors) {
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
@@ -306,6 +364,64 @@ for (const { scene, t, from, to, tag, absent } of FLOWS) {
   if (!absent && !shown.includes(tag)) failures.push(`${flow} does not show ${tag}`);
   if (absent && shown.includes(tag)) failures.push(`${flow} shows ${tag} before the fault`);
   for (const name of UNNAMED[scene] ?? []) if (id[name]) failures.push(`${scene} t=${t}: a node is still labelled ${name}`);
+}
+
+const plain = (s) => s.replace(/\s+/g, ' ').trim();
+const signed = (marks) => marks.some((m) => m.kind === 'tag' && m.text === 'SIGNED');
+const alpha = (marks, text) => Math.max(0, ...marks.filter((m) => m.text === text).map((m) => m.alpha ?? 0));
+
+for (const scene of SCENES) {
+  const { signer, card, act } = AI[scene];
+  const shots = {};
+  for (const [beat, t] of Object.entries(BEAT)) {
+    const shot = await stageAt(browser, base, scene, t);
+    shot.png = await shot.page.locator('.mesh canvas').screenshot();
+    if (!['before', 'unsigned'].includes(beat)) await shot.page.locator('.mesh').screenshot({ path: path.join(ART, `ai-${scene}-${beat}.png`) });
+    for (const e of shot.errors) failures.push(`${scene} ${beat}: console error: ${e}`);
+    shots[beat] = shot;
+  }
+  const { before, detect, trace, explain, unsigned, sign, act: done } = shots;
+  const at = (beat) => `${scene} ${beat} t=${BEAT[beat]}`;
+  if (before.card) failures.push(`${at('before')}: the agent card shows before the fault`);
+  if (signed(before.marks)) failures.push(`${at('before')}: SIGNED shows before the fault`);
+  if (!detect.marks.some((m) => m.kind === 'node' && m.text === 'AGENT')) failures.push(`${at('detect')}: no node is labelled AGENT`);
+  const [was, now] = await Promise.all([brightness(trace.page, detect.png, trace.trace), brightness(trace.page, trace.png, trace.trace)]);
+  const lit = trace.trace.length ? now.filter((v, i) => v > was[i] + 30).length / trace.trace.length : 0;
+  console.log(`${at('trace')}: ${(lit * 100).toFixed(0)}% of ${trace.trace.length} traced points brighter than at t=${BEAT.detect}`);
+  if (trace.trace.length < 10 || lit < LIT) failures.push(`${at('trace')}: the traced edges are not brighter than at t=${BEAT.detect} (${(lit * 100).toFixed(0)}%)`);
+  if (!explain.card) failures.push(`${at('explain')}: no agent card`);
+  else if (plain(explain.card.text) !== plain(card)) failures.push(`${at('explain')}: the card reads "${plain(explain.card.text)}"`);
+  if (!sign.marks.some((m) => m.kind === 'node' && m.text === signer)) failures.push(`${at('sign')}: no node is labelled ${signer}`);
+  if (signed(unsigned.marks)) failures.push(`${at('unsigned')}: SIGNED shows before the sign beat`);
+  if (!signed(sign.marks)) failures.push(`${at('sign')}: no SIGNED tag`);
+  for (const text of act) {
+    for (const beat of ['unsigned', 'sign']) if (alpha(shots[beat].marks, text) > 0) failures.push(`${at(beat)}: ${text} acts before the person signs`);
+    if (!(alpha(done.marks, text) > 0)) failures.push(`${at('act')}: ${text} never acts after SIGNED`);
+  }
+  console.log(`${scene}: card ${explain.card ? `${explain.card.lines} lines` : 'missing'}, SIGNED at ${BEAT.sign}, act ${act.map((a) => `${a}=${alpha(done.marks, a)}`).join(' ')}`);
+  for (const shot of Object.values(shots)) await shot.context.close();
+}
+
+for (const scene of SCENES) {
+  for (const { width, height = 900, deviceScaleFactor = 1 } of LAYOUTS) {
+    const shot = await stageAt(browser, base, scene, BEAT.explain, { viewport: { width, height }, deviceScaleFactor });
+    const at = `${scene} card at ${width}`;
+    const { card, stage, marks, copy } = shot;
+    await shot.context.close();
+    if (!card) {
+      failures.push(`${at}: no agent card`);
+      continue;
+    }
+    const { box } = card;
+    const inside = box.left >= stage.left - 0.5 && box.right <= stage.right + 0.5 && box.top >= stage.top - 0.5 && box.bottom <= stage.bottom + 0.5;
+    const below = box.top >= stage.bottom - 0.5 && box.left >= 0 && box.right <= width;
+    console.log(`${at}: ${card.lines} lines, ${inside ? 'inside' : below ? 'below' : 'outside'} the stage`);
+    if (!(inside || (width < 820 && below))) failures.push(`${at}: the card is not inside the stage`);
+    if (width >= 820 && card.lines > 3) failures.push(`${at}: the card runs to ${card.lines} lines`);
+    const shape = corners(box, stage.left, stage.top);
+    for (const m of marks) if (overlap(shape, m.box)) failures.push(`${at}: the card overlaps the ${m.text ?? m.of} ${m.kind === 'ring' ? 'ring' : 'label'}`);
+    for (const [name, rect] of copy) if (overlap(corners(box), corners(rect))) failures.push(`${at}: the card overlaps the hero ${name}`);
+  }
 }
 
 {

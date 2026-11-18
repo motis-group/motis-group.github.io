@@ -47,8 +47,18 @@ systems of record, one failure and its recovery. Each scene is a data file in
 `site/scenes/` (zones, nodes, links) listed in `site/scenes/index.ts`; mining and electricity
 distribution alternate, one per loop. Marker shape encodes role: circle for a
 field source, square for an edge device, hexagon for a system of record,
-triangle for the reconciled output. A scene depicts an industry and names no
-client, site, vendor or figure.
+triangle for the reconciled output, double square for the agent. A scene
+depicts an industry and names no client, site, vendor or measured figure.
+
+After the fault, each scene's `agent` runs five beats, as a depiction and not a
+live model. Detect: the agent node appears and its read lines to the systems of
+record light up. Trace: a bone pulse runs back along the existing edges from
+the output to the faulted source. Explain: the agent's card types out as DOM
+text, over the stage's top-right corner on a desktop and below the stage on a
+phone. Sign: the named person (`signer`) appears, an edge runs to them from the
+agent, and SIGNED shows under their label. Act: the held and paused flows
+release and the reroutes draw, never before SIGNED. The agent layer is bone
+and charcoal only; olive stays on the fault.
 
 The equipment on a node is a sourced open-licence model, not drawn in code. A
 node's `glb` lists the files in `public/models/` it places, each with a size,
@@ -101,11 +111,15 @@ six times into `tests/out/mesh/`, and checks that they draw, that olive appears
 only after the fault, that the scenes differ, that the stage spans the content column
 on a desktop, that no scene pixel falls inside the headline, lede, tags or
 actions at desktop, tablet and phone widths, that no width scrolls sideways,
-that no label overlaps a ring or another label on a desktop or a phone after the
-fault and at t=17, that a phone shows every node label, that each named flow
+that no label overlaps a ring or another label at 1440, 1280 and phone widths
+after the fault and at t=19, that a phone shows every node label, that each named flow
 shows its tag on the edge between its two labelled nodes (`FLOWS`), with the
 meters' LAST GASP only after the fault, that every model file loads with no fallback,
 that no request leaves the local server, reduced motion, and the console. It
-saves a close-up of every model at t=17 in `models-<scene>.png`. It also saves
+checks each agent beat on pinned frames: no card or SIGNED before the fault,
+traced edges brighter than a frame earlier, the card text inside the stage (or
+below it on a phone) clear of labels and rings, SIGNED only from the sign beat,
+and the act only after it, saving `ai-<scene>-<beat>.png`. It saves a close-up
+of every model at t=19 in `models-<scene>.png`. It also saves
 the first screen of each scene at 1440 by 900. With `MESH_REF` set to a reference video it also writes one
 comparison image per scene.
