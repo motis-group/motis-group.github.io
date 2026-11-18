@@ -34,6 +34,7 @@ export type Node = {
   at: [number, number];
   r?: number;
   label?: string;
+  labelSide?: 'right' | 'left';
   model?: Part[];
   glb?: Placement[];
   faulted?: 1 | 2;

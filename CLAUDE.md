@@ -61,8 +61,7 @@ distribution alternate, one per loop. Marker shape encodes role: circle for a
 field source, square for an edge device, hexagon for a system of record,
 triangle for the reconciled output, double diamond for the agent. Each scene
 has an `AI LAYER` zone on the systems side of the grid that holds the agent
-and no other node, and that no other node's label reaches into; in mining it is
-a box around the agent beside OFFICE, because the office labels run long on a phone; the agent's read lines and sign edge cross into it from the
+and no other node, and that no other node's label reaches into; the agent's read lines and sign edge cross into it from the
 systems of record. A scene depicts an industry and names no client, site, vendor or measured figure; its chip values are typical, not measured.
 
 The agent sits in its zone from the build and reads the systems of record:
@@ -105,7 +104,7 @@ function of the scene and the time in seconds, and `site/Mesh.tsx` loads it and
 three.js only in the browser. `?scene=<id>&t=<seconds>` pins one frame, and
 the canvas then publishes the projected outline of every label and ring in
 `data-layout` and of every zone in `data-zones`. Once every model has loaded or fallen back, the canvas
-publishes `data-models`: the files on each node and the nodes that fell back. A node label sits in front of its own marker. A link tag sits
+publishes `data-models`: the files on each node and the nodes that fell back. A node label sits in front of its own marker and runs right from it, or left with `labelSide: 'left'`, which keeps a label beside the `AI LAYER` out of that zone. A link tag sits
 beside its link, at the midpoint or at `tagAt`. A value chip is a DOM element
 over the canvas that rides its packet only along the longest stretch of its
 link where it clears every label and ring, at most four at once. The camera rises until the
@@ -138,7 +137,8 @@ saving `normal-<scene>.png`, that the scenes differ, that the stage spans the co
 on a desktop, that no scene pixel falls inside the headline, lede, tags or
 actions at desktop, tablet and phone widths, that no width scrolls sideways,
 that no label overlaps a ring or another label at 1440, 1280 and phone widths
-after the fault and at t=41, that each scene's AGENT marker sits inside its
+after the fault and at t=41, with mining's labels, tags, rings and chips held
+`CLEAR` (0.14 world units) apart, that each scene's AGENT marker sits inside its
 `AI LAYER` zone, in no other zone and with no other marker or other node's label, that a phone shows every node label, that each named flow
 shows its tag on the edge between its two labelled nodes (`FLOWS`), with the
 meters' LAST GASP only after the fault, that every model file loads with no fallback,

@@ -41,6 +41,7 @@ const LIT = 0.5;
 const REACH = 4;
 const GROW = 1.6;
 const APART = 10;
+const CLEAR = { mining: 0.14 };
 const FLOWS = [
   { scene: 'mining', t: STILL, from: 'HAUL TRUCK', to: 'MINE NETWORK', tag: 'PAYLOADS' },
   { scene: 'mining', t: STILL, from: 'OPERATOR', to: 'PROD. REPORTING', tag: 'SHIFT REPORT' },
@@ -252,16 +253,20 @@ async function sheet(page, file, tiles) {
   fs.writeFileSync(file, Buffer.from(png, 'base64'));
 }
 
-function overlap(a, b) {
+function overlap(a, b, pad = 0) {
   return [a, b].every((shape) =>
     shape.every(([x, y], i) => {
       const [u, v] = shape[(i + 1) % shape.length];
       const along = (points) => points.map(([px, py]) => px * (y - v) + py * (u - x));
       const [p, q] = [along(a), along(b)];
-      return Math.max(...p) > Math.min(...q) && Math.max(...q) > Math.min(...p);
+      const reach = pad * Math.hypot(y - v, u - x);
+      return Math.max(...p) + reach > Math.min(...q) && Math.max(...q) + reach > Math.min(...p);
     })
   );
 }
+
+const clearance = (scene, zones) =>
+  (CLEAR[scene] ?? 0) * Math.min(...zones.flatMap(({ rect: [a, b, c, d], box: [p, q, , s] }) => [Math.hypot(q[0] - p[0], q[1] - p[1]) / (c - a), Math.hypot(s[0] - p[0], s[1] - p[1]) / (d - b)]));
 
 const middle = (box) => [0, 1].map((k) => box.reduce((sum, p) => sum + p[k], 0) / box.length);
 
@@ -347,7 +352,8 @@ for (const scene of SCENES) {
   for (const { width, height = 900, deviceScaleFactor = 1, t } of LAYOUTS.flatMap((l) => RIDING.map((t) => ({ ...l, t })))) {
     const shot = await stageAt(browser, base, scene, t, { viewport: { width, height }, deviceScaleFactor });
     const at = `${scene} chips at ${width} t=${t}`;
-    const { chips, marks, stage } = shot;
+    const { chips, marks, stage, zones } = shot;
+    const pad = clearance(scene, zones);
     const valued = chips.filter((c) => UNIT.test(c.text));
     console.log(`${at}: ${chips.map((c) => c.text).join(' | ') || 'none'}`);
     if (width === 1440 && valued.length > most) {
@@ -357,8 +363,8 @@ for (const scene of SCENES) {
     if (chips.length > CHIPS.most) failures.push(`${at}: ${chips.length} chips at once, want at most ${CHIPS.most}`);
     chips.forEach((chip, i) => {
       const shape = corners(chip.box, stage.left, stage.top);
-      for (const m of marks) if (overlap(shape, m.box)) failures.push(`${at}: the ${chip.text} chip overlaps the ${m.text ?? m.of} ${m.kind === 'ring' ? 'ring' : 'label'}`);
-      for (const other of chips.slice(i + 1)) if (overlap(corners(chip.box), corners(other.box))) failures.push(`${at}: the ${chip.text} chip overlaps the ${other.text} chip`);
+      for (const m of marks) if (overlap(shape, m.box, pad)) failures.push(`${at}: the ${chip.text} chip overlaps the ${m.text ?? m.of} ${m.kind === 'ring' ? 'ring' : 'label'}`);
+      for (const other of chips.slice(i + 1)) if (overlap(corners(chip.box), corners(other.box), pad)) failures.push(`${at}: the ${chip.text} chip overlaps the ${other.text} chip`);
     });
     await shot.context.close();
   }
@@ -459,6 +465,7 @@ for (const scene of SCENES) {
     const at = `${scene} at ${width} t=${t}`;
     const { context, page } = await open(browser, base, `?scene=${scene}&t=${t}`, { viewport: { width, height }, deviceScaleFactor });
     const marks = JSON.parse((await page.locator('.mesh canvas').getAttribute('data-layout')) ?? '[]');
+    const pad = clearance(scene, JSON.parse((await page.locator('.mesh canvas').getAttribute('data-zones')) ?? '[]'));
     const labels = marks.filter((m) => m.kind !== 'ring');
     const nodes = labels.filter((m) => m.kind === 'node').map((m) => m.text);
     named.push(nodes);
@@ -468,7 +475,7 @@ for (const scene of SCENES) {
     if (hidden.length) failures.push(`${at}: node labels hidden: ${hidden.join(', ')}`);
     labels.forEach((label, i) => {
       for (const other of [...marks.filter((m) => m.kind === 'ring'), ...labels.slice(i + 1).filter((m) => m.of !== label.of)]) {
-        if (overlap(label.box, other.box)) failures.push(`${at}: the ${label.text} label overlaps the ${other.text ?? other.of} ${other.kind === 'ring' ? 'ring' : 'label'}`);
+        if (overlap(label.box, other.box, pad)) failures.push(`${at}: the ${label.text} label overlaps the ${other.text ?? other.of} ${other.kind === 'ring' ? 'ring' : 'label'}`);
       }
     });
     await context.close();

@@ -164,7 +164,7 @@ function build(scene: Scene, { bone, olive, signal, anisotropy }: Ink) {
     return mesh;
   };
 
-  const text = (value: string, height: number, x: number, z: number, kind: Mark['kind'], of: string) => {
+  const text = (value: string, height: number, x: number, z: number, kind: Mark['kind'], of: string, side: 'right' | 'left' = 'right') => {
     const canvas = document.createElement('canvas');
     const pen = canvas.getContext('2d')!;
     const font = '500 44px "Berkeley Mono", ui-monospace, monospace';
@@ -179,15 +179,16 @@ function build(scene: Scene, { bone, olive, signal, anisotropy }: Ink) {
     map.colorSpace = THREE.SRGBColorSpace;
     map.anisotropy = anisotropy;
     const width = (height * canvas.width) / canvas.height;
+    const start = side === 'left' ? -width : 0;
     const mesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(width, height).translate(width / 2, 0, 0),
+      new THREE.PlaneGeometry(width, height).translate(start + width / 2, 0, 0),
       new THREE.MeshBasicMaterial({ map, color: bone, transparent: true, depthWrite: false })
     );
     mesh.rotation.x = FLAT;
     mesh.position.set(x, 0.03, z);
     group.add(mesh);
     words.push(mesh);
-    marks.push({ of, kind, text: value, mesh, shape: [[0, -height / 2], [width, -height / 2], [width, height / 2], [0, height / 2]] });
+    marks.push({ of, kind, text: value, mesh, shape: [[start, -height / 2], [start + width, -height / 2], [start + width, height / 2], [start, height / 2]] });
     return mesh;
   };
 
@@ -240,9 +241,11 @@ function build(scene: Scene, { bone, olive, signal, anisotropy }: Ink) {
     const dot = flat(new THREE.CircleGeometry(0.09, 12), x, z);
     const inner = node.role === 'agent' ? [flat(new THREE.RingGeometry(r * 0.55 - 0.07, r * 0.55, sides, 1, spin), x, z)] : [];
     marks.push({ of: node.id, kind: 'ring', mesh: fill, shape: Array.from({ length: sides }, (_, k) => [r * Math.cos(spin + (k * 2 * Math.PI) / sides), r * Math.sin(spin + (k * 2 * Math.PI) / sides)]) });
-    const label = node.label ? text(node.label, TEXT.node, x - r * 0.7, z, 'node', node.id) : null;
-    const alarm = node.faultTag ? text(node.faultTag, TEXT.tag, x - r * 0.7, z, 'node', node.id) : null;
-    const signed = node.id === scene.agent?.signer ? text('SIGNED', TEXT.tag, x - r * 0.7, z, 'tag', node.id) : null;
+    const side = node.labelSide ?? 'right';
+    const edge = side === 'left' ? x + r * 0.7 : x - r * 0.7;
+    const label = node.label ? text(node.label, TEXT.node, edge, z, 'node', node.id, side) : null;
+    const alarm = node.faultTag ? text(node.faultTag, TEXT.tag, edge, z, 'node', node.id, side) : null;
+    const signed = node.id === scene.agent?.signer ? text('SIGNED', TEXT.tag, edge, z, 'tag', node.id, side) : null;
     alarm?.material.color.copy(olive);
     label?.material.color.copy(tone);
     if (label) names.push({ name: label, top: z + r + GAP, height: TEXT.node });
@@ -584,7 +587,7 @@ export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, card: HTM
       built[index].wires.map(({ of, signal, curve, path }) => ({ of, signal, alpha: path.geometry.drawRange.count > 1 ? path.material.opacity : 0, points: curve.getPoints(SEGMENTS).map(screen) }))
     );
     canvas.dataset.zones = JSON.stringify(
-      list[index].zones.map(({ label, rect: [a, b, c, d] }) => ({ label, box: [[a, b], [c, b], [c, d], [a, d]].map(([x, z]) => screen(new THREE.Vector3(x, 0, z))) }))
+      list[index].zones.map(({ label, rect }) => ({ label, rect, box: [[rect[0], rect[1]], [rect[2], rect[1]], [rect[2], rect[3]], [rect[0], rect[3]]].map(([x, z]) => screen(new THREE.Vector3(x, 0, z))) }))
     );
     canvas.dataset.t = String(pinned);
   };
