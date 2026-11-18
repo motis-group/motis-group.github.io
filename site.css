@@ -306,7 +306,6 @@ section {
 
 .hero .display {
   max-width: 14ch;
-  margin-top: 24px;
 }
 
 .hero-copy {
@@ -329,7 +328,6 @@ section {
   .hero .display {
     grid-column: 1;
     grid-row: 1 / span 2;
-    margin-top: 0;
   }
 
   .hero-copy {
@@ -930,6 +928,10 @@ main > .plate {
 
   .top {
     position: static;
+  }
+
+  .hero .display {
+    margin-top: 24px;
   }
 
   .mesh canvas {
