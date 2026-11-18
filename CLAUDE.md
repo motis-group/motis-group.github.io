@@ -47,7 +47,11 @@ systems of record, one failure and its recovery. Each scene is a data file in
 `site/scenes/` (zones, nodes, links) listed in `site/scenes/index.ts`; mining and electricity
 distribution alternate, one per loop. Marker shape encodes role: circle for a
 field source, square for an edge device, hexagon for a system of record,
-triangle for the reconciled output, double diamond for the agent. A scene
+triangle for the reconciled output, double diamond for the agent. Each scene
+has an `AI LAYER` zone on the systems side of the grid that holds the agent
+and no other node; the agent's read lines and sign edge cross into it from the
+systems of record. The grid spans the base plane and every zone, and the camera
+fits each scene's grid. A scene
 depicts an industry and names no client, site, vendor or measured figure.
 
 After the fault, each scene's `agent` runs five beats, as a depiction and not a
@@ -85,7 +89,7 @@ clipboard in `operator`) and michu (`solar-panel`).
 function of the scene and the time in seconds, and `site/Mesh.tsx` loads it and
 three.js only in the browser. `?scene=<id>&t=<seconds>` pins one frame, and
 the canvas then publishes the projected outline of every label and ring in
-`data-layout`. Once every model has loaded or fallen back, the canvas
+`data-layout` and of every zone in `data-zones`. Once every model has loaded or fallen back, the canvas
 publishes `data-models`: the files on each node and the nodes that fell back. A node label sits in front of its own marker. A link tag sits
 beside its link, at the midpoint or at `tagAt`. The camera rises until the
 plane fills the aspect ratio of the stage, so the taller stage on a phone is
@@ -112,7 +116,8 @@ only after the fault, that the scenes differ, that the stage spans the content c
 on a desktop, that no scene pixel falls inside the headline, lede, tags or
 actions at desktop, tablet and phone widths, that no width scrolls sideways,
 that no label overlaps a ring or another label at 1440, 1280 and phone widths
-after the fault and at t=19, that a phone shows every node label, that each named flow
+after the fault and at t=19, that each scene's AGENT marker sits inside its
+`AI LAYER` zone, in no other zone and with no other marker, that a phone shows every node label, that each named flow
 shows its tag on the edge between its two labelled nodes (`FLOWS`), with the
 meters' LAST GASP only after the fault, that every model file loads with no fallback,
 that no request leaves the local server, reduced motion, and the console. It

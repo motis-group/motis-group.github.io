@@ -24,6 +24,7 @@ const VIEWS = [
 ];
 const LAYOUTS = [{ width: 1440 }, { width: 1280, height: 800 }, { width: 390, height: 844, deviceScaleFactor: 2 }];
 const STILL = 19;
+const LAYER = 'AI LAYER';
 const AI = {
   mining: { signer: 'METALLURGIST', card: 'Balance 4% short of the belt scale. 3 trucks buffering on the haul road. Hold the close until they upload.', act: ['LATE', 'RECONCILE'] },
   electricity: { signer: 'DISPATCHER', card: 'Fault below the recloser. 412 meters dark. Close the tie switch to restore.', act: ['STATUS'] },
@@ -129,6 +130,7 @@ async function stageAt(browser, base, scene, t, options) {
     }
     return {
       marks: JSON.parse(canvas.dataset.layout ?? '[]'),
+      zones: JSON.parse(canvas.dataset.zones ?? '[]'),
       trace: JSON.parse(canvas.dataset.trace ?? '[]'),
       stage: canvas.getBoundingClientRect().toJSON(),
       card: shown ? { text: card.textContent, box: card.getBoundingClientRect().toJSON(), lines } : null,
@@ -196,6 +198,16 @@ function overlap(a, b) {
       return Math.max(...p) > Math.min(...q) && Math.max(...q) > Math.min(...p);
     })
   );
+}
+
+const middle = (box) => [0, 1].map((k) => box.reduce((sum, p) => sum + p[k], 0) / box.length);
+
+function inside([x, y], polygon) {
+  const turns = polygon.map(([ax, ay], i) => {
+    const [bx, by] = polygon[(i + 1) % polygon.length];
+    return Math.sign((bx - ax) * (y - ay) - (by - ay) * (x - ax));
+  });
+  return turns.every((s) => s >= 0) || turns.every((s) => s <= 0);
 }
 
 function compare(scene, frames) {
@@ -400,6 +412,29 @@ for (const scene of SCENES) {
   }
   console.log(`${scene}: card ${explain.card ? `${explain.card.lines} lines` : 'missing'}, SIGNED at ${BEAT.sign}, act ${act.map((a) => `${a}=${alpha(done.marks, a)}`).join(' ')}`);
   for (const shot of Object.values(shots)) await shot.context.close();
+}
+
+for (const scene of SCENES) {
+  for (const { width, height = 900, deviceScaleFactor = 1 } of LAYOUTS) {
+    const shot = await stageAt(browser, base, scene, BEAT.act, { viewport: { width, height }, deviceScaleFactor });
+    await shot.context.close();
+    const at = `${scene} ${LAYER} at ${width}`;
+    const { marks, zones } = shot;
+    const layer = zones.find((z) => z.label === LAYER);
+    const others = zones.filter((z) => z !== layer);
+    const rings = marks.filter((m) => m.kind === 'ring');
+    const agent = rings.find((m) => m.of === 'agent');
+    if (!marks.some((m) => m.kind === 'zone' && m.text === LAYER)) failures.push(`${at}: no zone is labelled ${LAYER}`);
+    if (!layer || !agent) {
+      failures.push(`${at}: ${layer ? 'no AGENT marker' : `no ${LAYER} zone area`}`);
+      continue;
+    }
+    const spot = middle(agent.box);
+    console.log(`${at}: AGENT at ${spot.map((v) => v.toFixed(0)).join(',')}, ${rings.filter((m) => inside(middle(m.box), layer.box)).length} markers inside the zone`);
+    if (!inside(spot, layer.box)) failures.push(`${at}: the AGENT marker is outside the ${LAYER} zone`);
+    for (const zone of others) if (inside(spot, zone.box)) failures.push(`${at}: the AGENT marker is inside the ${zone.label} zone`);
+    for (const ring of rings) if (ring !== agent && inside(middle(ring.box), layer.box)) failures.push(`${at}: the ${ring.of} marker is inside the ${LAYER} zone`);
+  }
 }
 
 for (const scene of SCENES) {

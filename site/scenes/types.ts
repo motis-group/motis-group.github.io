@@ -52,3 +52,6 @@ export type Scene = {
 };
 
 export const PLANE: [number, number, number, number] = [-11, -9, 11, 9];
+
+export const grid = (scene: Scene) =>
+  scene.zones.reduce<[number, number, number, number]>(([a, b, c, d], { rect: [e, f, g, h] }) => [Math.min(a, e), Math.min(b, f), Math.max(c, g), Math.max(d, h)], PLANE);

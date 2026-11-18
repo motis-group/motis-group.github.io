@@ -79,6 +79,7 @@ export const mining: Scene = {
   id: 'mining',
   caption: 'Mining · how the data is collected',
   zones: [
+    { label: 'AI LAYER', rect: [11, -9, 14, 9] },
     { label: 'UNDERGROUND', rect: [-11, -9, -4, 9] },
     { label: 'PLANT', rect: [-4, -9, 4, 9] },
     { label: 'OFFICE', rect: [4, -9, 11, 9] },
@@ -96,8 +97,8 @@ export const mining: Scene = {
     { id: 'historian', role: 'system', at: [5, -3], label: 'HISTORIAN' },
     { id: 'lab', role: 'system', at: [7.2, 0.2], label: 'LAB' },
     { id: 'reporting', role: 'system', at: [6.4, 5.1], label: 'PROD. REPORTING' },
-    { id: 'balance', role: 'output', at: [9.9, 0], label: 'METAL BALANCE' },
-    { id: 'agent', role: 'agent', at: [5, 2], label: 'AGENT' },
+    { id: 'balance', role: 'output', at: [9.9, 1.8], label: 'METAL BALANCE' },
+    { id: 'agent', role: 'agent', at: [12.5, -1.6], label: 'AGENT' },
     { id: 'metallurgist', role: 'source', at: [10, -7.4], r: 0.6, label: 'METALLURGIST', model: operator, glb: [{ src: 'operator', size: 1.7 }] },
   ],
   links: [
@@ -113,9 +114,9 @@ export const mining: Scene = {
     { from: 'historian', to: 'balance', bend: 0.4 },
     { from: 'lab', to: 'balance', bend: -0.03 },
     { from: 'reporting', to: 'balance', bend: -0.01 },
-    { from: 'crusher', to: 'balance', tag: 'RECONCILE', reroute: true, bend: 0.36, tagAt: 0.68 },
-    { from: 'stockpile', to: 'balance', tag: 'RECONCILE', reroute: true, bend: -0.37, tagAt: 0.68 },
-    ...['fleet', 'historian', 'lab', 'reporting', 'balance'].map((to) => ({ from: 'agent', to, beat: 'detect' as const })),
+    { from: 'crusher', to: 'balance', tag: 'RECONCILE', reroute: true, bend: 0.36, tagAt: 0.52 },
+    { from: 'stockpile', to: 'balance', tag: 'RECONCILE', reroute: true, bend: -0.37, tagAt: 0.64 },
+    ...([['fleet', 0.2], ['historian', 0], ['lab', 0], ['reporting', -0.18], ['balance', 0]] as const).map(([to, bend]) => ({ from: 'agent', to, bend, beat: 'detect' as const })),
     { from: 'agent', to: 'metallurgist', beat: 'sign' },
   ],
   agent: {

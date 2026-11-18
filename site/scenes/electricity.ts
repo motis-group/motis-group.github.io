@@ -73,6 +73,7 @@ export const electricity: Scene = {
   id: 'electricity',
   caption: 'Electricity distribution · how the data is collected',
   zones: [
+    { label: 'AI LAYER', rect: [-8, -13.5, 11, -10.8] },
     { label: 'ZONE SUBSTATION', rect: [-11, -1.6, -4, 9] },
     { label: 'FEEDER', rect: [-4, -1.6, 4, 9] },
     { label: 'LOW VOLTAGE', rect: [4, -1.6, 11, 9] },
@@ -90,10 +91,10 @@ export const electricity: Scene = {
     { id: 'scada', role: 'system', at: [-9.9, -3.9], label: 'SCADA' },
     { id: 'historian', role: 'system', at: [-4.1, -5.7], label: 'HISTORIAN' },
     { id: 'gis', role: 'system', at: [4.9, -6.6], label: 'GIS' },
-    { id: 'register', role: 'system', at: [6.5, -8], label: 'ASSET REGISTER' },
+    { id: 'register', role: 'system', at: [8.5, -8.6], label: 'ASSET REGISTER' },
     { id: 'meterdata', role: 'system', at: [9.8, -4.8], label: 'METER DATA' },
     { id: 'model', role: 'output', at: [-2.4, -7.1], label: 'NETWORK MODEL' },
-    { id: 'agent', role: 'agent', at: [-3.5, -10.5], label: 'AGENT' },
+    { id: 'agent', role: 'agent', at: [-2, -12.4], label: 'AGENT' },
     { id: 'dispatcher', role: 'source', at: [-10, -8.5], r: 0.6, label: 'DISPATCHER', model: operator, glb: [{ src: 'operator', size: 1.7 }] },
   ],
   links: [
@@ -116,8 +117,8 @@ export const electricity: Scene = {
     { from: 'adjacent', to: 'tie', tag: 'REROUTING', silent: true, reroute: true, bend: 0.13, tagAt: 0.25 },
     { from: 'tie', to: 'transformer', silent: true, reroute: true },
     { from: 'tie', to: 'scada', tag: 'STATUS', reroute: true, bend: -0.25, tagAt: 0.25 },
-    ...['scada', 'historian', 'gis', 'register', 'meterdata'].map((to) => ({ from: 'agent', to, beat: 'detect' as const })),
-    { from: 'agent', to: 'dispatcher', beat: 'sign', bend: -0.04 },
+    ...([['scada', 0.24], ['historian', 0], ['gis', 0], ['register', 0], ['meterdata', 0.04]] as const).map(([to, bend]) => ({ from: 'agent', to, bend, beat: 'detect' as const })),
+    { from: 'agent', to: 'dispatcher', beat: 'sign', bend: -0.28 },
   ],
   agent: {
     card: ['Fault below the recloser.', '412 meters dark.', 'Close the tie switch to restore.'],

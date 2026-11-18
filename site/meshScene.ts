@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
-import { PLANE, type Link, type Part, type Placement, type Role, type Scene } from './scenes/types';
+import { grid, type Link, type Part, type Placement, type Role, type Scene } from './scenes/types';
 
 const BEATS = { markers: 2, models: 4, links: 7, fault: 10.5, detect: 11, trace: 11.8, explain: 13.2, sign: 14.8, act: 15.4, fade: 20.2, loop: 21 };
 const STILL = 19;
@@ -153,7 +153,7 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
     return material;
   };
 
-  const [x0, z0, x1, z1] = PLANE;
+  const [x0, z0, x1, z1] = grid(scene);
   const ruled: THREE.Vector3[] = [];
   const dots: THREE.Vector3[] = [];
   for (let x = x0; x <= x1; x++) {
@@ -392,10 +392,11 @@ export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, card: HTM
   });
 
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 200);
-  const [x0, z0, x1, z1] = PLANE;
-  const reach = (x1 - x0 + z1 - z0) / Math.SQRT2;
   const bounds = new THREE.Box3();
+  let aimed = 0;
   const aim = (aspect: number) => {
+    const [x0, z0, x1, z1] = grid(list[aimed]);
+    const reach = (x1 - x0 + z1 - z0) / Math.SQRT2;
     const rise = Math.asin(Math.min(1, ((reach + 2 * MARGIN) / aspect - 2 * MARGIN) / Math.hypot(reach, HEADROOM))) - Math.atan2(HEADROOM, reach);
     camera.position.set(50, 50 * Math.SQRT2 * Math.tan(rise), 50);
     camera.lookAt(0, 0, 0);
@@ -412,6 +413,10 @@ export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, card: HTM
 
   const draw = () => {
     const index = pinned === null ? Math.floor(elapsed / BEATS.loop) % list.length : 0;
+    if (index !== aimed) {
+      aimed = index;
+      focus();
+    }
     built.forEach((b, i) => (b.group.visible = i === index));
     const t = pinned ?? elapsed % BEATS.loop;
     built[index].update(t);
@@ -435,10 +440,13 @@ export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, card: HTM
         .map(({ mesh, shape, ...mark }) => ({ ...mark, alpha: Math.round((mesh.material as THREE.Material).opacity * 100) / 100, box: shape.map((point) => place(mesh, point)) }))
     );
     canvas.dataset.trace = JSON.stringify(built[index].traced.map(screen));
+    canvas.dataset.zones = JSON.stringify(
+      list[index].zones.map(({ label, rect: [a, b, c, d] }) => ({ label, box: [[a, b], [c, b], [c, d], [a, d]].map(([x, z]) => screen(new THREE.Vector3(x, 0, z))) }))
+    );
     canvas.dataset.t = String(pinned);
   };
 
-  const fit = () => {
+  const focus = () => {
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
     if (!width || !height) return;
@@ -451,6 +459,10 @@ export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, card: HTM
     camera.top = bounds.min.y + height * scale;
     camera.updateProjectionMatrix();
     built.forEach((b) => b.size(Math.min(GROWN, Math.max(1, LEGIBLE * scale))));
+  };
+
+  const fit = () => {
+    focus();
     draw();
   };
 
