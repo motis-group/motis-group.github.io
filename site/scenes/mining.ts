@@ -84,7 +84,7 @@ export const mining: Scene = {
     { label: 'OFFICE', rect: [4, -9, 11, 9] },
   ],
   nodes: [
-    { id: 'loader', role: 'source', at: [-8.9, 0.7], r: 1.9, label: 'LOADER', model: loader, glb: loaderModel, faulted: 1, faultTag: 'BUFFERED' },
+    { id: 'loader', role: 'source', at: [-8.9, 0.7], r: 1.9, label: 'HAUL TRUCK', model: loader, glb: loaderModel, faulted: 1, faultTag: 'BUFFERED' },
     { id: 'crusher', role: 'source', at: [-1.5, -5.8], r: 2.3, label: 'WEIGHTOMETER', model: crusher, glb: crusherModel },
     { id: 'mill', role: 'source', at: [-1.9, 1.8], r: 1.8, label: 'MILL', model: mill, glb: millModel },
     { id: 'bench', role: 'source', at: [1.8, 0.1], r: 1.1, label: 'ASSAY', model: bench, glb: [{ src: 'lab-equipment', size: 1.5 }] },
