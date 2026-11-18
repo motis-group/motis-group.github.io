@@ -265,8 +265,10 @@ function overlap(a, b, pad = 0) {
   );
 }
 
-const clearance = (scene, zones) =>
-  (CLEAR[scene] ?? 0) * Math.min(...zones.flatMap(({ rect: [a, b, c, d], box: [p, q, , s] }) => [Math.hypot(q[0] - p[0], q[1] - p[1]) / (c - a), Math.hypot(s[0] - p[0], s[1] - p[1]) / (d - b)]));
+function clearance(scene, zones) {
+  if (!zones.length) throw new Error(`${scene}: the canvas published no data-zones, so overlap padding cannot be measured`);
+  return (CLEAR[scene] ?? 0) * Math.min(...zones.flatMap(({ rect: [a, b, c, d], box: [p, q, , s] }) => [Math.hypot(q[0] - p[0], q[1] - p[1]) / (c - a), Math.hypot(s[0] - p[0], s[1] - p[1]) / (d - b)]));
+}
 
 const middle = (box) => [0, 1].map((k) => box.reduce((sum, p) => sum + p[k], 0) / box.length);
 
