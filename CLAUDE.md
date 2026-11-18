@@ -101,8 +101,10 @@ six times into `tests/out/mesh/`, and checks that they draw, that olive appears
 only after the fault, that the scenes differ, that the stage spans the content column
 on a desktop, that no scene pixel falls inside the headline, lede, tags or
 actions at desktop, tablet and phone widths, that no width scrolls sideways,
-that no label overlaps a ring or another label on a desktop or a phone, that a
-phone shows every node label, that every model file loads with no fallback,
+that no label overlaps a ring or another label on a desktop or a phone after the
+fault and at t=17, that a phone shows every node label, that each named flow
+shows its tag on the edge between its two labelled nodes (`FLOWS`), with the
+meters' LAST GASP only after the fault, that every model file loads with no fallback,
 that no request leaves the local server, reduced motion, and the console. It
 saves a close-up of every model at t=17 in `models-<scene>.png`. It also saves
 the first screen of each scene at 1440 by 900. With `MESH_REF` set to a reference video it also writes one

@@ -253,7 +253,7 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
   const bead = new THREE.SphereGeometry(0.12, 10, 8);
   let flowed = 0;
   let rerouted = 0;
-  scene.links.forEach((link, i) => {
+  scene.links.forEach((link) => {
     const [ax, az] = place.get(link.from)!;
     const [bx, bz] = place.get(link.to)!;
     const start = link.reroute ? BEATS.recover + rerouted++ * 0.8 : BEATS.links + (flowed++ / flowing) * 2.1;
@@ -280,9 +280,13 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
       return { ...d, mesh };
     });
     const middle = curve.getPoint(link.tagAt ?? 0.5);
-    const tag = link.tag ? text(link.tag, TEXT.tag, middle.x + 0.15, middle.z + TEXT.tag * 0.8, 'tag', `link ${i}`) : null;
-    const late = link.lateTag ? text(link.lateTag, TEXT.tag, middle.x + 0.15, middle.z + TEXT.tag * 0.8, 'tag', `link ${i}`) : null;
+    const of = `${link.from}>${link.to}`;
+    const tag = link.tag ? text(link.tag, TEXT.tag, middle.x + 0.15, middle.z + TEXT.tag * 0.8, 'tag', of) : null;
+    const late = link.lateTag ? text(link.lateTag, TEXT.tag, middle.x + 0.15, middle.z + TEXT.tag * 0.8, 'tag', of) : null;
+    const alarm = link.faultTag ? text(link.faultTag, TEXT.tag, middle.x + 0.15, middle.z + TEXT.tag * 0.8, 'tag', of) : null;
+    const raised = faultAt(link.faulted ?? 1) + 0.2;
     late?.material.color.copy(olive);
+    alarm?.material.color.copy(olive);
     const strength = link.reroute ? 0.95 : link.silent ? 0.75 : 0.4;
     steps.push((t, live) => {
       const drawn = ramp(t, start, length);
@@ -293,8 +297,13 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
       path.material.opacity = (strength + (1 - strength) * hit) * live;
       ink.color.lerpColors(bone, olive, hit);
       ink.opacity = live;
-      if (tag) tag.material.opacity = ramp(t, start + length, 0.4) * (1 - released) * live;
+      const alarmed = alarm ? ramp(t, raised, 0.3) * (1 - ramp(t, BEATS.resume, 0.3)) : 0;
+      if (tag) tag.material.opacity = ramp(t, start + length, 0.4) * (1 - released) * (1 - alarmed) * live;
       if (late) late.material.opacity = released * live;
+      if (alarm) {
+        alarm.material.opacity = alarmed * live;
+        alarm.visible = alarmed > 0;
+      }
       let queued = 0;
       for (const b of beads) {
         const u = (t - b.leaves) / TRAVEL;

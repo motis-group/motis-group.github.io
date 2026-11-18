@@ -38,6 +38,7 @@ export type Link = {
   faulted?: 1 | 2;
   onFault?: 'stop' | 'pause' | 'hold';
   lateTag?: string;
+  faultTag?: string;
 };
 
 export type Scene = {

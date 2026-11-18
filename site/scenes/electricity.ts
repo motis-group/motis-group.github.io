@@ -102,7 +102,7 @@ export const electricity: Scene = {
     { from: 'recloser', to: 'scada', bend: 0.05 },
     { from: 'scada', to: 'historian', bend: 0 },
     { from: 'houses', to: 'collector', onFault: 'pause', bend: 0.18 },
-    { from: 'collector', to: 'meterdata', tag: 'INTERVAL', onFault: 'pause', bend: 0.28, tagAt: 0.48 },
+    { from: 'collector', to: 'meterdata', tag: 'INTERVAL', onFault: 'pause', faultTag: 'LAST GASP', bend: 0.28, tagAt: 0.48 },
     { from: 'crew', to: 'gis', tag: 'AS-BUILT', bend: 0.06, tagAt: 0.62 },
     { from: 'gis', to: 'register', bend: 0 },
     { from: 'scada', to: 'model', bend: 0.13 },
@@ -112,5 +112,6 @@ export const electricity: Scene = {
     { from: 'meterdata', to: 'model', bend: 0.01 },
     { from: 'adjacent', to: 'tie', tag: 'REROUTING', silent: true, reroute: true, bend: 0.13, tagAt: 0.25 },
     { from: 'tie', to: 'transformer', silent: true, reroute: true },
+    { from: 'tie', to: 'scada', tag: 'STATUS', reroute: true, bend: -0.25, tagAt: 0.25 },
   ],
 };

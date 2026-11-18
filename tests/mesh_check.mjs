@@ -24,6 +24,14 @@ const VIEWS = [
 ];
 const LAYOUTS = [{ width: 1440 }, { width: 390, height: 844, deviceScaleFactor: 2 }];
 const STILL = 17;
+const FLOWS = [
+  { scene: 'mining', t: STILL, from: 'HAUL TRUCK', to: 'MINE NETWORK', tag: 'PAYLOADS' },
+  { scene: 'mining', t: STILL, from: 'OPERATOR', to: 'PROD. REPORTING', tag: 'SHIFT REPORT' },
+  { scene: 'electricity', t: STILL, from: 'TIE SWITCH', to: 'SCADA', tag: 'STATUS' },
+  { scene: 'electricity', t: AFTER_FAULT, from: 'METER COMMS', to: 'METER DATA', tag: 'LAST GASP' },
+  { scene: 'electricity', t: BEFORE_FAULT, from: 'METER COMMS', to: 'METER DATA', tag: 'LAST GASP', absent: true },
+];
+const UNNAMED = { mining: ['ERP'] };
 const REFERENCE = process.env.MESH_REF;
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.ttf': 'font/ttf', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.png': 'image/png', '.glb': 'model/gltf-binary' };
 const CROP = 360;
@@ -265,9 +273,9 @@ for (const scene of SCENES) {
 
 for (const scene of SCENES) {
   const named = [];
-  for (const { width, height = 900, deviceScaleFactor = 1 } of LAYOUTS) {
-    const at = `${scene} at ${width}`;
-    const { context, page } = await open(browser, base, `?scene=${scene}&t=${STILL}`, { viewport: { width, height }, deviceScaleFactor });
+  for (const { width, height = 900, deviceScaleFactor = 1, t } of LAYOUTS.flatMap((l) => [AFTER_FAULT, STILL].map((t) => ({ ...l, t })))) {
+    const at = `${scene} at ${width} t=${t}`;
+    const { context, page } = await open(browser, base, `?scene=${scene}&t=${t}`, { viewport: { width, height }, deviceScaleFactor });
     const marks = JSON.parse((await page.locator('.mesh canvas').getAttribute('data-layout')) ?? '[]');
     const labels = marks.filter((m) => m.kind !== 'ring');
     const nodes = labels.filter((m) => m.kind === 'node').map((m) => m.text);
@@ -283,6 +291,21 @@ for (const scene of SCENES) {
     });
     await context.close();
   }
+}
+
+for (const { scene, t, from, to, tag, absent } of FLOWS) {
+  const { context, page } = await open(browser, base, `?scene=${scene}&t=${t}`);
+  const marks = JSON.parse((await page.locator('.mesh canvas').getAttribute('data-layout')) ?? '[]');
+  await context.close();
+  const id = Object.fromEntries(marks.filter((m) => m.kind === 'node').map((m) => [m.text, m.of]));
+  const between = [`${id[from]}>${id[to]}`, `${id[to]}>${id[from]}`];
+  const shown = marks.filter((m) => m.kind === 'tag' && between.includes(m.of)).map((m) => m.text);
+  const flow = `${scene} t=${t}: the ${from} to ${to} edge`;
+  console.log(`${flow} shows ${shown.length ? shown.join(', ') : 'no tag'}`);
+  for (const name of [from, to]) if (!id[name]) failures.push(`${scene} t=${t}: no node is labelled ${name}`);
+  if (!absent && !shown.includes(tag)) failures.push(`${flow} does not show ${tag}`);
+  if (absent && shown.includes(tag)) failures.push(`${flow} shows ${tag} before the fault`);
+  for (const name of UNNAMED[scene] ?? []) if (id[name]) failures.push(`${scene} t=${t}: a node is still labelled ${name}`);
 }
 
 {
