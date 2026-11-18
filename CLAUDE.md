@@ -50,9 +50,7 @@ field source, square for an edge device, hexagon for a system of record,
 triangle for the reconciled output, double diamond for the agent. Each scene
 has an `AI LAYER` zone on the systems side of the grid that holds the agent
 and no other node; the agent's read lines and sign edge cross into it from the
-systems of record. The grid spans the base plane and every zone, and the camera
-fits each scene's grid. A scene
-depicts an industry and names no client, site, vendor or measured figure.
+systems of record. A scene depicts an industry and names no client, site, vendor or measured figure.
 
 After the fault, each scene's `agent` runs five beats, as a depiction and not a
 live model. Detect: the agent node appears and its read lines to the systems of
@@ -92,7 +90,7 @@ the canvas then publishes the projected outline of every label and ring in
 `data-layout` and of every zone in `data-zones`. Once every model has loaded or fallen back, the canvas
 publishes `data-models`: the files on each node and the nodes that fell back. A node label sits in front of its own marker. A link tag sits
 beside its link, at the midpoint or at `tagAt`. The camera rises until the
-plane fills the aspect ratio of the stage, so the taller stage on a phone is
+scene's grid, the base plane plus every zone, fills the aspect ratio of the stage, so the taller stage on a phone is
 seen from higher up. On a stage too narrow for the labels to read, the
 renderer enlarges every label and staggers the zone labels.
 Reduced motion gets one still frame, and no WebGL gets nothing. The built output requests nothing

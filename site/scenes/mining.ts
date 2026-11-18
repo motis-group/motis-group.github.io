@@ -117,7 +117,7 @@ export const mining: Scene = {
     { from: 'crusher', to: 'balance', tag: 'RECONCILE', reroute: true, bend: 0.36, tagAt: 0.52 },
     { from: 'stockpile', to: 'balance', tag: 'RECONCILE', reroute: true, bend: -0.37, tagAt: 0.64 },
     ...([['fleet', 0.2], ['historian', 0], ['lab', 0], ['reporting', -0.18], ['balance', 0]] as const).map(([to, bend]) => ({ from: 'agent', to, bend, beat: 'detect' as const })),
-    { from: 'agent', to: 'metallurgist', beat: 'sign' },
+    { from: 'agent', to: 'metallurgist', beat: 'sign', bend: 0.7 },
   ],
   agent: {
     card: ['Balance 4% short of the belt scale.', '3 trucks buffering on the haul road.', 'Hold the close until they upload.'],
