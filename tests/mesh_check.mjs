@@ -415,43 +415,36 @@ for (const scene of SCENES) {
 }
 
 for (const scene of SCENES) {
-  for (const { width, height = 900, deviceScaleFactor = 1 } of LAYOUTS) {
-    const shot = await stageAt(browser, base, scene, BEAT.act, { viewport: { width, height }, deviceScaleFactor });
-    await shot.context.close();
-    const at = `${scene} ${LAYER} at ${width}`;
-    const { marks, zones } = shot;
-    const layer = zones.find((z) => z.label === LAYER);
-    const others = zones.filter((z) => z !== layer);
-    const rings = marks.filter((m) => m.kind === 'ring');
-    const agent = rings.find((m) => m.of === 'agent');
-    if (!marks.some((m) => m.kind === 'zone' && m.text === LAYER)) failures.push(`${at}: no zone is labelled ${LAYER}`);
-    if (!layer || !agent) {
-      failures.push(`${at}: ${layer ? 'no AGENT marker' : `no ${LAYER} zone area`}`);
-      continue;
-    }
-    const spot = middle(agent.box);
-    console.log(`${at}: AGENT at ${spot.map((v) => v.toFixed(0)).join(',')}, ${rings.filter((m) => inside(middle(m.box), layer.box)).length} markers inside the zone`);
-    if (!inside(spot, layer.box)) failures.push(`${at}: the AGENT marker is outside the ${LAYER} zone`);
-    for (const zone of others) if (inside(spot, zone.box)) failures.push(`${at}: the AGENT marker is inside the ${zone.label} zone`);
-    for (const ring of rings) if (ring !== agent && inside(middle(ring.box), layer.box)) failures.push(`${at}: the ${ring.of} marker is inside the ${LAYER} zone`);
-  }
-}
-
-for (const scene of SCENES) {
   for (const { width, height = 900, deviceScaleFactor = 1, t } of LAYOUTS.flatMap((l) => [BEAT.explain, BEAT.act].map((t) => ({ ...l, t })))) {
     const shot = await stageAt(browser, base, scene, t, { viewport: { width, height }, deviceScaleFactor });
     const at = `${scene} card at ${width} t=${t}`;
-    const { card, stage, marks, copy } = shot;
+    const { card, stage, marks, copy, zones } = shot;
     await shot.context.close();
+    if (t === BEAT.act) {
+      const where = `${scene} ${LAYER} at ${width}`;
+      const layer = zones.find((z) => z.label === LAYER);
+      const others = zones.filter((z) => z !== layer);
+      const rings = marks.filter((m) => m.kind === 'ring');
+      const agent = rings.find((m) => m.of === 'agent');
+      if (!marks.some((m) => m.kind === 'zone' && m.text === LAYER)) failures.push(`${where}: no zone is labelled ${LAYER}`);
+      if (!layer || !agent) failures.push(`${where}: ${layer ? 'no AGENT marker' : `no ${LAYER} zone area`}`);
+      else {
+        const spot = middle(agent.box);
+        console.log(`${where}: AGENT at ${spot.map((v) => v.toFixed(0)).join(',')}, ${rings.filter((m) => inside(middle(m.box), layer.box)).length} markers inside the zone`);
+        if (!inside(spot, layer.box)) failures.push(`${where}: the AGENT marker is outside the ${LAYER} zone`);
+        for (const zone of others) if (inside(spot, zone.box)) failures.push(`${where}: the AGENT marker is inside the ${zone.label} zone`);
+        for (const ring of rings) if (ring !== agent && inside(middle(ring.box), layer.box)) failures.push(`${where}: the ${ring.of} marker is inside the ${LAYER} zone`);
+      }
+    }
     if (!card) {
       failures.push(`${at}: no agent card`);
       continue;
     }
     const { box } = card;
-    const inside = box.left >= stage.left - 0.5 && box.right <= stage.right + 0.5 && box.top >= stage.top - 0.5 && box.bottom <= stage.bottom + 0.5;
+    const within = box.left >= stage.left - 0.5 && box.right <= stage.right + 0.5 && box.top >= stage.top - 0.5 && box.bottom <= stage.bottom + 0.5;
     const below = box.top >= stage.bottom - 0.5 && box.left >= 0 && box.right <= width;
-    console.log(`${at}: ${card.lines} lines, ${inside ? 'inside' : below ? 'below' : 'outside'} the stage`);
-    if (!(inside || (width < 820 && below))) failures.push(`${at}: the card is not inside the stage`);
+    console.log(`${at}: ${card.lines} lines, ${within ? 'inside' : below ? 'below' : 'outside'} the stage`);
+    if (!(within || (width < 820 && below))) failures.push(`${at}: the card is not inside the stage`);
     if (width >= 820 && card.lines > 3) failures.push(`${at}: the card runs to ${card.lines} lines`);
     const shape = corners(box, stage.left, stage.top);
     for (const m of marks) if (overlap(shape, m.box)) failures.push(`${at}: the card overlaps the ${m.text ?? m.of} ${m.kind === 'ring' ? 'ring' : 'label'}`);

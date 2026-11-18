@@ -73,7 +73,7 @@ export const electricity: Scene = {
   id: 'electricity',
   caption: 'Electricity distribution · how the data is collected',
   zones: [
-    { label: 'AI LAYER', rect: [-8, -13.5, 11, -10.8] },
+    { label: 'AI LAYER', rect: [-8, -14, 11, -10.8] },
     { label: 'ZONE SUBSTATION', rect: [-11, -1.6, -4, 9] },
     { label: 'FEEDER', rect: [-4, -1.6, 4, 9] },
     { label: 'LOW VOLTAGE', rect: [4, -1.6, 11, 9] },
