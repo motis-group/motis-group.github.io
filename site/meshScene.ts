@@ -152,6 +152,7 @@ function build(scene: Scene, { bone, olive, signal, anisotropy }: Ink) {
   const marks: Mark[] = [];
   const names: { name: THREE.Mesh; top: number; height: number; below?: number }[] = [];
   const riders: Rider[] = [];
+  const wires: { of: string; signal: Signal; curve: THREE.QuadraticBezierCurve3; path: THREE.Line<THREE.BufferGeometry, THREE.LineBasicMaterial> }[] = [];
   const teal = signal.agent;
   const rows: { row: THREE.Mesh; z: number }[] = [];
 
@@ -332,6 +333,7 @@ function build(scene: Scene, { bone, olive, signal, anisotropy }: Ink) {
     );
     path.computeLineDistances();
     group.add(path);
+    if (!link.silent) wires.push({ of: `${link.from}>${link.to}`, signal: signalOf(link), curve, path });
     const hop = trail.findIndex((id, k) => k > 0 && [trail[k - 1], id].sort().join() === [link.from, link.to].sort().join());
     const forward = hop > 0 && trail[hop - 1] === link.from;
     const begins = BEATS.trace + (hop - 1) * stride;
@@ -418,7 +420,7 @@ function build(scene: Scene, { bone, olive, signal, anisotropy }: Ink) {
     return { step, text: text.slice(0, Math.round(Math.min(1, (t - BEATS[STEPS[step]]) / TYPED) * text.length)) };
   };
 
-  return { group, marks, size, loads, traced, riders, say, update: (t: number) => steps.forEach((step) => step(t, 1 - ramp(t, BEATS.fade, 0.7))) };
+  return { group, marks, size, loads, traced, riders, wires, say, update: (t: number) => steps.forEach((step) => step(t, 1 - ramp(t, BEATS.fade, 0.7))) };
 }
 
 export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, card: HTMLElement, chips: HTMLElement, scenes: Scene[]) {
@@ -578,6 +580,9 @@ export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, card: HTM
         .map(({ mesh, shape, ...mark }) => ({ ...mark, alpha: Math.round((mesh.material as THREE.Material).opacity * 100) / 100, box: shape.map((point) => place(mesh, point)) }))
     );
     canvas.dataset.trace = JSON.stringify(built[index].traced.map(screen));
+    canvas.dataset.links = JSON.stringify(
+      built[index].wires.map(({ of, signal, curve, path }) => ({ of, signal, alpha: path.geometry.drawRange.count > 1 ? path.material.opacity : 0, points: curve.getPoints(SEGMENTS).map(screen) }))
+    );
     canvas.dataset.zones = JSON.stringify(
       list[index].zones.map(({ label, rect: [a, b, c, d] }) => ({ label, box: [[a, b], [c, b], [c, d], [a, d]].map(([x, z]) => screen(new THREE.Vector3(x, 0, z))) }))
     );

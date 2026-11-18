@@ -38,6 +38,9 @@ const SIGNALS = { telemetry: /telemetry/i, event: /event/i, record: /record/i, a
 const UNIT = /\d[\d.,]*\s?(t\/h|kt|t|MW|%|min|h|kV|A|kWh)(?![\w])/;
 const CHIPS = { least: 3, most: 4 };
 const LIT = 0.5;
+const REACH = 4;
+const GROW = 1.6;
+const APART = 10;
 const FLOWS = [
   { scene: 'mining', t: STILL, from: 'HAUL TRUCK', to: 'MINE NETWORK', tag: 'PAYLOADS' },
   { scene: 'mining', t: STILL, from: 'OPERATOR', to: 'PROD. REPORTING', tag: 'SHIFT REPORT' },
@@ -63,8 +66,8 @@ function serve() {
   return new Promise((resolve) => server.listen(0, '127.0.0.1', () => resolve(server)));
 }
 
-function count(page, png, other = png) {
-  return page.evaluate(async (pair) => {
+function count(page, png, other = png, owners = []) {
+  return page.evaluate(async ({ pair, owners, reach }) => {
     const [px, py] = await Promise.all(
       pair.map(async (data) => {
         const img = new Image();
@@ -84,6 +87,19 @@ function count(page, png, other = png) {
     let accent = 0;
     let differing = 0;
     const ink = { telemetry: 0, event: 0, record: 0, agent: 0 };
+    const owned = Object.fromEntries(Object.keys(ink).map((k) => [k, { ...ink }]));
+    const owner = new Map();
+    for (const [x, y, signal] of owners)
+      for (let dx = -reach; dx <= reach; dx++)
+        for (let dy = -reach; dy <= reach; dy++) {
+          const at = (Math.round(y) + dy) * px.columns + Math.round(x) + dx;
+          owner.set(at, owner.has(at) && owner.get(at) !== signal ? null : signal);
+        }
+    const tally = (i, kind) => {
+      ink[kind]++;
+      const by = owner.get(i / 4);
+      if (by) owned[by][kind]++;
+    };
     for (let i = 0; i < px.length; i += 4) {
       if (Math.max(px[i], px[i + 1], px[i + 2]) > 48) {
         drawn++;
@@ -93,15 +109,38 @@ function count(page, png, other = png) {
       const [r, g, b] = [px[i], px[i + 1], px[i + 2]];
       if (g - b > 22 && g >= r - 2 && g > 60) accent++;
       else if (Math.max(r, g, b) > 70) {
-        if (b - r > 30 && b >= g) ink.event++;
-        else if (g - r > 30 && g > b && g - b < 22) ink.agent++;
-        else if (r - b > 40 && r > g && g > b && r - g > 12) ink.record++;
-        else if (Math.max(r, g, b) - Math.min(r, g, b) < 26 && Math.max(r, g, b) > 140) ink.telemetry++;
+        if (b - r > 30 && b >= g) tally(i, 'event');
+        else if (g - r > 30 && g > b && g - b < 22) tally(i, 'agent');
+        else if (r - b > 40 && r > g && g > b && r - g > 12) tally(i, 'record');
+        else if (Math.max(r, g, b) - Math.min(r, g, b) < 26 && Math.max(r, g, b) > 140) tally(i, 'telemetry');
       }
       if (Math.abs(px[i] - py[i]) > 24) differing++;
     }
-    return { drawn, accent, differing, ink, span: Math.max(0, right - left + 1) / px.columns };
-  }, [png.toString('base64'), other.toString('base64')]);
+    return { drawn, accent, differing, ink, owned, span: Math.max(0, right - left + 1) / px.columns };
+  }, { pair: [png.toString('base64'), other.toString('base64')], owners, reach: REACH });
+}
+
+function along(links, marks) {
+  const shown = links.filter((l) => l.alpha > 0.1);
+  const dense = shown.map(({ signal, points }) => ({
+    signal,
+    points: points.slice(1).flatMap(([x, y], i) => {
+      const [u, v] = points[i];
+      const steps = Math.max(1, Math.ceil(Math.hypot(x - u, y - v)));
+      return Array.from({ length: steps }, (_, k) => [u + ((x - u) * k) / steps, v + ((y - v) * k) / steps]);
+    }),
+  }));
+  const grown = (box) => {
+    const [cx, cy] = middle(box);
+    return box.map(([x, y]) => [cx + (x - cx) * GROW, cy + (y - cy) * GROW]);
+  };
+  const clear = marks.map((m) => (m.kind === 'ring' ? grown(m.box) : m.box));
+  return dense.flatMap(({ signal, points }) =>
+    points
+      .filter((p) => !clear.some((box) => inside(p, box)))
+      .filter(([x, y]) => !dense.some((o) => o.signal !== signal && o.points.some(([u, v]) => Math.hypot(x - u, y - v) < APART)))
+      .map(([x, y]) => [x, y, signal])
+  );
 }
 
 function brightness(page, png, points) {
@@ -151,6 +190,7 @@ async function stageAt(browser, base, scene, t, options) {
     const key = [...document.querySelectorAll('.mesh-key li')].map((li) => li.textContent);
     return {
       marks: JSON.parse(canvas.dataset.layout ?? '[]'),
+      links: JSON.parse(canvas.dataset.links ?? '[]'),
       zones: JSON.parse(canvas.dataset.zones ?? '[]'),
       trace: JSON.parse(canvas.dataset.trace ?? '[]'),
       stage: canvas.getBoundingClientRect().toJSON(),
@@ -286,10 +326,17 @@ for (const scene of SCENES) {
   if (left > 2000) failures.push(`${scene} t=${FADED}: the scene has not faded before the loop ends`);
   await faded.context.close();
   const normal = await stageAt(browser, base, scene, NORMAL);
-  await normal.page.addStyleTag({ content: '.mesh-chips { visibility: hidden }' });
-  const { ink, accent } = await count(normal.page, await normal.page.locator('.mesh canvas').screenshot());
-  console.log(`${scene} normal t=${NORMAL}: ${Object.entries(ink).map(([k, v]) => `${k}=${v}`).join(' ')} olive=${accent}`);
-  for (const [signal, pixels] of Object.entries(ink)) if (pixels < 40) failures.push(`${scene} normal t=${NORMAL}: the ${signal} colour does not render (${pixels} pixels)`);
+  await normal.page.addStyleTag({ content: '.mesh-chips, .mesh-chips * { visibility: hidden !important }' });
+  const owners = along(normal.links, normal.marks);
+  const { owned, accent } = await count(normal.page, await normal.page.locator('.mesh canvas').screenshot(), undefined, owners);
+  for (const [signal, inks] of Object.entries(owned)) {
+    const own = inks[signal];
+    const [rival, most] = Object.entries(inks).filter(([k]) => k !== signal).sort((a, b) => b[1] - a[1])[0];
+    console.log(`${scene} normal t=${NORMAL}: near ${signal} links ${Object.entries(inks).map(([k, v]) => `${k}=${v}`).join(' ')}`);
+    if (own < 40) failures.push(`${scene} normal t=${NORMAL}: the ${signal} links and packets do not render in the ${signal} colour (${own} pixels)`);
+    else if (own < 2 * most) failures.push(`${scene} normal t=${NORMAL}: the ${signal} links render as much in the ${rival} colour (${most}) as in their own (${own})`);
+  }
+  console.log(`${scene} normal t=${NORMAL}: olive=${accent}`);
   if (accent > 20) failures.push(`${scene} normal t=${NORMAL}: olive renders before the fault (${accent} pixels)`);
   for (const [signal, pattern] of Object.entries(SIGNALS)) if (!normal.key.some((k) => pattern.test(k))) failures.push(`${scene}: the legend does not name the ${signal} signals (${normal.key.join(' | ') || 'no legend'})`);
   await normal.context.close();
