@@ -27,24 +27,24 @@ export default function Home() {
         {plate('hero') ? <Plate name="hero" shape="hero" eager /> : <Mesh />}
         <div className="wrap">
           <Label n="01">Independent systems studio · Melbourne, Australia</Label>
-          <h1 className="display" style={{ marginTop: 24 }}>
-            Systems for operations where a wrong number costs something.
-          </h1>
-          <p className="lede">
-            Motis designs, builds and integrates the data platforms, automations and AI workflows that complex operations run on. Each one is proved against a figure somebody has signed before it is handed over.
-          </p>
-          <div className="tags">
-            {['Systems architecture', 'Automation', 'Applied AI', 'Data engineering'].map((t) => (
-              <span key={t} className="tag">
-                {t}
-              </span>
-            ))}
-          </div>
-          <div className="actions">
-            <Go href="/work/">Explore the work</Go>
-            <Go href="/contact/" ghost>
-              Start a conversation
-            </Go>
+          <h1 className="display">Systems for operations where a wrong number costs something.</h1>
+          <div className="hero-copy">
+            <p className="lede">
+              Motis designs, builds and integrates the data platforms, automations and AI workflows that complex operations run on. Each one is proved against a figure somebody has signed before it is handed over.
+            </p>
+            <div className="tags">
+              {['Systems architecture', 'Automation', 'Applied AI', 'Data engineering'].map((t) => (
+                <span key={t} className="tag">
+                  {t}
+                </span>
+              ))}
+            </div>
+            <div className="actions">
+              <Go href="/work/">Explore the work</Go>
+              <Go href="/contact/" ghost>
+                Start a conversation
+              </Go>
+            </div>
           </div>
         </div>
       </section>

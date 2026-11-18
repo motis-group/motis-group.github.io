@@ -16,8 +16,9 @@ const FIGURE_FLOOR = 0.85;
 const STAGE_FLOOR = 0.9;
 const COPY = ['h1', '.lede', '.tags', '.actions'];
 const VIEWS = [
-  { name: 'hero-desktop-mining', scene: 'mining', width: 1440 },
-  { name: 'hero-desktop-electricity', scene: 'electricity', width: 1440 },
+  { name: 'hero-desktop-mining', scene: 'mining', width: 1440, fold: 'fold-mining', floor: 0.4 },
+  { name: 'hero-desktop-electricity', scene: 'electricity', width: 1440, fold: 'fold-electricity', floor: 0.4 },
+  { name: 'hero-1280', scene: 'mining', width: 1280, height: 800, fold: 'fold-mining-1280', floor: 0.35 },
   { name: 'hero-1100', scene: 'mining', width: 1100 },
   { name: 'hero-phone', scene: 'electricity', width: 390, height: 844, deviceScaleFactor: 2 },
 ];
@@ -177,19 +178,35 @@ for (const scene of SCENES) {
   }
 }
 
-for (const { name, scene, width, height = 900, deviceScaleFactor = 1 } of VIEWS) {
+for (const { name, scene, width, height = 900, deviceScaleFactor = 1, fold, floor } of VIEWS) {
   const { context, page, errors } = await open(browser, base, `?scene=${scene}&t=${AFTER_FAULT}`, { viewport: { width, height }, deviceScaleFactor });
+  const layout = await page.evaluate(() => {
+    const box = (selector) => document.querySelector(selector).getBoundingClientRect().toJSON();
+    const canvas = document.querySelector('.mesh canvas');
+    const marks = JSON.parse(canvas.dataset.layout ?? '[]').filter((m) => m.kind === 'node');
+    const top = Math.min(...marks.map((m) => Math.min(...m.box.map(([, y]) => y))));
+    return { h1: box('.hero .wrap h1'), lede: box('.hero .wrap .lede'), actions: box('.hero .wrap .actions'), stage: box('.mesh canvas'), nodes: top, view: window.innerHeight };
+  });
+  const { h1, lede, actions, stage } = layout;
+  const beside = h1.right <= lede.left && lede.top < h1.bottom && actions.left >= h1.right;
+  if (fold) {
+    const file = path.join(ART, `${fold}.png`);
+    await page.screenshot({ path: file });
+    console.log(`frame ${file}`);
+    const shown = Math.max(0, Math.min(stage.height, layout.view - stage.top)) / stage.height;
+    console.log(`${name}: stage top ${stage.top.toFixed(0)} of ${layout.view}, ${(shown * 100).toFixed(0)}% of the stage above the fold, top node at ${(stage.top + layout.nodes).toFixed(0)}`);
+    if (shown < floor) failures.push(`${name}: ${(shown * 100).toFixed(0)}% of the stage is above the fold, under ${floor * 100}%`);
+    if (stage.top + layout.nodes > layout.view) failures.push(`${name}: the scene's top nodes sit below the fold`);
+    if (!beside) failures.push(`${name}: the hero text is not in two side-by-side columns`);
+  }
+  if (width < 820 && lede.top < h1.bottom) failures.push(`${name}: the hero text is not stacked`);
   const file = path.join(ART, `${name}.png`);
   await page.locator('.hero').screenshot({ path: file });
   console.log(`frame ${file}`);
-  if (width === 1440) {
-    const fold = path.join(ART, `fold-${scene}.png`);
-    await page.screenshot({ path: fold });
-    console.log(`frame ${fold}`);
-  }
   await page.addStyleTag({ content: '.hero .wrap { visibility: hidden }' });
   const region = async (selector) => {
-    const clip = await page.locator(selector).boundingBox();
+    const box = await page.locator(selector).boundingBox();
+    const clip = { ...box, y: box.y + (await page.evaluate(() => window.scrollY)) };
     return count(page, await page.screenshot({ clip, fullPage: true }));
   };
   for (const part of COPY) {
