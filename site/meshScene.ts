@@ -2,14 +2,35 @@ import * as THREE from 'three';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
-import { grid, type Link, type Part, type Placement, type Role, type Scene } from './scenes/types';
+import { grid, SIGNALS, STEPS, type Link, type Part, type Placement, type Role, type Scene, type Signal } from './scenes/types';
 
-const BEATS = { markers: 2, models: 4, links: 7, fault: 10.5, detect: 11, trace: 11.8, explain: 13.2, sign: 14.8, act: 15.4, fade: 20.2, loop: 21 };
-const STILL = 19;
-const TRACED = 1.2;
-const TYPED = 1.2;
-const TRAVEL = 1.4;
-const PERIOD = 1.5;
+const BEATS = {
+  markers: 2,
+  models: 4,
+  links: 7,
+  agent: 9.4,
+  normal: 10.5,
+  fault: 22,
+  detect: 23,
+  correlate: 25.5,
+  trace: 28,
+  explain: 30.5,
+  recommend: 33,
+  sign: 34.5,
+  act: 36,
+  audit: 39.5,
+  fade: 43.6,
+  loop: 45,
+};
+const STILL = 41;
+const TRACED = 1.6;
+const TYPED = 0.8;
+const TRAVEL = 2.8;
+const PERIOD: Record<Signal, number> = { telemetry: 1.6, event: 3.2, record: 4.8, agent: 3.2 };
+const HELD = 3;
+const CHIPS = 4;
+const CHIP = { gap: 6, pad: 3, fade: 0.05, least: 0.16 };
+const CORNERS: [number, number][] = [[1, -1], [-1, -1], [1, 1], [-1, 1]];
 const SEGMENTS = 48;
 const RADIUS: Record<Role, number> = { source: 1.4, edge: 0.45, system: 0.8, output: 0.9, agent: 0.7 };
 const OUTLINE: Record<Role, [number, number]> = { source: [56, 0], edge: [4, Math.PI / 4], system: [6, 0], output: [3, Math.PI / 2], agent: [4, 0] };
@@ -25,7 +46,9 @@ const CREASE = 30;
 const MODELS = '/models/';
 
 type Step = (t: number, live: number) => void;
-type Ink = { bone: THREE.Color; olive: THREE.Color; anisotropy: number };
+type Ink = { bone: THREE.Color; olive: THREE.Color; signal: Record<Signal, THREE.Color>; anisotropy: number };
+type Rider = { text: string; signal: Signal; curve: THREE.QuadraticBezierCurve3; leaves: number[] };
+type Shape = [number, number][];
 type Mark = { of: string; kind: 'zone' | 'node' | 'tag' | 'ring'; text?: string; mesh: THREE.Mesh; shape: [number, number][] };
 type Loaded = { id: string; urls: string[]; ok: boolean };
 
@@ -36,15 +59,34 @@ const ramp = (t: number, start: number, length: number) => {
 
 const faultAt = (order?: 1 | 2) => (order ? BEATS.fault + (order - 1) * 1.2 : Infinity);
 
+const signalOf = (link: Link): Signal => (link.beat ? 'agent' : (link.signal ?? 'telemetry'));
+
+const overlaps = (a: Shape, b: Shape) =>
+  [a, b].every((shape) =>
+    shape.every(([x, y], i) => {
+      const [u, v] = shape[(i + 1) % shape.length];
+      const along = (points: Shape) => points.map(([px, py]) => px * (y - v) + py * (u - x));
+      const [p, q] = [along(a), along(b)];
+      return Math.max(...p) > Math.min(...q) && Math.max(...q) > Math.min(...p);
+    })
+  );
+
+const rect = (x: number, y: number, w: number, h: number, pad = 0): Shape => [
+  [x - pad, y - pad],
+  [x + w + pad, y - pad],
+  [x + w + pad, y + h + pad],
+  [x - pad, y + h + pad],
+];
+
 function departures(link: Link, drawn: number): { due: number; leaves: number }[] {
-  if (link.silent || link.beat) return [];
+  if (link.silent || link.beat === 'sign') return [];
   const fault = link.onFault ? faultAt(link.faulted ?? 1) : Infinity;
   const out: { due: number; leaves: number }[] = [];
   let held = 0;
-  for (let due = drawn + 0.2; due < BEATS.loop; due += PERIOD) {
+  for (let due = drawn + 0.2; due < BEATS.loop; due += PERIOD[signalOf(link)]) {
     const quiet = due > fault && (link.onFault === 'stop' || due < BEATS.act);
     if (!quiet) out.push({ due, leaves: due });
-    else if (link.onFault === 'hold') out.push({ due, leaves: BEATS.act + held++ * 0.35 });
+    else if (link.onFault === 'hold' && held < HELD) out.push({ due, leaves: BEATS.act + held++ * 0.35 });
   }
   if (link.onFault === 'pause') out.push({ due: fault + 0.2, leaves: fault + 0.2 });
   return out;
@@ -102,13 +144,15 @@ function shape(parts: Part[]) {
   return merged;
 }
 
-function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
+function build(scene: Scene, { bone, olive, signal, anisotropy }: Ink) {
   const group = new THREE.Group();
   const loads: Promise<Loaded>[] = [];
   const steps: Step[] = [];
   const words: THREE.Mesh[] = [];
   const marks: Mark[] = [];
   const names: { name: THREE.Mesh; top: number; height: number; below?: number }[] = [];
+  const riders: Rider[] = [];
+  const teal = signal.agent;
   const rows: { row: THREE.Mesh; z: number }[] = [];
 
   const flat = (geometry: THREE.BufferGeometry, x: number, z: number) => {
@@ -187,7 +231,8 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
     const [x, z] = node.at;
     const r = node.r ?? RADIUS[node.role];
     const [sides, spin] = OUTLINE[node.role];
-    const born = node.id === scene.agent?.signer ? BEATS.explain : node.role === 'agent' ? BEATS.detect - 0.3 : BEATS.markers + (i / scene.nodes.length) * 2.2;
+    const born = node.id === scene.agent?.signer ? BEATS.recommend : node.role === 'agent' ? BEATS.agent - 0.3 : BEATS.markers + (i / scene.nodes.length) * 2.2;
+    const tone = node.role === 'agent' ? teal : bone;
     const fault = faultAt(node.faulted);
     const ring = flat(new THREE.RingGeometry(r - (node.role === 'source' ? 0.06 : 0.09), r, sides, 1, spin), x, z);
     const fill = flat(new THREE.CircleGeometry(r, sides, spin), x, z);
@@ -198,6 +243,7 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
     const alarm = node.faultTag ? text(node.faultTag, TEXT.tag, x - r * 0.7, z, 'node', node.id) : null;
     const signed = node.id === scene.agent?.signer ? text('SIGNED', TEXT.tag, x - r * 0.7, z, 'tag', node.id) : null;
     alarm?.material.color.copy(olive);
+    label?.material.color.copy(tone);
     if (label) names.push({ name: label, top: z + r + GAP, height: TEXT.node });
     if (alarm) names.push({ name: alarm, top: z + r + GAP, height: TEXT.tag });
     if (signed) names.push({ name: signed, top: z + r + GAP, height: TEXT.tag, below: TEXT.node });
@@ -208,7 +254,8 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
       for (const mark of [ring, ...inner]) mark.material.opacity = grown * live;
       fill.material.opacity = grown * (0.05 + 0.12 * hit) * live;
       dot.material.opacity = ramp(t, born, 0.3) * live;
-      for (const mark of [ring, fill, dot, ...inner]) mark.material.color.lerpColors(bone, olive, hit);
+      const closed = node.role === 'output' ? ramp(t, BEATS.act + 1.5, 0.4) * (1 - ramp(t, BEATS.audit + 1, 1)) : 0;
+      for (const mark of [ring, fill, dot, ...inner]) mark.material.color.lerpColors(tone, olive, hit).lerp(teal, closed);
       const raised = alarm ? ramp(t, fault + 0.3, 0.4) : 0;
       if (label) label.material.opacity = grown * 0.75 * (1 - raised) * live;
       if (alarm) alarm.material.opacity = raised * live;
@@ -268,7 +315,8 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
     const [ax, az] = place.get(link.from)!;
     const [bx, bz] = place.get(link.to)!;
     const start =
-      link.beat === 'detect' ? BEATS.detect + 0.2 : link.beat === 'sign' ? BEATS.sign - 0.5 : link.reroute ? BEATS.act + rerouted++ * 0.8 : BEATS.links + (flowed++ / flowing) * 2.1;
+      link.beat === 'detect' ? BEATS.agent + 0.2 : link.beat === 'sign' ? BEATS.sign - 0.5 : link.reroute ? BEATS.act + rerouted++ * 0.6 : BEATS.links + (flowed++ / flowing) * 2.1;
+    const tone = link.silent ? bone : signal[signalOf(link)];
     const length = link.beat ? 0.5 : link.reroute ? 1.4 : 0.8;
     const bend = link.bend ?? (link.silent || link.beat ? 0 : 0.2);
     const curve = new THREE.QuadraticBezierCurve3(
@@ -279,43 +327,55 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
     const path = new THREE.Line(
       new THREE.BufferGeometry().setFromPoints(curve.getPoints(SEGMENTS)),
       link.reroute
-        ? new THREE.LineDashedMaterial({ color: bone, transparent: true, dashSize: 0.14, gapSize: 0.16, depthWrite: false })
-        : new THREE.LineBasicMaterial({ color: bone, transparent: true, depthWrite: false })
+        ? new THREE.LineDashedMaterial({ color: tone, transparent: true, dashSize: 0.14, gapSize: 0.16, depthWrite: false })
+        : new THREE.LineBasicMaterial({ color: tone, transparent: true, depthWrite: false })
     );
     path.computeLineDistances();
     group.add(path);
     const hop = trail.findIndex((id, k) => k > 0 && [trail[k - 1], id].sort().join() === [link.from, link.to].sort().join());
     const forward = hop > 0 && trail[hop - 1] === link.from;
     const begins = BEATS.trace + (hop - 1) * stride;
-    const pulse = hop > 0 ? new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 8), new THREE.MeshBasicMaterial({ color: bone, transparent: true })) : null;
+    const pulse = hop > 0 ? new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 8), new THREE.MeshBasicMaterial({ color: teal, transparent: true })) : null;
     if (pulse) {
       group.add(pulse);
       traced.push(...curve.getPoints(12).slice(2, -2));
     }
     const fault = faultAt(link.faulted);
-    const ink = new THREE.MeshBasicMaterial({ color: bone, transparent: true });
+    const ink = new THREE.MeshBasicMaterial({ color: tone, transparent: true });
     const beads = departures(link, start + length).map((d) => {
       const mesh = new THREE.Mesh(bead, ink);
       group.add(mesh);
       return { ...d, mesh };
     });
+    if (link.chip)
+      riders.push({
+        text: link.chip,
+        signal: signalOf(link),
+        curve,
+        leaves: beads.map((b) => b.leaves).filter((leaves) => leaves >= BEATS.normal && leaves + TRAVEL <= BEATS.fault),
+      });
     const middle = curve.getPoint(link.tagAt ?? 0.5);
     const of = `${link.from}>${link.to}`;
     const tag = link.tag ? text(link.tag, TEXT.tag, middle.x + 0.15, middle.z + TEXT.tag * 0.8, 'tag', of) : null;
     const late = link.lateTag ? text(link.lateTag, TEXT.tag, middle.x + 0.15, middle.z + TEXT.tag * 0.8, 'tag', of) : null;
     const alarm = link.faultTag ? text(link.faultTag, TEXT.tag, middle.x + 0.15, middle.z + TEXT.tag * 0.8, 'tag', of) : null;
     const raised = faultAt(link.faulted ?? 1) + 0.2;
+    tag?.material.color.copy(tone);
     late?.material.color.copy(olive);
     alarm?.material.color.copy(olive);
-    const strength = link.reroute ? 0.95 : link.silent ? 0.75 : 0.4;
     const reads = link.beat === 'detect';
+    const strength = link.reroute ? 0.95 : link.silent ? 0.75 : reads ? 0.3 : 0.5;
+    const crossed = reads && !!scene.agent?.correlate.includes(link.to);
     steps.push((t, live) => {
       const drawn = ramp(t, start, length);
       const hit = ramp(t, fault, 0.4);
       const released = late ? ramp(t, BEATS.act, 0.3) : 0;
       path.geometry.setDrawRange(0, drawn ? Math.round(drawn * SEGMENTS) + 1 : 0);
-      path.material.color.lerpColors(bone, olive, hit);
-      const lit = hop > 0 ? ramp(t, begins, stride) * (1 - ramp(t, BEATS.act, 0.6)) : reads ? 0.3 + 0.6 * (1 - ramp(t, BEATS.explain, 0.8)) : 0;
+      const glow = hop > 0 ? ramp(t, begins, stride) * (1 - ramp(t, BEATS.act, 0.6)) : 0;
+      path.material.color.lerpColors(tone, olive, hit);
+      const flagged = ramp(t, BEATS.detect, 0.4) * (1 - ramp(t, BEATS.correlate, 0.4));
+      const matched = crossed ? ramp(t, BEATS.correlate, 0.4) * (1 - ramp(t, BEATS.explain, 0.8)) : 0;
+      const lit = hop > 0 ? glow : reads ? 0.3 + 0.7 * Math.max(flagged, matched) : 0;
       path.material.opacity = Math.max(strength + (1 - strength) * hit, lit) * live;
       if (pulse) {
         const u = (t - begins) / stride;
@@ -323,7 +383,7 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
         pulse.position.copy(curve.getPoint(Math.min(1, Math.max(0, forward ? u : 1 - u)))).setY(0.2);
         pulse.material.opacity = live;
       }
-      ink.color.lerpColors(bone, olive, hit);
+      ink.color.lerpColors(tone, olive, hit);
       ink.opacity = live;
       const alarmed = alarm ? ramp(t, raised, 0.3) * (1 - ramp(t, BEATS.act, 0.3)) : 0;
       if (tag) tag.material.opacity = ramp(t, start + length, 0.4) * (1 - released) * (1 - alarmed) * live;
@@ -338,7 +398,7 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
         const waits = t >= b.due && t < b.leaves;
         b.mesh.visible = waits || (u >= 0 && u < 1);
         if (waits) b.mesh.position.copy(curve.getPoint(0.12)).setY(0.3 + queued++ * 0.32);
-        else if (b.mesh.visible) b.mesh.position.copy(curve.getPoint(u)).setY(0.13);
+        else if (b.mesh.visible) b.mesh.position.copy(curve.getPoint(reads ? 1 - u : u)).setY(0.13);
       }
     });
   });
@@ -349,13 +409,19 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
     rows.forEach(({ row, z }, i) => (row.position.z = z + (grow > 1 ? (i % 2) * grow * STAGGER : 0)));
   };
 
-  const card = (scene.agent?.card ?? []).join('\n');
-  const say = (t: number) => (t < BEATS.explain ? '' : card.slice(0, Math.round(Math.min(1, (t - BEATS.explain) / TYPED) * card.length)));
+  const agent = scene.agent;
+  const captions = STEPS.map((step) => (!agent ? '' : step === 'explain' ? agent.card.join('\n') : agent.say[step]));
+  const say = (t: number) => {
+    const step = agent ? STEPS.reduce((at, beat, k) => (t >= BEATS[beat] ? k : at), -1) : -1;
+    if (step < 0) return { step, text: '' };
+    const text = captions[step];
+    return { step, text: text.slice(0, Math.round(Math.min(1, (t - BEATS[STEPS[step]]) / TYPED) * text.length)) };
+  };
 
-  return { group, marks, size, loads, traced, say, update: (t: number) => steps.forEach((step) => step(t, 1 - ramp(t, BEATS.fade, 0.7))) };
+  return { group, marks, size, loads, traced, riders, say, update: (t: number) => steps.forEach((step) => step(t, 1 - ramp(t, BEATS.fade, 0.7))) };
 }
 
-export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, card: HTMLElement, scenes: Scene[]) {
+export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, card: HTMLElement, chips: HTMLElement, scenes: Scene[]) {
   const context = canvas.getContext('webgl2', { antialias: true, alpha: true });
   if (!context) return () => {};
   const renderer = new THREE.WebGLRenderer({ canvas, context });
@@ -366,6 +432,7 @@ export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, card: HTM
   const ink: Ink = {
     bone: new THREE.Color(style.getPropertyValue('--bone').trim()),
     olive: new THREE.Color(style.getPropertyValue('--olive').trim()),
+    signal: Object.fromEntries(SIGNALS.map(({ id, ink }) => [id, new THREE.Color(style.getPropertyValue(ink).trim())])) as Record<Signal, THREE.Color>,
     anisotropy: renderer.capabilities.getMaxAnisotropy(),
   };
 
@@ -406,6 +473,78 @@ export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, card: HTM
     bounds.expandByVector(new THREE.Vector3(MARGIN, MARGIN, 0));
   };
 
+  const steps = [...card.querySelectorAll('li')];
+  const voice = card.querySelector('.mesh-say')!;
+  let windows: { span: [number, number]; corner: [number, number] }[] = [];
+
+  const screen = (point: THREE.Vector3) => {
+    const p = point.clone().project(camera);
+    return [((p.x + 1) * canvas.clientWidth) / 2, ((1 - p.y) * canvas.clientHeight) / 2].map((v) => Math.round(v * 10) / 10) as [number, number];
+  };
+  const place = (mesh: THREE.Mesh, [x, y]: [number, number]) => screen(mesh.localToWorld(new THREE.Vector3(x, y, 0)));
+  const chipAt = (point: THREE.Vector3, chip: HTMLElement, [sx, sy]: [number, number]) => {
+    const [x, y] = screen(point);
+    return [sx > 0 ? x + CHIP.gap : x - CHIP.gap - chip.offsetWidth, sy > 0 ? y + CHIP.gap : y - CHIP.gap - chip.offsetHeight] as [number, number];
+  };
+
+  const ride = () => {
+    const riders = built[aimed].riders;
+    if (chips.dataset.scene !== list[aimed].id) {
+      chips.dataset.scene = list[aimed].id;
+      chips.replaceChildren(
+        ...riders.map(({ text, signal }) => {
+          const chip = document.createElement('span');
+          chip.className = 'mesh-chip';
+          chip.textContent = text;
+          chip.style.setProperty('--c', `var(${SIGNALS.find((s) => s.id === signal)!.ink})`);
+          return chip;
+        })
+      );
+    }
+    chips.style.left = `${canvas.offsetLeft}px`;
+    chips.style.top = `${canvas.offsetTop}px`;
+    built[aimed].group.updateMatrixWorld(true);
+    const blocks = built[aimed].marks.map(({ mesh, shape }) => shape.map((point) => place(mesh, point)));
+    windows = riders.map((rider, i) => {
+      const chip = chips.children[i] as HTMLElement;
+      let best = { span: [0, 0] as [number, number], corner: CORNERS[0] };
+      for (const corner of CORNERS) {
+        let run: [number, number] | null = null;
+        for (let u = 0.04; u <= 0.96; u += 0.02) {
+          const [x, y] = chipAt(rider.curve.getPoint(u), chip, corner);
+          const box = rect(x, y, chip.offsetWidth, chip.offsetHeight, CHIP.pad);
+          const clear = x >= 0 && y >= 0 && x + chip.offsetWidth <= canvas.clientWidth && y + chip.offsetHeight <= canvas.clientHeight && !blocks.some((b) => overlaps(box, b));
+          run = clear ? [run ? run[0] : u, u] : null;
+          if (run && run[1] - run[0] > best.span[1] - best.span[0]) best = { span: [run[0], run[1]], corner };
+        }
+      }
+      return best;
+    });
+  };
+
+  const carry = (t: number, live: number) => {
+    const placed: Shape[] = [];
+    built[aimed].riders.forEach((rider, i) => {
+      const chip = chips.children[i] as HTMLElement | undefined;
+      if (!chip) return;
+      const { span, corner } = windows[i];
+      let shown = 0;
+      for (const leaves of span[1] - span[0] >= CHIP.least ? rider.leaves : []) {
+        const u = (t - leaves) / TRAVEL;
+        if (u < span[0] || u > span[1]) continue;
+        const [x, y] = chipAt(rider.curve.getPoint(u), chip, corner);
+        const box = rect(x, y, chip.offsetWidth, chip.offsetHeight, CHIP.pad);
+        if (placed.length >= CHIPS || placed.some((other) => overlaps(box, other))) break;
+        placed.push(box);
+        shown = Math.min(1, (u - span[0]) / CHIP.fade, (span[1] - u) / CHIP.fade) * live;
+        chip.style.transform = `translate(${x}px, ${y}px)`;
+        break;
+      }
+      chip.style.opacity = String(shown);
+      chip.style.visibility = shown > 0 ? 'visible' : 'hidden';
+    });
+  };
+
   let elapsed = 0;
   let last = 0;
   let frame = 0;
@@ -420,20 +559,19 @@ export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, card: HTM
     built.forEach((b, i) => (b.group.visible = i === index));
     const t = pinned ?? elapsed % BEATS.loop;
     built[index].update(t);
-    const said = built[index].say(t);
-    if (card.textContent !== said) card.textContent = said;
-    card.style.opacity = String(1 - ramp(t, BEATS.fade, 0.7));
+    const live = 1 - ramp(t, BEATS.fade, 0.7);
+    const { step, text } = built[index].say(t);
+    card.style.visibility = step < 0 ? 'hidden' : 'visible';
+    steps.forEach((item, k) => (item.className = k === step ? 'on' : k < step ? 'done' : ''));
+    if (voice.textContent !== text) voice.textContent = text;
+    card.style.opacity = String(live);
+    carry(t, live);
     if (canvas.dataset.scene !== list[index].id) {
       canvas.dataset.scene = list[index].id;
       caption.textContent = list[index].caption;
     }
     renderer.render(world, camera);
     if (pinned === null) return;
-    const screen = (point: THREE.Vector3) => {
-      const p = point.clone().project(camera);
-      return [((p.x + 1) * canvas.clientWidth) / 2, ((1 - p.y) * canvas.clientHeight) / 2].map((v) => Math.round(v * 10) / 10);
-    };
-    const place = (mesh: THREE.Mesh, [x, y]: [number, number]) => screen(mesh.localToWorld(new THREE.Vector3(x, y, 0)));
     canvas.dataset.layout = JSON.stringify(
       built[index].marks
         .filter((m) => m.mesh.visible)
@@ -459,6 +597,7 @@ export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, card: HTM
     camera.top = bounds.min.y + height * scale;
     camera.updateProjectionMatrix();
     built.forEach((b) => b.size(Math.min(GROWN, Math.max(1, LEGIBLE * scale))));
+    ride();
   };
 
   const fit = () => {
