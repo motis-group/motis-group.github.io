@@ -47,7 +47,7 @@ systems of record, one failure and its recovery. Each scene is a data file in
 `site/scenes/` (zones, nodes, links) listed in `site/scenes/index.ts`; mining and electricity
 distribution alternate, one per loop. Marker shape encodes role: circle for a
 field source, square for an edge device, hexagon for a system of record,
-triangle for the reconciled output, double square for the agent. A scene
+triangle for the reconciled output, double diamond for the agent. A scene
 depicts an industry and names no client, site, vendor or measured figure.
 
 After the fault, each scene's `agent` runs five beats, as a depiction and not a
