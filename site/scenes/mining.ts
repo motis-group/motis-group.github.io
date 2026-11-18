@@ -49,7 +49,7 @@ const stockpile: Part[] = [
   { shape: 'box', size: [0.22, 0.22, 0.05], at: [1.1, 1.42, 0.6] },
 ];
 
-const operator: Part[] = [
+export const operator: Part[] = [
   { shape: 'box', size: [0.3, 0.7, 0.2], at: [0, 0.35, 0] },
   { shape: 'box', size: [0.42, 0.58, 0.24], at: [0, 0.99, 0] },
   { shape: 'box', size: [0.2, 0.22, 0.2], at: [0, 1.41, 0] },
@@ -95,23 +95,32 @@ export const mining: Scene = {
     { id: 'fleet', role: 'system', at: [6.8, -8], label: 'FLEET' },
     { id: 'historian', role: 'system', at: [5, -3], label: 'HISTORIAN' },
     { id: 'lab', role: 'system', at: [7.2, 0.2], label: 'LAB' },
-    { id: 'erp', role: 'system', at: [6.4, 5.1], label: 'ERP' },
+    { id: 'reporting', role: 'system', at: [6.4, 5.1], label: 'PROD. REPORTING' },
     { id: 'balance', role: 'output', at: [9.9, 0], label: 'METAL BALANCE' },
+    { id: 'agent', role: 'agent', at: [5, 2], label: 'AGENT' },
+    { id: 'metallurgist', role: 'source', at: [10, -7.4], r: 0.6, label: 'METALLURGIST', model: operator, glb: [{ src: 'operator', size: 1.7 }] },
   ],
   links: [
-    { from: 'loader', to: 'network', tag: 'TAGS', faulted: 1, onFault: 'hold', lateTag: 'LATE', bend: 0.3, tagAt: 0.57 },
+    { from: 'loader', to: 'network', tag: 'PAYLOADS', faulted: 1, onFault: 'hold', lateTag: 'LATE', bend: 0.3, tagAt: 0.57 },
     { from: 'network', to: 'fleet', onFault: 'pause' },
     { from: 'crusher', to: 'plc', tag: 'TONNES', bend: -0.4, tagAt: 0.55 },
     { from: 'mill', to: 'plc', tag: 'TAGS', bend: 0.02, tagAt: 0.65 },
     { from: 'plc', to: 'historian', bend: 0.4 },
     { from: 'bench', to: 'lab', tag: 'GRADE', bend: 0.29, tagAt: 0.25 },
-    { from: 'operator', to: 'erp', tag: 'SHIFT REPORT', bend: -0.36, tagAt: 0.48 },
-    { from: 'stockpile', to: 'erp', bend: -0.01 },
+    { from: 'operator', to: 'reporting', tag: 'SHIFT REPORT', bend: -0.36, tagAt: 0.48 },
+    { from: 'stockpile', to: 'reporting', bend: -0.01 },
     { from: 'fleet', to: 'balance', bend: 0.4 },
     { from: 'historian', to: 'balance', bend: 0.4 },
     { from: 'lab', to: 'balance', bend: -0.03 },
-    { from: 'erp', to: 'balance', bend: -0.01 },
-    { from: 'crusher', to: 'balance', tag: 'RECONCILE', reroute: true, bend: 0.36, tagAt: 0.56 },
+    { from: 'reporting', to: 'balance', bend: -0.01 },
+    { from: 'crusher', to: 'balance', tag: 'RECONCILE', reroute: true, bend: 0.36, tagAt: 0.68 },
     { from: 'stockpile', to: 'balance', tag: 'RECONCILE', reroute: true, bend: -0.37, tagAt: 0.68 },
+    ...['fleet', 'historian', 'lab', 'reporting', 'balance'].map((to) => ({ from: 'agent', to, beat: 'detect' as const })),
+    { from: 'agent', to: 'metallurgist', beat: 'sign' },
   ],
+  agent: {
+    card: ['Balance 4% short of the belt scale.', '3 trucks buffering on the haul road.', 'Hold the close until they upload.'],
+    trace: ['balance', 'fleet', 'network', 'loader'],
+    signer: 'metallurgist',
+  },
 };

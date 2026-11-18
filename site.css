@@ -342,6 +342,7 @@ section {
 }
 
 .mesh {
+  position: relative;
   order: 2;
   width: 100%;
   max-width: 1440px;
@@ -354,6 +355,35 @@ section {
   display: block;
   width: 100%;
   aspect-ratio: 23 / 14;
+}
+
+.mesh-card {
+  position: absolute;
+  top: 56px;
+  right: var(--gutter);
+  width: 40ch;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line-strong);
+  background: var(--bg);
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--bone);
+  white-space: pre-line;
+}
+
+.mesh-card::before {
+  content: 'AGENT';
+  display: block;
+  margin-bottom: 4px;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--faint);
+}
+
+.mesh-card:empty {
+  visibility: hidden;
 }
 
 .mesh-cap {
@@ -936,6 +966,13 @@ main > .plate {
 
   .mesh canvas {
     aspect-ratio: 6 / 5;
+  }
+
+  .mesh-card {
+    position: static;
+    width: auto;
+    min-height: calc(5 * 1.5em + 26px);
+    margin: 12px 0;
   }
 
   .plate.hero {

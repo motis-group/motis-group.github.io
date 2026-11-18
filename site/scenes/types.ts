@@ -13,7 +13,7 @@ export type Placement = {
   turn?: [number, number, number];
 };
 
-export type Role = 'source' | 'edge' | 'system' | 'output';
+export type Role = 'source' | 'edge' | 'system' | 'output' | 'agent';
 
 export type Node = {
   id: string;
@@ -38,6 +38,8 @@ export type Link = {
   faulted?: 1 | 2;
   onFault?: 'stop' | 'pause' | 'hold';
   lateTag?: string;
+  faultTag?: string;
+  beat?: 'detect' | 'sign';
 };
 
 export type Scene = {
@@ -46,6 +48,7 @@ export type Scene = {
   zones: { label: string; rect: [number, number, number, number] }[];
   nodes: Node[];
   links: Link[];
+  agent?: { card: string[]; trace: string[]; signer: string };
 };
 
 export const PLANE: [number, number, number, number] = [-11, -9, 11, 9];

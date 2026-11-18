@@ -4,13 +4,15 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { PLANE, type Link, type Part, type Placement, type Role, type Scene } from './scenes/types';
 
-const BEATS = { markers: 2, models: 4, links: 7, fault: 10.5, recover: 13, resume: 16, fade: 18.2, loop: 19 };
-const STILL = 17;
+const BEATS = { markers: 2, models: 4, links: 7, fault: 10.5, detect: 11, trace: 11.8, explain: 13.2, sign: 14.8, act: 15.4, fade: 20.2, loop: 21 };
+const STILL = 19;
+const TRACED = 1.2;
+const TYPED = 1.2;
 const TRAVEL = 1.4;
 const PERIOD = 1.5;
 const SEGMENTS = 48;
-const RADIUS: Record<Role, number> = { source: 1.4, edge: 0.45, system: 0.8, output: 0.9 };
-const OUTLINE: Record<Role, [number, number]> = { source: [56, 0], edge: [4, Math.PI / 4], system: [6, 0], output: [3, Math.PI / 2] };
+const RADIUS: Record<Role, number> = { source: 1.4, edge: 0.45, system: 0.8, output: 0.9, agent: 0.7 };
+const OUTLINE: Record<Role, [number, number]> = { source: [56, 0], edge: [4, Math.PI / 4], system: [6, 0], output: [3, Math.PI / 2], agent: [4, 0] };
 const FLAT = -Math.PI / 2;
 const HEADROOM = 2.4;
 const MARGIN = 1.2;
@@ -35,14 +37,14 @@ const ramp = (t: number, start: number, length: number) => {
 const faultAt = (order?: 1 | 2) => (order ? BEATS.fault + (order - 1) * 1.2 : Infinity);
 
 function departures(link: Link, drawn: number): { due: number; leaves: number }[] {
-  if (link.silent) return [];
+  if (link.silent || link.beat) return [];
   const fault = link.onFault ? faultAt(link.faulted ?? 1) : Infinity;
   const out: { due: number; leaves: number }[] = [];
   let held = 0;
   for (let due = drawn + 0.2; due < BEATS.loop; due += PERIOD) {
-    const quiet = due > fault && (link.onFault === 'stop' || due < BEATS.resume);
+    const quiet = due > fault && (link.onFault === 'stop' || due < BEATS.act);
     if (!quiet) out.push({ due, leaves: due });
-    else if (link.onFault === 'hold') out.push({ due, leaves: BEATS.resume + held++ * 0.35 });
+    else if (link.onFault === 'hold') out.push({ due, leaves: BEATS.act + held++ * 0.35 });
   }
   if (link.onFault === 'pause') out.push({ due: fault + 0.2, leaves: fault + 0.2 });
   return out;
@@ -106,7 +108,7 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
   const steps: Step[] = [];
   const words: THREE.Mesh[] = [];
   const marks: Mark[] = [];
-  const names: { name: THREE.Mesh; top: number; height: number }[] = [];
+  const names: { name: THREE.Mesh; top: number; height: number; below?: number }[] = [];
   const rows: { row: THREE.Mesh; z: number }[] = [];
 
   const flat = (geometry: THREE.BufferGeometry, x: number, z: number) => {
@@ -185,33 +187,39 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
     const [x, z] = node.at;
     const r = node.r ?? RADIUS[node.role];
     const [sides, spin] = OUTLINE[node.role];
-    const born = BEATS.markers + (i / scene.nodes.length) * 2.2;
+    const born = node.id === scene.agent?.signer ? BEATS.explain : node.role === 'agent' ? BEATS.detect - 0.3 : BEATS.markers + (i / scene.nodes.length) * 2.2;
     const fault = faultAt(node.faulted);
     const ring = flat(new THREE.RingGeometry(r - (node.role === 'source' ? 0.06 : 0.09), r, sides, 1, spin), x, z);
     const fill = flat(new THREE.CircleGeometry(r, sides, spin), x, z);
     const dot = flat(new THREE.CircleGeometry(0.09, 12), x, z);
+    const inner = node.role === 'agent' ? [flat(new THREE.RingGeometry(r * 0.55 - 0.07, r * 0.55, sides, 1, spin), x, z)] : [];
     marks.push({ of: node.id, kind: 'ring', mesh: fill, shape: Array.from({ length: sides }, (_, k) => [r * Math.cos(spin + (k * 2 * Math.PI) / sides), r * Math.sin(spin + (k * 2 * Math.PI) / sides)]) });
     const label = node.label ? text(node.label, TEXT.node, x - r * 0.7, z, 'node', node.id) : null;
     const alarm = node.faultTag ? text(node.faultTag, TEXT.tag, x - r * 0.7, z, 'node', node.id) : null;
+    const signed = node.id === scene.agent?.signer ? text('SIGNED', TEXT.tag, x - r * 0.7, z, 'tag', node.id) : null;
     alarm?.material.color.copy(olive);
     if (label) names.push({ name: label, top: z + r + GAP, height: TEXT.node });
     if (alarm) names.push({ name: alarm, top: z + r + GAP, height: TEXT.tag });
+    if (signed) names.push({ name: signed, top: z + r + GAP, height: TEXT.tag, below: TEXT.node });
     steps.push((t, live) => {
       const grown = ramp(t, born + 0.3, 0.7);
       const hit = ramp(t, fault, 0.4);
-      ring.scale.setScalar(Math.max(grown, 0.001));
-      fill.scale.setScalar(Math.max(grown, 0.001));
-      ring.material.opacity = grown * live;
+      for (const mark of [ring, fill, ...inner]) mark.scale.setScalar(Math.max(grown, 0.001));
+      for (const mark of [ring, ...inner]) mark.material.opacity = grown * live;
       fill.material.opacity = grown * (0.05 + 0.12 * hit) * live;
       dot.material.opacity = ramp(t, born, 0.3) * live;
-      for (const mark of [ring, fill, dot]) mark.material.color.lerpColors(bone, olive, hit);
+      for (const mark of [ring, fill, dot, ...inner]) mark.material.color.lerpColors(bone, olive, hit);
       const raised = alarm ? ramp(t, fault + 0.3, 0.4) : 0;
       if (label) label.material.opacity = grown * 0.75 * (1 - raised) * live;
       if (alarm) alarm.material.opacity = raised * live;
+      if (signed) {
+        signed.visible = t >= BEATS.sign;
+        signed.material.opacity = ramp(t, BEATS.sign, 0.3) * live;
+      }
     });
 
     if (!node.model) return;
-    const lands = BEATS.models + (landed++ / modelled) * 2.3;
+    const lands = Math.max(born, BEATS.models + (landed++ / modelled) * 2.3);
     const body = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshLambertMaterial({ color: bone, transparent: true }));
     const lines = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: bone, transparent: true }));
     const mirror = new THREE.Mesh(body.geometry, new THREE.MeshBasicMaterial({ color: bone, transparent: true, side: THREE.BackSide, depthWrite: false }));
@@ -249,16 +257,20 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
   });
 
   const place = new Map(scene.nodes.map((n) => [n.id, n.at]));
-  const flowing = scene.links.filter((l) => !l.reroute).length;
+  const flowing = scene.links.filter((l) => !l.reroute && !l.beat).length;
+  const trail = scene.agent?.trace ?? [];
+  const stride = TRACED / Math.max(1, trail.length - 1);
+  const traced: THREE.Vector3[] = [];
   const bead = new THREE.SphereGeometry(0.12, 10, 8);
   let flowed = 0;
   let rerouted = 0;
-  scene.links.forEach((link, i) => {
+  scene.links.forEach((link) => {
     const [ax, az] = place.get(link.from)!;
     const [bx, bz] = place.get(link.to)!;
-    const start = link.reroute ? BEATS.recover + rerouted++ * 0.8 : BEATS.links + (flowed++ / flowing) * 2.1;
-    const length = link.reroute ? 1.4 : 0.8;
-    const bend = link.bend ?? (link.silent ? 0 : 0.2);
+    const start =
+      link.beat === 'detect' ? BEATS.detect + 0.2 : link.beat === 'sign' ? BEATS.sign - 0.5 : link.reroute ? BEATS.act + rerouted++ * 0.8 : BEATS.links + (flowed++ / flowing) * 2.1;
+    const length = link.beat ? 0.5 : link.reroute ? 1.4 : 0.8;
+    const bend = link.bend ?? (link.silent || link.beat ? 0 : 0.2);
     const curve = new THREE.QuadraticBezierCurve3(
       new THREE.Vector3(ax, 0.02, az),
       new THREE.Vector3((ax + bx) / 2 + (bz - az) * bend, 0.02, (az + bz) / 2 - (bx - ax) * bend),
@@ -272,6 +284,14 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
     );
     path.computeLineDistances();
     group.add(path);
+    const hop = trail.findIndex((id, k) => k > 0 && [trail[k - 1], id].sort().join() === [link.from, link.to].sort().join());
+    const forward = hop > 0 && trail[hop - 1] === link.from;
+    const begins = BEATS.trace + (hop - 1) * stride;
+    const pulse = hop > 0 ? new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 8), new THREE.MeshBasicMaterial({ color: bone, transparent: true })) : null;
+    if (pulse) {
+      group.add(pulse);
+      traced.push(...curve.getPoints(12).slice(2, -2));
+    }
     const fault = faultAt(link.faulted);
     const ink = new THREE.MeshBasicMaterial({ color: bone, transparent: true });
     const beads = departures(link, start + length).map((d) => {
@@ -280,21 +300,38 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
       return { ...d, mesh };
     });
     const middle = curve.getPoint(link.tagAt ?? 0.5);
-    const tag = link.tag ? text(link.tag, TEXT.tag, middle.x + 0.15, middle.z + TEXT.tag * 0.8, 'tag', `link ${i}`) : null;
-    const late = link.lateTag ? text(link.lateTag, TEXT.tag, middle.x + 0.15, middle.z + TEXT.tag * 0.8, 'tag', `link ${i}`) : null;
+    const of = `${link.from}>${link.to}`;
+    const tag = link.tag ? text(link.tag, TEXT.tag, middle.x + 0.15, middle.z + TEXT.tag * 0.8, 'tag', of) : null;
+    const late = link.lateTag ? text(link.lateTag, TEXT.tag, middle.x + 0.15, middle.z + TEXT.tag * 0.8, 'tag', of) : null;
+    const alarm = link.faultTag ? text(link.faultTag, TEXT.tag, middle.x + 0.15, middle.z + TEXT.tag * 0.8, 'tag', of) : null;
+    const raised = faultAt(link.faulted ?? 1) + 0.2;
     late?.material.color.copy(olive);
+    alarm?.material.color.copy(olive);
     const strength = link.reroute ? 0.95 : link.silent ? 0.75 : 0.4;
+    const reads = link.beat === 'detect';
     steps.push((t, live) => {
       const drawn = ramp(t, start, length);
       const hit = ramp(t, fault, 0.4);
-      const released = late ? ramp(t, BEATS.resume, 0.3) : 0;
+      const released = late ? ramp(t, BEATS.act, 0.3) : 0;
       path.geometry.setDrawRange(0, drawn ? Math.round(drawn * SEGMENTS) + 1 : 0);
       path.material.color.lerpColors(bone, olive, hit);
-      path.material.opacity = (strength + (1 - strength) * hit) * live;
+      const lit = hop > 0 ? ramp(t, begins, stride) * (1 - ramp(t, BEATS.act, 0.6)) : reads ? 0.3 + 0.6 * (1 - ramp(t, BEATS.explain, 0.8)) : 0;
+      path.material.opacity = Math.max(strength + (1 - strength) * hit, lit) * live;
+      if (pulse) {
+        const u = (t - begins) / stride;
+        pulse.visible = u >= 0 && u < 1;
+        pulse.position.copy(curve.getPoint(Math.min(1, Math.max(0, forward ? u : 1 - u)))).setY(0.2);
+        pulse.material.opacity = live;
+      }
       ink.color.lerpColors(bone, olive, hit);
       ink.opacity = live;
-      if (tag) tag.material.opacity = ramp(t, start + length, 0.4) * (1 - released) * live;
+      const alarmed = alarm ? ramp(t, raised, 0.3) * (1 - ramp(t, BEATS.act, 0.3)) : 0;
+      if (tag) tag.material.opacity = ramp(t, start + length, 0.4) * (1 - released) * (1 - alarmed) * live;
       if (late) late.material.opacity = released * live;
+      if (alarm) {
+        alarm.material.opacity = alarmed * live;
+        alarm.visible = alarmed > 0;
+      }
       let queued = 0;
       for (const b of beads) {
         const u = (t - b.leaves) / TRAVEL;
@@ -308,14 +345,17 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
 
   const size = (grow: number) => {
     words.forEach((word) => word.scale.setScalar(grow));
-    names.forEach(({ name, top, height }) => (name.position.z = top + (height * grow) / 2));
+    names.forEach(({ name, top, height, below = 0 }) => (name.position.z = top + (below + height / 2) * grow));
     rows.forEach(({ row, z }, i) => (row.position.z = z + (grow > 1 ? (i % 2) * grow * STAGGER : 0)));
   };
 
-  return { group, marks, size, loads, update: (t: number) => steps.forEach((step) => step(t, 1 - ramp(t, BEATS.fade, 0.7))) };
+  const card = (scene.agent?.card ?? []).join('\n');
+  const say = (t: number) => (t < BEATS.explain ? '' : card.slice(0, Math.round(Math.min(1, (t - BEATS.explain) / TYPED) * card.length)));
+
+  return { group, marks, size, loads, traced, say, update: (t: number) => steps.forEach((step) => step(t, 1 - ramp(t, BEATS.fade, 0.7))) };
 }
 
-export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, scenes: Scene[]) {
+export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, card: HTMLElement, scenes: Scene[]) {
   const context = canvas.getContext('webgl2', { antialias: true, alpha: true });
   if (!context) return () => {};
   const renderer = new THREE.WebGLRenderer({ canvas, context });
@@ -373,20 +413,28 @@ export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, scenes: S
   const draw = () => {
     const index = pinned === null ? Math.floor(elapsed / BEATS.loop) % list.length : 0;
     built.forEach((b, i) => (b.group.visible = i === index));
-    built[index].update(pinned ?? elapsed % BEATS.loop);
+    const t = pinned ?? elapsed % BEATS.loop;
+    built[index].update(t);
+    const said = built[index].say(t);
+    if (card.textContent !== said) card.textContent = said;
+    card.style.opacity = String(1 - ramp(t, BEATS.fade, 0.7));
     if (canvas.dataset.scene !== list[index].id) {
       canvas.dataset.scene = list[index].id;
       caption.textContent = list[index].caption;
     }
     renderer.render(world, camera);
     if (pinned === null) return;
-    const place = (mesh: THREE.Mesh, [x, y]: [number, number]) => {
-      const p = mesh.localToWorld(new THREE.Vector3(x, y, 0)).project(camera);
+    const screen = (point: THREE.Vector3) => {
+      const p = point.clone().project(camera);
       return [((p.x + 1) * canvas.clientWidth) / 2, ((1 - p.y) * canvas.clientHeight) / 2].map((v) => Math.round(v * 10) / 10);
     };
+    const place = (mesh: THREE.Mesh, [x, y]: [number, number]) => screen(mesh.localToWorld(new THREE.Vector3(x, y, 0)));
     canvas.dataset.layout = JSON.stringify(
-      built[index].marks.filter((m) => m.mesh.visible).map(({ mesh, shape, ...mark }) => ({ ...mark, box: shape.map((point) => place(mesh, point)) }))
+      built[index].marks
+        .filter((m) => m.mesh.visible)
+        .map(({ mesh, shape, ...mark }) => ({ ...mark, alpha: Math.round((mesh.material as THREE.Material).opacity * 100) / 100, box: shape.map((point) => place(mesh, point)) }))
     );
+    canvas.dataset.trace = JSON.stringify(built[index].traced.map(screen));
     canvas.dataset.t = String(pinned);
   };
 
