@@ -93,7 +93,7 @@ export const electricity: Scene = {
     { id: 'register', role: 'system', at: [6.5, -8], label: 'ASSET REGISTER' },
     { id: 'meterdata', role: 'system', at: [9.8, -4.8], label: 'METER DATA' },
     { id: 'model', role: 'output', at: [-2.4, -7.1], label: 'NETWORK MODEL' },
-    { id: 'agent', role: 'agent', at: [1, -8.3], label: 'AGENT' },
+    { id: 'agent', role: 'agent', at: [-3.5, -10.5], label: 'AGENT' },
     { id: 'dispatcher', role: 'source', at: [-10, -8.5], r: 0.6, label: 'DISPATCHER', model: operator, glb: [{ src: 'operator', size: 1.7 }] },
   ],
   links: [

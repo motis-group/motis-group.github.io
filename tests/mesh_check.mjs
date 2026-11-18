@@ -403,9 +403,9 @@ for (const scene of SCENES) {
 }
 
 for (const scene of SCENES) {
-  for (const { width, height = 900, deviceScaleFactor = 1 } of LAYOUTS) {
-    const shot = await stageAt(browser, base, scene, BEAT.explain, { viewport: { width, height }, deviceScaleFactor });
-    const at = `${scene} card at ${width}`;
+  for (const { width, height = 900, deviceScaleFactor = 1, t } of LAYOUTS.flatMap((l) => [BEAT.explain, BEAT.act].map((t) => ({ ...l, t })))) {
+    const shot = await stageAt(browser, base, scene, t, { viewport: { width, height }, deviceScaleFactor });
+    const at = `${scene} card at ${width} t=${t}`;
     const { card, stage, marks, copy } = shot;
     await shot.context.close();
     if (!card) {
