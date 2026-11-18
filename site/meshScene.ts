@@ -1,6 +1,8 @@
 import * as THREE from 'three';
+import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
-import { PLANE, type Link, type Part, type Role, type Scene } from './scenes/types';
+import { PLANE, type Link, type Part, type Placement, type Role, type Scene } from './scenes/types';
 
 const BEATS = { markers: 2, models: 4, links: 7, fault: 10.5, recover: 13, resume: 16, fade: 18.2, loop: 19 };
 const STILL = 17;
@@ -17,10 +19,13 @@ const LEGIBLE = 24;
 const GROWN = 1.5;
 const STAGGER = 1.05;
 const GAP = 0.25;
+const CREASE = 30;
+const MODELS = '/models/';
 
 type Step = (t: number, live: number) => void;
 type Ink = { bone: THREE.Color; olive: THREE.Color; anisotropy: number };
 type Mark = { of: string; kind: 'zone' | 'node' | 'tag' | 'ring'; text?: string; mesh: THREE.Mesh; shape: [number, number][] };
+type Loaded = { id: string; urls: string[]; ok: boolean };
 
 const ramp = (t: number, start: number, length: number) => {
   const u = Math.min(1, Math.max(0, (t - start) / length));
@@ -43,6 +48,46 @@ function departures(link: Link, drawn: number): { due: number; leaves: number }[
   return out;
 }
 
+const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+const files = new Map<string, Promise<THREE.BufferGeometry>>();
+
+function file(url: string) {
+  if (!files.has(url))
+    files.set(
+      url,
+      loader.loadAsync(url).then(({ scene }) => {
+        scene.updateMatrixWorld(true);
+        const pieces: THREE.BufferGeometry[] = [];
+        scene.traverse((object) => {
+          const mesh = object as THREE.Mesh;
+          if (!mesh.isMesh) return;
+          const source = mesh.geometry.getAttribute('position');
+          const points = new Float32Array(source.count * 3).map((_, i) => source.getComponent(Math.floor(i / 3), i % 3));
+          const piece = new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(points, 3));
+          if (mesh.geometry.index) piece.setIndex(mesh.geometry.index.clone());
+          pieces.push(piece.applyMatrix4(mesh.matrixWorld).toNonIndexed());
+        });
+        return mergeGeometries(pieces);
+      })
+    );
+  return files.get(url)!;
+}
+
+async function sourced(placements: Placement[]) {
+  const placed = await Promise.all(
+    placements.map(async ({ src, size, at = [0, 0, 0], turn = [0, 0, 0] }) => {
+      const g = (await file(MODELS + src + '.glb')).clone().applyMatrix4(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(...turn)));
+      g.computeBoundingBox();
+      const { min, max } = g.boundingBox!;
+      const scale = size / Math.max(max.x - min.x, max.y - min.y, max.z - min.z);
+      return g.translate(-(min.x + max.x) / 2, -min.y, -(min.z + max.z) / 2).scale(scale, scale, scale).translate(...at);
+    })
+  );
+  const solid = mergeGeometries(placed);
+  solid.computeVertexNormals();
+  return { solid, edges: new THREE.EdgesGeometry(solid, CREASE) };
+}
+
 function shape(parts: Part[]) {
   const solids = parts.map((p) => {
     const g = p.shape === 'box' ? new THREE.BoxGeometry(...p.size) : new THREE.CylinderGeometry(p.size[0], p.size[1], p.size[2], p.sides ?? 10);
@@ -57,6 +102,7 @@ function shape(parts: Part[]) {
 
 function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
   const group = new THREE.Group();
+  const loads: Promise<Loaded>[] = [];
   const steps: Step[] = [];
   const words: THREE.Mesh[] = [];
   const marks: Mark[] = [];
@@ -166,15 +212,32 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
 
     if (!node.model) return;
     const lands = BEATS.models + (landed++ / modelled) * 2.3;
-    const { solid, edges } = shape(node.model);
-    const body = new THREE.Mesh(solid, new THREE.MeshLambertMaterial({ color: bone, transparent: true }));
-    const lines = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: bone, transparent: true }));
-    const mirror = new THREE.Mesh(solid, new THREE.MeshBasicMaterial({ color: bone, transparent: true, side: THREE.BackSide, depthWrite: false }));
+    const body = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshLambertMaterial({ color: bone, transparent: true }));
+    const lines = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: bone, transparent: true }));
+    const mirror = new THREE.Mesh(body.geometry, new THREE.MeshBasicMaterial({ color: bone, transparent: true, side: THREE.BackSide, depthWrite: false }));
     mirror.scale.y = -1;
     body.renderOrder = lines.renderOrder = 1;
     group.add(mirror, body, lines);
+    const wear = ({ solid, edges }: { solid: THREE.BufferGeometry; edges: THREE.BufferGeometry }) => {
+      body.geometry.dispose();
+      lines.geometry.dispose();
+      body.geometry = mirror.geometry = solid;
+      lines.geometry = edges;
+    };
+    const parts = node.model;
+    const urls = (node.glb ?? []).map((p) => MODELS + p.src + '.glb');
+    if (node.glb)
+      loads.push(
+        sourced(node.glb).then(
+          (model) => (wear(model), { id: node.id, urls, ok: true }),
+          () => (wear(shape(parts)), { id: node.id, urls, ok: false })
+        )
+      );
+    else wear(shape(parts));
     steps.push((t, live) => {
       const down = ramp(t, lands, 0.8);
+      const hit = ramp(t, fault, 0.4);
+      for (const mark of [body, lines, mirror]) mark.material.color.lerpColors(bone, olive, hit);
       const lift = (1 - down) * 2.4;
       body.position.set(x, lift, z);
       lines.position.set(x, lift, z);
@@ -249,7 +312,7 @@ function build(scene: Scene, { bone, olive, anisotropy }: Ink) {
     rows.forEach(({ row, z }, i) => (row.position.z = z + (grow > 1 ? (i % 2) * grow * STAGGER : 0)));
   };
 
-  return { group, marks, size, update: (t: number) => steps.forEach((step) => step(t, 1 - ramp(t, BEATS.fade, 0.7))) };
+  return { group, marks, size, loads, update: (t: number) => steps.forEach((step) => step(t, 1 - ramp(t, BEATS.fade, 0.7))) };
 }
 
 export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, scenes: Scene[]) {
@@ -278,6 +341,15 @@ export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, scenes: S
   world.add(sun);
   const built = list.map((scene) => build(scene, ink));
   built.forEach((b) => world.add(b.group));
+  let stopped = false;
+  Promise.all(built.flatMap((b) => b.loads)).then((loaded) => {
+    if (stopped) return;
+    canvas.dataset.models = JSON.stringify({
+      nodes: Object.fromEntries(loaded.map(({ id, urls }) => [id, urls])),
+      fallback: loaded.filter((l) => !l.ok).map((l) => l.id),
+    });
+    if (pinned !== null) draw();
+  });
 
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 200);
   const [x0, z0, x1, z1] = PLANE;
@@ -360,6 +432,7 @@ export function mount(canvas: HTMLCanvasElement, caption: HTMLElement, scenes: S
   run();
 
   return () => {
+    stopped = true;
     cancelAnimationFrame(frame);
     sized.disconnect();
     watched.disconnect();

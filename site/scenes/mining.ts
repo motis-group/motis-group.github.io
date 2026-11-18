@@ -1,4 +1,4 @@
-import type { Part, Scene } from './types';
+import type { Part, Placement, Scene } from './types';
 
 const AXLE: [number, number, number] = [Math.PI / 2, 0, 0];
 
@@ -58,6 +58,23 @@ const operator: Part[] = [
   { shape: 'box', size: [0.26, 0.34, 0.03], at: [0.42, 1.1, 0.1], turn: [0, 0, -0.6] },
 ];
 
+const loaderModel: Placement[] = [{ src: 'haul-truck', size: 2.9, turn: [0, -Math.PI / 2, 0] }];
+
+const crusherModel: Placement[] = [
+  { src: 'crusher-hopper', size: 1.7, at: [-1.05, 0, 0] },
+  { src: 'conveyor', size: 3.2, at: [0.75, 0, 0] },
+];
+
+const millModel: Placement[] = [
+  { src: 'mill', size: 2, at: [-0.5, 0, -0.45], turn: [0, Math.PI / 2, 0] },
+  ...[[0.85, 0.35], [-0.1, 0.75], [-1.05, 0.75]].map(([x, z]): Placement => ({ src: 'flotation-tank', size: 0.85, at: [x, 0, z] })),
+];
+
+const stockpileModel: Placement[] = [
+  { src: 'stockpile', size: 2.4, at: [-0.3, 0, -0.1] },
+  { src: 'survey-flag', size: 1.5, at: [1.1, 0, 0.6] },
+];
+
 export const mining: Scene = {
   id: 'mining',
   caption: 'Mining · how the data is collected',
@@ -67,12 +84,12 @@ export const mining: Scene = {
     { label: 'OFFICE', rect: [4, -9, 11, 9] },
   ],
   nodes: [
-    { id: 'loader', role: 'source', at: [-8.9, 0.7], r: 1.9, label: 'LOADER', model: loader, faulted: 1, faultTag: 'BUFFERED' },
-    { id: 'crusher', role: 'source', at: [-1.5, -5.8], r: 2.3, label: 'WEIGHTOMETER', model: crusher },
-    { id: 'mill', role: 'source', at: [-1.9, 1.8], r: 1.8, label: 'MILL', model: mill },
-    { id: 'bench', role: 'source', at: [1.8, 0.1], r: 1.1, label: 'ASSAY', model: bench },
-    { id: 'stockpile', role: 'source', at: [1.3, 4.3], r: 1.5, label: 'SURVEY', model: stockpile },
-    { id: 'operator', role: 'source', at: [-2.3, 6.5], r: 0.9, label: 'OPERATOR', model: operator },
+    { id: 'loader', role: 'source', at: [-8.9, 0.7], r: 1.9, label: 'LOADER', model: loader, glb: loaderModel, faulted: 1, faultTag: 'BUFFERED' },
+    { id: 'crusher', role: 'source', at: [-1.5, -5.8], r: 2.3, label: 'WEIGHTOMETER', model: crusher, glb: crusherModel },
+    { id: 'mill', role: 'source', at: [-1.9, 1.8], r: 1.8, label: 'MILL', model: mill, glb: millModel },
+    { id: 'bench', role: 'source', at: [1.8, 0.1], r: 1.1, label: 'ASSAY', model: bench, glb: [{ src: 'lab-equipment', size: 1.5 }] },
+    { id: 'stockpile', role: 'source', at: [1.3, 4.3], r: 1.5, label: 'SURVEY', model: stockpile, glb: stockpileModel },
+    { id: 'operator', role: 'source', at: [-2.3, 6.5], r: 0.9, label: 'OPERATOR', model: operator, glb: [{ src: 'operator', size: 1.7 }] },
     { id: 'network', role: 'edge', at: [-9.8, -7], label: 'MINE NETWORK' },
     { id: 'plc', role: 'edge', at: [2.8, -8.4], label: 'PLC' },
     { id: 'fleet', role: 'system', at: [6.8, -8], label: 'FLEET' },

@@ -6,6 +6,13 @@ export type Part = {
   sides?: number;
 };
 
+export type Placement = {
+  src: string;
+  size: number;
+  at?: [number, number, number];
+  turn?: [number, number, number];
+};
+
 export type Role = 'source' | 'edge' | 'system' | 'output';
 
 export type Node = {
@@ -15,6 +22,7 @@ export type Node = {
   r?: number;
   label?: string;
   model?: Part[];
+  glb?: Placement[];
   faulted?: 1 | 2;
   faultTag?: string;
 };

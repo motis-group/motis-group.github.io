@@ -24,7 +24,8 @@ const VIEWS = [
 const LAYOUTS = [{ width: 1440 }, { width: 390, height: 844, deviceScaleFactor: 2 }];
 const STILL = 17;
 const REFERENCE = process.env.MESH_REF;
-const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.ttf': 'font/ttf', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.png': 'image/png' };
+const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.ttf': 'font/ttf', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.png': 'image/png', '.glb': 'model/gltf-binary' };
+const CROP = 360;
 
 function serve() {
   const server = http.createServer((req, res) => {
@@ -72,15 +73,51 @@ function count(page, png, other = png) {
   }, [png.toString('base64'), other.toString('base64')]);
 }
 
+function watch(page, base, errors) {
+  page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
+  page.on('pageerror', (e) => errors.push(String(e)));
+  page.on('request', (r) => !r.url().startsWith(base) && !r.url().startsWith('data:') && errors.push(`request leaves localhost: ${r.url()}`));
+}
+
 async function open(browser, base, query, options = {}) {
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1, ...options });
   const page = await context.newPage();
   const errors = [];
-  page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
-  page.on('pageerror', (e) => errors.push(String(e)));
+  watch(page, base, errors);
   await page.goto(`${base}/${query}`);
   await page.waitForSelector('canvas[data-t]', { timeout: 20000 });
+  await page.waitForSelector('canvas[data-models]', { timeout: 20000 }).catch(() => errors.push('the models never finished loading'));
   return { context, page, errors };
+}
+
+function models(page) {
+  return page.evaluate(() => JSON.parse(document.querySelector('.mesh canvas').dataset.models ?? '{"nodes":{},"fallback":[]}'));
+}
+
+async function sheet(page, file, tiles) {
+  const png = await page.evaluate(async ({ tiles, size }) => {
+    const columns = Math.min(4, tiles.length);
+    const c = document.createElement('canvas');
+    c.width = columns * size;
+    c.height = Math.ceil(tiles.length / columns) * size;
+    const g = c.getContext('2d');
+    g.fillStyle = '#111210';
+    g.fillRect(0, 0, c.width, c.height);
+    g.font = '20px monospace';
+    for (const [i, { data, name }] of tiles.entries()) {
+      const img = new Image();
+      img.src = `data:image/png;base64,${data}`;
+      await img.decode();
+      const scale = Math.min(size / img.width, (size - 28) / img.height);
+      const x = (i % columns) * size;
+      const y = Math.floor(i / columns) * size;
+      g.drawImage(img, x + (size - img.width * scale) / 2, y + 28, img.width * scale, img.height * scale);
+      g.fillStyle = '#9a9a90';
+      g.fillText(name, x + 8, y + 20);
+    }
+    return c.toDataURL('image/png').split(',')[1];
+  }, { tiles, size: CROP });
+  fs.writeFileSync(file, Buffer.from(png, 'base64'));
 }
 
 function overlap(a, b) {
@@ -178,6 +215,38 @@ for (const { name, scene, width, height = 900, deviceScaleFactor = 1 } of VIEWS)
 }
 
 for (const scene of SCENES) {
+  const { context, page, errors } = await open(browser, base, `?scene=${scene}&t=${STILL}`, { deviceScaleFactor: 2 });
+  const { nodes, fallback } = await models(page);
+  const urls = [...new Set(Object.values(nodes).flat())];
+  console.log(`${scene}: ${urls.length} model files on ${Object.keys(nodes).length} nodes, fallback on ${fallback.length}`);
+  if (!urls.length) failures.push(`${scene}: the scene references no model files`);
+  for (const id of fallback) failures.push(`${scene}: the ${id} model fell back to the procedural one`);
+  for (const url of urls) {
+    const status = (await fetch(new URL(url, base))).status;
+    if (status !== 200) failures.push(`${scene}: ${url} returns ${status}`);
+  }
+  const marks = JSON.parse((await page.locator('.mesh canvas').getAttribute('data-layout')) ?? '[]');
+  const tiles = [];
+  for (const id of Object.keys(nodes)) {
+    const ring = marks.find((m) => m.kind === 'ring' && m.of === id);
+    if (!ring) continue;
+    const xs = ring.box.map(([x]) => x);
+    const ys = ring.box.map(([, y]) => y);
+    const canvas = await page.locator('.mesh canvas').boundingBox();
+    const half = (Math.max(...xs) - Math.min(...xs)) * 0.75;
+    const cx = canvas.x + (Math.max(...xs) + Math.min(...xs)) / 2;
+    const bottom = canvas.y + Math.max(...ys) + half * 0.15;
+    const clip = { x: Math.max(0, cx - half), y: Math.max(0, bottom - half * 2), width: half * 2, height: half * 2 };
+    tiles.push({ name: id, data: (await page.screenshot({ clip, fullPage: true })).toString('base64') });
+  }
+  const file = path.join(ART, `models-${scene}.png`);
+  if (tiles.length) await sheet(page, file, tiles);
+  console.log(`frame ${file}`);
+  for (const e of errors) failures.push(`${scene} models: ${e}`);
+  await context.close();
+}
+
+for (const scene of SCENES) {
   const named = [];
   for (const { width, height = 900, deviceScaleFactor = 1 } of LAYOUTS) {
     const at = `${scene} at ${width}`;
@@ -222,7 +291,7 @@ for (const scene of SCENES) {
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   const page = await context.newPage();
   const errors = [];
-  page.on('pageerror', (e) => errors.push(String(e)));
+  watch(page, base, errors);
   await page.goto(`${base}/`);
   await page.waitForSelector('.mesh canvas[data-scene]', { timeout: 20000 });
   const first = await page.locator('.mesh').screenshot();
