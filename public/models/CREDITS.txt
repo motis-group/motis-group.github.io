@@ -1,0 +1,58 @@
+Hero scene models. Each file was downloaded from the source below, stripped of
+textures and materials, and optimised with glTF Transform. The site draws every
+model in its own palette.
+
+haul-truck.glb
+  "Dump truck" by jeremy, https://poly.pizza/m/1BpGYg14QGD, CC-BY 3.0
+
+crusher-hopper.glb
+  "hopper-high-round" from Factory Kit by Kenney, https://kenney.nl/assets/factory-kit, CC0 1.0
+
+conveyor.glb
+  "Conveyor Belt" by Sierra Maple, https://poly.pizza/m/1dFo1i3wR_T, CC-BY 3.0
+
+mill.glb
+  "Water Tank Floor" by Quaternius, https://poly.pizza/m/xgsh3kWbAM, CC0 1.0
+
+flotation-tank.glb
+  "detail-tank-large" from City Kit Industrial by Kenney, https://kenney.nl/assets/city-kit-industrial, CC0 1.0
+
+lab-equipment.glb
+  "Blocks Lab Equipment" by Don Carson, https://poly.pizza/m/atB26Z6BPd0, CC-BY 3.0
+
+stockpile.glb
+  "Soil mount" by apelab, https://poly.pizza/m/0ycSG7vDLMm, CC-BY 3.0
+
+survey-flag.glb
+  "Flag" by Poly by Google, https://poly.pizza/m/0okBVouy3-T, CC-BY 3.0
+
+operator.glb
+  "Worker" by Quaternius, https://poly.pizza/m/Yg2bQZO6Hj, CC0 1.0, posed from its Interact animation
+  "Clipboard" by Poly Haven, https://polyhaven.com/a/clipboard, CC0 1.0
+
+switchgear.glb
+  "Utility Box 02" by Poly Haven, https://polyhaven.com/a/utility_box_02, CC0 1.0
+
+line-poles.glb
+  "Telephone pole" by Poly by Google, https://poly.pizza/m/7YIloiV4cAt, CC-BY 3.0
+
+pole.glb
+  "Modular Electricity Poles" (preset 02) by Poly Haven, https://polyhaven.com/a/modular_electricity_poles, CC0 1.0
+
+pole-transformer.glb
+  "Modular Electricity Poles" (preset 03) by Poly Haven, https://polyhaven.com/a/modular_electricity_poles, CC0 1.0
+
+house.glb
+  "House" by Poly by Google, https://poly.pizza/m/6PGyqELX8M-, CC-BY 3.0
+
+house-two-storey.glb
+  "Two story house" by Kenney, https://poly.pizza/m/hmXhiLDf8D, CC0 1.0
+
+solar-panel.glb
+  "Flat Solar Panel" by michu, https://poly.pizza/m/bvw2d4XUKR, CC0 1.0
+
+ute.glb
+  "Pickup Truck" by Quaternius, https://poly.pizza/m/qn4grQgHm8, CC0 1.0
+
+CC-BY 3.0: https://creativecommons.org/licenses/by/3.0/
+CC0 1.0: https://creativecommons.org/publicdomain/zero/1.0/
